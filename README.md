@@ -1,8 +1,8 @@
 
-git clone wherever
-find where vcvarsall.bat that comes with visual studio
-pase it in code\bin\build.bat
-call build.bat from "code" directory like this code>bin\build.bat to build source
+git clone wherever,
+find where vcvarsall.bat is that comes with visual studio,
+paste it in code\bin\build.bat and
+call build.bat from "code" directory like this: code>bin\build.bat to build source
 
 confusingly theres's two custom folders, one in "code" directory and one under "build" directory.
 I think for the source you just build in code\bin\build.bat and for fleury's custom stuff
