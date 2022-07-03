@@ -1,8 +1,10 @@
 
-git clone wherever.
-In the repo directory, there will be a "dual_build.bat" file.
-Patch in call to vcvarsall.bat in the dual_build.bat file.
-You can split these builds apart if you would like, but if you want a complete build,
+Step1 git clone wherever
+Step2 patch vcvarsall.bat in "dual_build.bat" file
+Step3 git clone "4coder non-source" into the cloned repository
+-> https://github.com/Dion-Systems/4coder-non-source.git
+
+You can split the builds apart in dual build if you would like, but if you want a complete build,
 you will have to build the source *then* build the custom layer. 
 
 to learn how to make custom commands you can look at code\custom\4coder_examples.cpp

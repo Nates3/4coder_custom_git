@@ -1,6 +1,6 @@
 @echo off
 
-REM [INSERT HERE CALL TO: vcvarsall.bat x64]
+[PATCH vcvarsall.bat] here!
 
 echo ---
 echo --- building 4coder source ---

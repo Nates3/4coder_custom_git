@@ -1673,6 +1673,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
   
   // NOTE(allen): someone get my shit togeth :(er for me
   
+#if 0
   for (i32 i = 0; i < argc; i += 1){
     String_Const_u8 arg = SCu8(argv[i]);
     printf("arg[%d]: %.*s\n", i, string_expand(arg));
@@ -2250,6 +2251,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
     
     win32vars.first = false;
   }
+#endif
   
   return(0);
 }
