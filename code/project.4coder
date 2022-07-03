@@ -31,7 +31,6 @@ load_paths = {
 commands = {
  .build_x64 = {
   .win = "echo build: x64 & bin\build.bat",
-  .linux = "echo build: x64 & bin/build-linux.sh",
   .out = "*compilation*",
   .footer_panel = true,
   .save_dirty_files = true,
@@ -141,7 +140,7 @@ commands = {
 };
 
 fkey_command = {
- .F1 = "build_x64",
+ .F2 = "build_x64",
  .F3 = "build_site_render",
  .F4 = "run_one_time",
  .F5 = "build_C___lexer_generator",

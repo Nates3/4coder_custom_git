@@ -1,7 +1,5 @@
 @echo off
 
-REM [replace this with vcvarsall.bat x64 call]
-
 set location=%cd%
 set me="%~dp0"
 cd %me%

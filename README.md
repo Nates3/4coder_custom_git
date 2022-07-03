@@ -1,15 +1,11 @@
 
-git clone wherever,
-find where vcvarsall.bat is that comes with visual studio,
-paste it in code\bin\build.bat and
-call build.bat from "code" directory like this: code>bin\build.bat to build source
-
-confusingly theres's two custom folders, one in "code" directory and one under "build" directory.
-I think for the source you just build in code\bin\build.bat and for fleury's custom stuff
-you run build\custom\4coder_fleury\build.bat
+git clone wherever.
+In the repo directory, there will be a "dual_build.bat" file.
+Patch in call to vcvarsall.bat in the dual_build.bat file.
+You can split these builds apart if you would like, but if you want a complete build,
+you will have to build the source *then* build the custom layer. 
 
 to learn how to make custom commands you can look at code\custom\4coder_examples.cpp
-
 and for user defined "custom_layer_init" function stuff you follow 
 https://4coder.handmade.network/forums/articles/t/7319-customization_layer_-_getting_started__4coder_4.1_
 
