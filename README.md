@@ -1,16 +1,16 @@
-## Build Instructions
+# Build Instructions
 
-# Step1 
+## Step1 
 HTTPS: git clone --recursive https://github.com/Nates3/4coder_custom_git.git
 SSH: git clone --recursive git@github.com:Nates3/4coder_custom_git.git
 
-# Step2 
+## Step2 
 Insert call to vcvarsall.bat in "code\bin\build.bat" file
 
-# Step3 
+## Step3 
 call "code\bin\build.bat"
 
-# Info
+## Info
 To learn how to make custom commands you can look at code\custom\4coder_examples.cpp
 and for user defined "custom_layer_init" function stuff you follow 
 https://4coder.handmade.network/forums/articles/t/7319-customization_layer_-_getting_started__4coder_4.1_
