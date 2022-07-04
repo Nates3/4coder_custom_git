@@ -131,7 +131,7 @@ set_default_color_scheme(Application_Links *app){
     default_color_table.arrays[defcolor_mark] = make_colors(arena, 0xFF494949);
     default_color_table.arrays[defcolor_text_default] = make_colors(arena, 0xFF90B080);
     default_color_table.arrays[defcolor_comment] = make_colors(arena, 0xFF2090F0);
-    default_color_table.arrays[defcolor_comment_pop] = make_colors(arena, 0xFF00A000, 0xFFA00000);
+    default_color_table.arrays[defcolor_comment_pop] = make_colors(arena, 0xFF00A000, 0xFFA00000, 0xFFFFFF00, 0xFFFF00FF);
     default_color_table.arrays[defcolor_keyword] = make_colors(arena, 0xFFD08F20);
     default_color_table.arrays[defcolor_str_constant] = make_colors(arena, 0xFF50FF30);
     default_color_table.arrays[defcolor_char_constant] = make_colors(arena, 0xFF50FF30);

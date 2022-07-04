@@ -1,6 +1,8 @@
 
 Step1 git clone wherever
+
 Step2 patch vcvarsall.bat in "dual_build.bat" file
+
 Step3 git clone "4coder non-source" into the cloned repository
 -> https://github.com/Dion-Systems/4coder-non-source.git
 

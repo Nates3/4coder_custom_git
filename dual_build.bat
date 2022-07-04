@@ -14,6 +14,6 @@ echo ---
 echo --- building ryan's custom layer ---
 echo ---
 
-pushd build\custom\
+pushd code\custom\
 call 4coder_fleury\build.bat
 popd
