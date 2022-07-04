@@ -1,8 +1,8 @@
 # Build Instructions
 
 ## Step1 
-HTTPS: git clone --recursive https://github.com/Nates3/4coder_custom_git.git  
-SSH: git clone --recursive git@github.com:Nates3/4coder_custom_git.git
+HTTPS: `git clone --recursive https://github.com/Nates3/4coder_custom_git.git`  
+SSH: `git clone --recursive git@github.com:Nates3/4coder_custom_git.git`
 
 ## Step2 
 Insert call to `vcvarsall.bat` in `code\bin\build.bat` file
