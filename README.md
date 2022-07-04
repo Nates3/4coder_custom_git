@@ -1,12 +1,13 @@
-
-Step1 git clone wherever
+#Build Instructions
+Step1 
+HTTPS: git clone --recursive https://github.com/Nates3/4coder_custom_git.git
+SSH: git clone --recursive git@github.com:Nates3/4coder_custom_git.git
 
 Step2 insert call to vcvarsall.bat in "code\bin\build.bat" file
 
-Step3 git clone "4coder non-source" into the cloned repository
--> https://github.com/Dion-Systems/4coder-non-source.git
+Step3 call "code\bin\build.bat"
 
-to learn how to make custom commands you can look at code\custom\4coder_examples.cpp
+To learn how to make custom commands you can look at code\custom\4coder_examples.cpp
 and for user defined "custom_layer_init" function stuff you follow 
 https://4coder.handmade.network/forums/articles/t/7319-customization_layer_-_getting_started__4coder_4.1_
 the function should be in code\custom\4coder_defualt_bindings.cpp
