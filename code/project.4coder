@@ -29,8 +29,16 @@ load_paths = {
 };
 
 commands = {
+	.full_build = {
+  .win = "full_build.bat",
+  .out = "*compilation*",
+  .footer_panel = true,
+  .save_dirty_files = true,
+  .cursor_at_end = false,
+ },
  .build_x64 = {
   .win = "echo build: x64 & bin\build.bat",
+  .linux = "echo build: x64 & bin/build-linux.sh",
   .out = "*compilation*",
   .footer_panel = true,
   .save_dirty_files = true,
@@ -140,6 +148,7 @@ commands = {
 };
 
 fkey_command = {
+ .F1 = "full_build",
  .F2 = "build_x64",
  .F3 = "build_site_render",
  .F4 = "run_one_time",

@@ -1,17 +1,15 @@
 
 Step1 git clone wherever
 
-Step2 patch vcvarsall.bat in "dual_build.bat" file
+Step2 insert call to vcvarsall.bat in "code\bin\build.bat" file
 
 Step3 git clone "4coder non-source" into the cloned repository
 -> https://github.com/Dion-Systems/4coder-non-source.git
 
-You can split the builds apart in dual build if you would like, but if you want a complete build,
-you will have to build the source *then* build the custom layer. 
-
 to learn how to make custom commands you can look at code\custom\4coder_examples.cpp
 and for user defined "custom_layer_init" function stuff you follow 
 https://4coder.handmade.network/forums/articles/t/7319-customization_layer_-_getting_started__4coder_4.1_
+the function should be in code\custom\4coder_defualt_bindings.cpp
 
 
 Copyright (c) 2022 Allen Webster

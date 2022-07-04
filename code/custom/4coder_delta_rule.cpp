@@ -189,7 +189,7 @@ cubic_reinterpolate(f32 t){
     return(3*t2 - 2*t3);
 }
 DELTA_RULE_SIG(fixed_time_cubic_delta){
-    local_const f32 duration_in_seconds = (1.f/100.f);
+    local_const f32 duration_in_seconds = (1.f/8.f);
     local_const f32 dt_multiplier = 1.f/duration_in_seconds;
     f32 step = dt*dt_multiplier;
     f32 *t = (f32*)data;
