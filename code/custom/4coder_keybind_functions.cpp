@@ -18,6 +18,9 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(interactive_switch_buffer, KeyCode_I, KeyCode_Control);
   Bind(change_active_panel, KeyCode_1, KeyCode_Control);
   Bind(build_in_build_panel, KeyCode_B, KeyCode_Control, KeyCode_Shift);
+  Bind(toggle_fullscreen, KeyCode_F11);
+  Bind(exit_4coder, KeyCode_F4, KeyCode_Alt);
+  Bind(load_project, KeyCode_L, KeyCode_Control, KeyCode_Shift);
   
   Bind(jump_to_definition_at_cursor_other_panel, KeyCode_W, KeyCode_Control);
   Bind(jump_to_definition, KeyCode_Q, KeyCode_Control);
