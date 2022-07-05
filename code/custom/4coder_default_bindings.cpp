@@ -21,7 +21,7 @@ custom_layer_init(Application_Links *app)
   Thread_Context *tctx = get_thread_context(app);
   
   // NOTE(allen): setup for default framework
-  default_framework_init(app);
+  default_framework_init(app);  
   
   // NOTE(allen): default hooks and command maps
   set_all_default_hooks(app);

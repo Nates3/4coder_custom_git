@@ -1,6 +1,6 @@
 @echo off
 
-[insert vcvarsall.bat x64 here]
+call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
 
 set location=%cd%
 set me="%~dp0"
