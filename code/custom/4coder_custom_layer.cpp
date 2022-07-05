@@ -49,6 +49,14 @@ CUSTOM_DOC("alll the text in the world, right here!")
   active_color_table.arrays[defcolor_margin_active].vals[0] = TEXT_MODE_BUFFER_MARGIN_COLOR;
 }
 
+CUSTOM_COMMAND_SIG(change_to_text_mode_2)
+CUSTOM_DOC("alll the text in the world, right here!")
+{
+  bind_mapping_to_buffer(app, text_mode_mapid);
+  // active_color_table.arrays[defcolor_cursor].vals[0] = something;
+  active_color_table.arrays[defcolor_margin_active].vals[0] = TEXT_MODE_BUFFER_MARGIN_COLOR;
+}
+
 CUSTOM_COMMAND_SIG(change_binding_mode)
 CUSTOM_DOC("yo yo yo, change the mode and go!")
 {
