@@ -1,0 +1,10 @@
+
+
+[ ] - Make there keymaps (keybind groups): "shared_bindings", "command_mode_bindings", "text_input_mode"
+
+[ ] - Syntax Highlighting for identifiers 
+			Need to figure out how to assign types to identifiers based on some context
+			#define Identifier should be type macro for instance
+			then need to figure out how to compare identifiers and render text using identifier color
+
+[ ] - Assign keybinds

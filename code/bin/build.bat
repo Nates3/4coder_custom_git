@@ -1,6 +1,7 @@
 @echo off
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+[REPLACE THIS]
+call "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" x64 1>NUL 2>NUL
 
 set location=%cd%
 set me="%~dp0"
@@ -24,7 +25,7 @@ set opts=%opts% %mode%
 
 set FirstError=0
 pushd %build_root%
-call cl %opts% kernel32.lib %bin_root%\4ed_build.cpp /Febuild
+call cl %opts% kernel32.lib %bin_root%\4ed_build.cpp /DEBUG:FULL /Febuild
 if %ERRORLEVEL% neq 0 (set FirstError=1)
 if %ERRORLEVEL% neq 0 (goto END)
 popd
