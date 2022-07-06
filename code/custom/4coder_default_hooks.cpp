@@ -296,12 +296,13 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
       draw_comment_highlights(app, buffer, text_layout_id, &token_array, pairs, ArrayCount(pairs));
     }
     
-#if 0
+#if 1
     // TODO(allen): Put in 4coder_draw.cpp
     // NOTE(allen): Color functions
+    // NOTE(nates): Welp syntax higlighting was already here?
     
     Scratch_Block scratch(app);
-    ARGB_Color argb = 0xFFFF00FF;
+    ARGB_Color argb = 0xff000000;
     
     Token_Iterator_Array it = token_iterator_pos(0, &token_array, visible_range.first);
     for (;;){
@@ -311,7 +312,31 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
       Token *token = token_it_read(&it);
       String_Const_u8 lexeme = push_token_lexeme(app, scratch, buffer, token);
       Code_Index_Note *note = code_index_note_from_string(lexeme);
-      if (note != 0 && note->note_kind == CodeIndexNote_Function){
+      if (note != 0)
+      {
+        switch(note->note_kind)
+        {
+          case CodeIndexNote_Type:
+          {
+            argb = 0xffedb211;
+          } break;
+          
+          case CodeIndexNote_Function:
+          {
+            argb = 0xffde451f;
+          } break;
+          
+          case CodeIndexNote_Macro:
+          {
+            argb = 0xff2895c7;
+          } break;
+          
+          case CodeIndexNote_4coderCommand:
+          {
+            argb = 0xffb99468;
+          } break;
+        }
+        
         paint_text_color(app, text_layout_id, Ii64_size(token->pos, token->size), argb);
       }
     }
@@ -859,6 +884,7 @@ BUFFER_HOOK_SIG(default_begin_buffer){
   // SUPER IMPORTANT TODO(nates): Is this the correct place to put this??
   // it works, but it needs to be ran in the actual startup code
   change_to_text_mode(app);
+  system_set_fullscreen(true);
   
   // no meaning for return
   return(0);

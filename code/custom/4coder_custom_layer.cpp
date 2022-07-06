@@ -36,6 +36,7 @@ void bind_mapping_to_buffer( Application_Links* app, Command_Map_ID mapid )
 CUSTOM_COMMAND_SIG(change_to_command_mode)
 CUSTOM_DOC("all the commands in the world, right here!")
 {
+  global_is_command_mode = true;
   bind_mapping_to_buffer(app, command_mode_mapid);
   // active_color_table.arrays[defcolor_cursor].vals[0] = something;
   active_color_table.arrays[defcolor_margin_active].vals[0] = COMMAND_MODE_BUFFER_MARGIN_COLOR;
@@ -44,6 +45,7 @@ CUSTOM_DOC("all the commands in the world, right here!")
 CUSTOM_COMMAND_SIG(change_to_text_mode)
 CUSTOM_DOC("alll the text in the world, right here!")
 {
+  global_is_command_mode = false;
   bind_mapping_to_buffer(app, text_mode_mapid);
   // active_color_table.arrays[defcolor_cursor].vals[0] = something;
   active_color_table.arrays[defcolor_margin_active].vals[0] = TEXT_MODE_BUFFER_MARGIN_COLOR;
@@ -52,6 +54,7 @@ CUSTOM_DOC("alll the text in the world, right here!")
 CUSTOM_COMMAND_SIG(change_to_text_mode_2)
 CUSTOM_DOC("alll the text in the world, right here!")
 {
+  global_is_command_mode = false;
   bind_mapping_to_buffer(app, text_mode_mapid);
   // active_color_table.arrays[defcolor_cursor].vals[0] = something;
   active_color_table.arrays[defcolor_margin_active].vals[0] = TEXT_MODE_BUFFER_MARGIN_COLOR;
@@ -62,12 +65,10 @@ CUSTOM_DOC("yo yo yo, change the mode and go!")
 {
   if(global_is_command_mode)
   {
-    global_is_command_mode = !global_is_command_mode;
     change_to_text_mode(app);
   }
   else
   {
-    global_is_command_mode = !global_is_command_mode;
     change_to_command_mode(app);
   }
 }
@@ -113,7 +114,7 @@ custom_layer_init(Application_Links *app){
   ParentMap(shared_mapid);
   cakez_bind_text_input(m, map);
   
-  /* This is to make sure that the default bindings on the buffers will be mapid_normal. */
+  // NOTE(nates): You have to bind the "global_map, file_map, and code_map for some reason"
   SelectMap(file_map_id);
   ParentMap(command_mode_mapid);
   

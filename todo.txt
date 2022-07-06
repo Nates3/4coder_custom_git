@@ -1,10 +1,31 @@
 
+//////////////////////////////
+---------- TODOS -------------
 
-[ ] - Make there keymaps (keybind groups): "shared_bindings", "command_mode_bindings", "text_input_mode"
 
-[ ] - Syntax Highlighting for identifiers 
+[ ] - Assign more keybinds
+
+[ ] - Add predicate CodeIndexNotes for function params?
+			i.e. all local variables to a function are highlighted in pink, but nowhere else?
+
+[ ] - Add more "CodeIndexNote_Types" for syntax highlighting
+  [ ] - Add CodeIndexNote_TODO type
+	[ ] - Add CodeIndexNote_NOTE type
+	[ ] - Add CodeIndexNote_Union type
+	[ ] - Add CodeIndexNote_Global_Variable type
+	[ ] - Add CodeIndexNote_Operator_Type for syntax hilighting *+-=\%#!~&
+
+[ ] - Add a lister for CodeIndexNote_Types
+			i.e. list all functions, list all TODOS, list all NOTES, list all MACROS, etc..
+
+
+
+////////////////////////////////
+------- FINISHED TODOS ---------
+
+[x] - Make there keymaps (keybind groups): "shared_bindings", "command_mode_bindings", "text_input_mode"
+
+[x] - Syntax Highlighting for identifiers (it already had a basic implementation!)
 			Need to figure out how to assign types to identifiers based on some context
 			#define Identifier should be type macro for instance
 			then need to figure out how to compare identifiers and render text using identifier color
-
-[ ] - Assign keybinds
