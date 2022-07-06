@@ -1,7 +1,14 @@
 
+/////////////////////////////
+------------BUGS-------------
+
+[ ] - Bug: When opening a lister panel you can't execute any other cammands as if the
+			leave_event_unhandled() function wasn't invoked so other CUSTOM_COMMAND_SIGs can execute 
+			what they want to
+
+
 //////////////////////////////
 ---------- TODOS -------------
-
 
 [ ] - Assign more keybinds
 
@@ -20,8 +27,8 @@
 
 
 
-////////////////////////////////
-------- FINISHED TODOS ---------
+/////////////////////////////////////////////
+------- FINISHED TODOS / FIXED BUGS ---------
 
 [x] - Make there keymaps (keybind groups): "shared_bindings", "command_mode_bindings", "text_input_mode"
 
@@ -29,3 +36,6 @@
 			Need to figure out how to assign types to identifiers based on some context
 			#define Identifier should be type macro for instance
 			then need to figure out how to compare identifiers and render text using identifier color
+
+[x] - Bug: Margin Border green indicating text mode sometimes renders even though
+			command mode is enabled

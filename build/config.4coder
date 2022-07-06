@@ -43,7 +43,7 @@ lister_roundness = 0;
 
 // Code Wrapping
 treat_as_code = ".cpp.c.hpp.h.cc.cs.java.rs.glsl.m.mm";
-enable_virtual_whitespace = false;
+enable_virtual_whitespace = true;
 virtual_whitespace_regular_indent = 2;
 enable_code_wrapping = false;
 

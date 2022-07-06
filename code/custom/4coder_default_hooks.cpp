@@ -884,7 +884,6 @@ BUFFER_HOOK_SIG(default_begin_buffer){
   // SUPER IMPORTANT TODO(nates): Is this the correct place to put this??
   // it works, but it needs to be ran in the actual startup code
   change_to_text_mode(app);
-  system_set_fullscreen(true);
   
   // no meaning for return
   return(0);

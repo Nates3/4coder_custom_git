@@ -502,8 +502,6 @@ word_complete_menu_next(Word_Complete_Menu *menu){
   menu->count = count;
 }
 
-global i32 menu_f1_index = 0;
-
 function void
 word_complete_menu_render(Application_Links *app, Frame_Info frame_info, View_ID view)
 {
