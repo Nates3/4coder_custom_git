@@ -25,6 +25,9 @@
 [ ] - Add a lister for CodeIndexNote_Types
 			i.e. list all functions, list all TODOS, list all NOTES, list all MACROS, etc..
 
+[ ] - Implement Shift + V selection in visual mode
+  [ ] - Set markStart, markEnd
+  [ ] - draw_rectangle for every line between markStart and markEnd
 
 
 /////////////////////////////////////////////

@@ -60,6 +60,7 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(auto_indent_range, KeyCode_F, KeyCode_Shift);
   Bind(search, KeyCode_F);
   Bind(reverse_search, KeyCode_F, KeyCode_Shift);
+  Bind(jump_from_brace_to_brace, KeyCode_5, KeyCode_Shift);
   
   Bind(move_up, KeyCode_K);
   Bind(move_down, KeyCode_J);
