@@ -5,6 +5,10 @@
 [ ] - Bug: When opening a lister panel you can't execute any other cammands as if the
 			leave_event_unhandled() function wasn't invoked. 
 
+[ ] - Bug?: When you open a new file it sets text mode 
+  		see custom\4coder_default_hooks.cpp -> default_begin_buffer
+			we should probably only do this on startup
+
 //////////////////////////////
 ---------- TODOS -------------
 

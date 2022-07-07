@@ -881,8 +881,9 @@ BUFFER_HOOK_SIG(default_begin_buffer){
     }
   }
   
-  // SUPER IMPORTANT TODO(nates): Is this the correct place to put this??
-  // it works, but it needs to be ran in the actual startup code
+  // IMPORTANT TODO(nates): This is not the correct place to put this
+  // when you open a file / buffer it will set it back to text mode,
+  // probably only want to set text mode upon startup, but don't know where that is yet
   change_to_text_mode(app);
   
   // no meaning for return

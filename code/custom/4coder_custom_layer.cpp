@@ -56,6 +56,13 @@ bind_mapping_to_all_view_buffers(Application_Links *app, Command_Map_ID mapid)
   }
 }
 
+internal b32
+view_set_buffer_modal(Application_Links *app, View_ID view, Buffer_ID buffer, Set_Buffer_Flag flags)
+{
+  b32 result = view_set_buffer(app, view, buffer, flags);
+  set_modal_mode_buffer(app, buffer, get_modal_mapid());
+  return(result);
+}
 
 // NOTE(nates): Look at 4coder_custom_variables.h
 //              and 4coder_custom_functions.cpp

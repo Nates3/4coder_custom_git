@@ -1350,7 +1350,7 @@ CUSTOM_DOC("Read from the top of the point stack and jump there; if already ther
       if (point_stack_read_top(app, &stack_buffer, &stack_pos)){
         if (stack_buffer != 0 &&
             (stack_buffer != buffer || stack_pos != pos)){
-          view_set_buffer(app, view, stack_buffer, 0);
+          view_set_buffer_modal(app, view, stack_buffer, 0);
           view_set_cursor_and_preferred_x(app, view, seek_pos(stack_pos));
           break;
         }
@@ -1453,7 +1453,7 @@ CUSTOM_DOC("Queries the user for a file name and saves the contents of the curre
         Buffer_ID new_buffer = create_buffer(app, new_file_name, BufferCreate_NeverNew|BufferCreate_JustChangedFile);
         if (new_buffer != 0 && new_buffer != buffer){
           buffer_kill(app, buffer, BufferKill_AlwaysKill);
-          view_set_buffer(app, view, new_buffer, 0);
+          view_set_buffer_modal(app, view, new_buffer, 0);
         }
       }
     }
@@ -1488,7 +1488,7 @@ CUSTOM_DOC("Queries the user for a new name and renames the file of the current 
         Buffer_ID new_buffer = create_buffer(app, new_file_name, BufferCreate_NeverNew|BufferCreate_JustChangedFile);
         if (new_buffer != 0 && new_buffer != buffer){
           delete_file_base(app, file_name, buffer);
-          view_set_buffer(app, view, new_buffer, 0);
+          view_set_buffer_modal(app, view, new_buffer, 0);
         }
       }
     }
@@ -1667,7 +1667,7 @@ CUSTOM_DOC("If the current file is a *.cpp or *.h, attempts to open the correspo
   Buffer_ID new_buffer = 0;
   if (get_cpp_matching_file(app, buffer, &new_buffer)){
     view = get_next_view_looped_primary_panels(app, view, Access_Always);
-    view_set_buffer(app, view, new_buffer, 0);
+    view_set_buffer_modal(app, view, new_buffer, 0);
     view_set_active(app, view);
   }
 }
@@ -1680,7 +1680,7 @@ CUSTOM_DOC("Set the other non-active panel to view the buffer that the active pa
   i64 pos = view_get_cursor_pos(app, view);
   change_active_panel(app);
   view = get_active_view(app, Access_Always);
-  view_set_buffer(app, view, buffer, 0);
+  view_set_buffer_modal(app, view, buffer, 0);
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
 }
 
@@ -1714,13 +1714,13 @@ CUSTOM_DOC("Change to the most recently used buffer in this view - or to the top
   Buffer_ID *prev_buffer = scope_attachment(app, scope, view_previous_buffer, Buffer_ID);
   b32 fallback = true;
   if (prev_buffer != 0 && *prev_buffer != 0){
-    if (view_set_buffer(app, view, *prev_buffer, 0)){
+    if (view_set_buffer_modal(app, view, *prev_buffer, 0)){
       fallback = false;
     }
   }
   if (fallback){
     Buffer_ID top_buffer = get_buffer_next(app, 0, Access_Always);
-    view_set_buffer(app, view, top_buffer, 0);
+    view_set_buffer_modal(app, view, top_buffer, 0);
   }
 }
 
