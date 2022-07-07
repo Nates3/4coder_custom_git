@@ -230,6 +230,8 @@ CUSTOM_DOC("Sets the cursor position and mark to the mouse position.")
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
   view_set_mark(app, view, seek_pos(pos));
+  Buffer_ID buffer = view_get_buffer(app, view, 0);
+  set_modal_mode_buffer(app, buffer, get_modal_mapid());
 }
 
 CUSTOM_COMMAND_SIG(click_set_cursor)
@@ -240,6 +242,8 @@ CUSTOM_DOC("Sets the cursor position to the mouse position.")
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
   no_mark_snap_to_cursor(app, view);
+  Buffer_ID buffer = view_get_buffer(app, view, 0);
+  set_modal_mode_buffer(app, buffer, get_modal_mapid());
 }
 
 CUSTOM_COMMAND_SIG(click_set_cursor_if_lbutton)
@@ -253,6 +257,8 @@ CUSTOM_DOC("If the mouse left button is pressed, sets the cursor position to the
   }
   no_mark_snap_to_cursor(app, view);
   set_next_rewrite(app, view, Rewrite_NoChange);
+  Buffer_ID buffer = view_get_buffer(app, view, 0);
+  set_modal_mode_buffer(app, buffer, get_modal_mapid());
 }
 
 CUSTOM_COMMAND_SIG(click_set_mark)
@@ -263,6 +269,8 @@ CUSTOM_DOC("Sets the mark position to the mouse position.")
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
   view_set_mark(app, view, seek_pos(pos));
   no_mark_snap_to_cursor(app, view);
+  Buffer_ID buffer = view_get_buffer(app, view, 0);
+  set_modal_mode_buffer(app, buffer, get_modal_mapid());
 }
 
 CUSTOM_COMMAND_SIG(mouse_wheel_scroll)
@@ -671,6 +679,7 @@ CUSTOM_DOC("Change the currently active panel, moving to the panel with the next
   View_ID view = get_active_view(app, Access_Always);
   get_next_view_looped_all_panels(app, view, Access_Always);
   view_set_active(app, view);
+  
 }
 
 CUSTOM_COMMAND_SIG(close_panel)

@@ -331,10 +331,10 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
             argb = 0xff2895c7;
           } break;
           
-          case CodeIndexNote_4coderCommand:
+          case CodeIndexNote_Enum:
           {
-            argb = 0xffb99468;
-          } break;
+            argb = 0xff68AA32;
+          }
         }
         
         paint_text_color(app, text_layout_id, Ii64_size(token->pos, token->size), argb);

@@ -3,9 +3,7 @@
 ------------BUGS-------------
 
 [ ] - Bug: When opening a lister panel you can't execute any other cammands as if the
-			leave_event_unhandled() function wasn't invoked so other CUSTOM_COMMAND_SIGs can execute 
-			what they want to
-
+			leave_event_unhandled() function wasn't invoked. 
 
 //////////////////////////////
 ---------- TODOS -------------
@@ -16,19 +14,29 @@
 			i.e. all local variables to a function are highlighted in pink, but nowhere else?
 
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
+	[x] - Add CodeIndexNote_Enum Type
   [ ] - Add CodeIndexNote_TODO type
 	[ ] - Add CodeIndexNote_NOTE type
 	[ ] - Add CodeIndexNote_Union type
 	[ ] - Add CodeIndexNote_Global_Variable type
 	[ ] - Add CodeIndexNote_Operator_Type for syntax hilighting *+-=\%#!~&
 
-[ ] - Add a lister for CodeIndexNote_Types
-			i.e. list all functions, list all TODOS, list all NOTES, list all MACROS, etc..
-
 [ ] - Implement Shift + V selection in visual mode
   [ ] - Set markStart, markEnd
+				could store as line_num_begin, line_num_end
+				then if you're in select_line_mode, commands like copy / cut
+				could change behavior
   [ ] - draw_rectangle for every line between markStart and markEnd
 
+[ ] - Implement render text that's above / on line ScopeBegin 
+			at the matching ScopeClose
+			i.e.
+			this_is_some_function_name(u32 index, u32 index2)
+			{ 
+				// function body
+			} Render this -> (this_is_some_function_name(u32 index, u32 index2))
+
+[ ] - Add functionality to change syntax coloring using theme-name.4coder file
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
@@ -42,3 +50,9 @@
 
 [x] - Bug: Margin Border green indicating text mode sometimes renders even though
 			command mode is enabled
+
+[x] - Bug: When switching view buffers using ctr + i/o, 
+			their keymaps need to be updated depending on the mode
+
+[x] - Add a lister for CodeIndexNote_Types
+			i.e. list all functions, list all TODOS, list all NOTES, list all MACROS, etc..

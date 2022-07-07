@@ -65,6 +65,8 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
   }
 }
 
+
+
 CUSTOM_UI_COMMAND_SIG(jump_to_definition_at_cursor)
 CUSTOM_DOC("Jump to the first definition in the code index matching an identifier at the cursor")
 {
