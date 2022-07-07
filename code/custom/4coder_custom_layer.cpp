@@ -19,6 +19,13 @@ set_modal_mode_buffer(Application_Links *app, Buffer_ID buffer,
   *map_id_ptr = mapid;
 }
 
+internal void
+set_modal_mode_view(Application_Links *app, View_ID view, Command_Map_ID mapid)
+{
+  Buffer_ID buffer = view_get_buffer(app, view, 0);
+  set_modal_mode_buffer(app, buffer, mapid);
+}
+
 internal Command_Map_ID
 get_modal_mapid(void)
 {

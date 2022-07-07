@@ -352,6 +352,8 @@ change_active_panel_send_command(Application_Links *app, Custom_Command_Function
   if (custom_func != 0){
     view_enqueue_command_function(app, view, custom_func);
   }
+  
+  set_modal_mode_view(app, view, get_modal_mapid());
 }
 
 CUSTOM_COMMAND_SIG(change_active_panel)

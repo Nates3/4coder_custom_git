@@ -515,7 +515,6 @@ CUSTOM_DOC("Interactively switch to an open buffer.")
   if (buffer != 0){
     View_ID view = get_this_ctx_view(app, Access_Always);
     view_set_buffer(app, view, buffer, 0);
-    set_modal_mode_buffer(app, buffer, get_modal_mapid());
   }
 }
 
@@ -654,7 +653,6 @@ CUSTOM_DOC("Interactively open a file out of the file system.")
     Buffer_ID buffer = create_buffer(app, full_file_name, 0);
     if (buffer != 0){
       view_set_buffer(app, view, buffer, 0);
-      set_modal_mode_buffer(app, buffer, get_modal_mapid());
     }
     break;
   }
