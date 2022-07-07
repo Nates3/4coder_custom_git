@@ -4,6 +4,7 @@
 
 global b32 global_is_command_mode;
 global i32 menu_f1_index;
+global i32 global_relative_mark_history_index;
 
 String_ID shared_mapid;
 String_ID command_mode_mapid;

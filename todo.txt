@@ -38,6 +38,9 @@
 
 [ ] - Add functionality to change syntax coloring using theme-name.4coder file
 
+[ ] - ? Find the code that is used by all things that change
+			the active view, and insert set_modal and record_mark functions there
+
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
 
@@ -60,3 +63,5 @@
 [x] - Bug?: When you open a new file it sets text mode 
   		see custom\4coder_default_hooks.cpp -> default_begin_buffer
 			we should probably only do this on startup
+
+[ ] - Implement a mark history system that records marks

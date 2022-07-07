@@ -12,6 +12,7 @@
 #define REMOVE_OLD_STRING
 
 #include "4coder_base_types.h"
+#include "4coder_shared.h"
 #include "4coder_version.h"
 #include "4coder_table.h"
 #include "4coder_events.h"

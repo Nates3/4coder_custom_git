@@ -49,6 +49,8 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(cut, KeyCode_C);
   Bind(copy, KeyCode_Y);
   Bind(set_mark, KeyCode_Space);
+  Bind(goto_next_mark, KeyCode_Equal);
+  Bind(goto_prev_mark, KeyCode_Minus);
   Bind(delete_range, KeyCode_D);
   //Bind(select_entire_line, KeyCode_V, KeyCode_Shift);
   Bind(combine_two_lines, KeyCode_J, KeyCode_Shift);
@@ -134,6 +136,9 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(copy, KeyCode_J);
   Bind(paste, KeyCode_K);
   Bind(set_mark, KeyCode_Space);
+  Bind(goto_next_mark, KeyCode_Equal);
+  Bind(goto_prev_mark, KeyCode_Minus);
+  
   Bind(delete_range, KeyCode_E);
   //Bind(select_entire_line, KeyCode_J, KeyCode_Shift);
   Bind(search, KeyCode_U);

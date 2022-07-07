@@ -68,6 +68,7 @@ struct View{
   
   File_Edit_Positions edit_pos_;
   i64 mark;
+  Mark_History mark_history;
   
   f32 preferred_x;
   Vec2_f32 cursor_margin;

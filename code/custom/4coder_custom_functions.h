@@ -8,5 +8,5 @@ internal void set_modal_mode_view(Application_Links *app, View_ID view, Command_
 internal Command_Map_ID get_modal_mapid(void);
 internal void bind_mapping_to_all_view_buffers(Application_Links *app, Command_Map_ID mapid);
 internal b32 view_set_buffer_modal(Application_Links *app, View_ID view, Buffer_ID buffer, Set_Buffer_Flag flags);
-
+internal b32 view_set_mark_record(Application_Links *app, View_ID view, Buffer_Seek seek);
 #endif //4CODER_CUSTOM_FUNCTIONS_H

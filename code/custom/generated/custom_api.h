@@ -87,6 +87,8 @@
 #define custom_view_set_cursor_sig() b32 custom_view_set_cursor(Application_Links* app, View_ID view_id, Buffer_Seek seek)
 #define custom_view_set_buffer_scroll_sig() b32 custom_view_set_buffer_scroll(Application_Links* app, View_ID view_id, Buffer_Scroll scroll, Set_Buffer_Scroll_Rule rule)
 #define custom_view_set_mark_sig() b32 custom_view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek)
+#define custom_view_get_mark_history_sig() void custom_view_get_mark_history(Application_Links* app, View_ID view_id)
+#define custom_view_record_mark_sig() void custom_view_record_mark(Application_Links *app, View_ID view_id)
 #define custom_view_quit_ui_sig() b32 custom_view_quit_ui(Application_Links* app, View_ID view_id)
 #define custom_view_set_buffer_sig() b32 custom_view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags)
 #define custom_view_push_context_sig() b32 custom_view_push_context(Application_Links* app, View_ID view_id, View_Context* ctx)
@@ -266,6 +268,8 @@ typedef b32 custom_view_get_camera_bounds_type(Application_Links* app, View_ID v
 typedef b32 custom_view_set_cursor_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 typedef b32 custom_view_set_buffer_scroll_type(Application_Links* app, View_ID view_id, Buffer_Scroll scroll, Set_Buffer_Scroll_Rule rule);
 typedef b32 custom_view_set_mark_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
+typedef Mark_History *custom_view_get_mark_history_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_record_mark_type(Application_Links *app, View_ID);
 typedef b32 custom_view_quit_ui_type(Application_Links* app, View_ID view_id);
 typedef b32 custom_view_set_buffer_type(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
 typedef b32 custom_view_push_context_type(Application_Links* app, View_ID view_id, View_Context* ctx);
@@ -446,6 +450,8 @@ struct API_VTable_custom{
   custom_view_set_cursor_type *view_set_cursor;
   custom_view_set_buffer_scroll_type *view_set_buffer_scroll;
   custom_view_set_mark_type *view_set_mark;
+  custom_view_get_mark_history_type *view_get_mark_history;
+  custom_view_record_mark_type *view_record_mark;
   custom_view_quit_ui_type *view_quit_ui;
   custom_view_set_buffer_type *view_set_buffer;
   custom_view_push_context_type *view_push_context;
@@ -627,6 +633,8 @@ internal b32 view_get_camera_bounds(Application_Links* app, View_ID view_id, Vec
 internal b32 view_set_cursor(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 internal b32 view_set_buffer_scroll(Application_Links* app, View_ID view_id, Buffer_Scroll scroll, Set_Buffer_Scroll_Rule rule);
 internal b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek);
+internal Mark_History *view_get_mark_history(Application_Links* app, View_ID view_id);
+internal void view_record_mark(Application_Links *app, View_ID view_id);
 internal b32 view_quit_ui(Application_Links* app, View_ID view_id);
 internal b32 view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
 internal b32 view_push_context(Application_Links* app, View_ID view_id, View_Context* ctx);
@@ -808,6 +816,8 @@ global custom_view_get_camera_bounds_type *view_get_camera_bounds = 0;
 global custom_view_set_cursor_type *view_set_cursor = 0;
 global custom_view_set_buffer_scroll_type *view_set_buffer_scroll = 0;
 global custom_view_set_mark_type *view_set_mark = 0;
+global custom_view_get_mark_history_type *view_get_mark_history = 0;
+global custom_view_record_mark_type *view_record_mark = 0;
 global custom_view_quit_ui_type *view_quit_ui = 0;
 global custom_view_set_buffer_type *view_set_buffer = 0;
 global custom_view_push_context_type *view_push_context = 0;

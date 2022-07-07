@@ -139,3 +139,45 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
     }
   }
 }
+
+
+CUSTOM_COMMAND_SIG(goto_next_mark)
+CUSTOM_DOC("moves forward in mark history if user has searched backwards in history")
+{
+  View_ID view = get_active_view(app, Access_ReadVisible);
+  Mark_History *mark_history = view_get_mark_history(app, view);
+  
+  if(global_relative_mark_history_index < 0)
+  {
+    global_relative_mark_history_index++;
+    i32 index = mark_history->recent_index + global_relative_mark_history_index;
+    if(index < 0)
+    {
+      index += mark_history->max_mark_count;
+    }
+    
+    i64 mark_pos = mark_history->marks[index];
+    view_set_cursor_and_preferred_x(app, view, seek_pos(mark_pos));
+  }
+  
+}
+
+CUSTOM_COMMAND_SIG(goto_prev_mark)
+CUSTOM_DOC("moves backward in mark history")
+{
+  View_ID view = get_active_view(app, Access_ReadVisible);
+  Mark_History *mark_history = view_get_mark_history(app, view);
+  
+  if(global_relative_mark_history_index > -(mark_history->mark_count - 1))
+  {
+    global_relative_mark_history_index--;
+    i32 index = mark_history->recent_index + global_relative_mark_history_index;
+    if(index < 0)
+    {
+      index += mark_history->max_mark_count;
+    }
+    
+    i64 mark_pos = mark_history->marks[index];
+    view_set_cursor_and_preferred_x(app, view, seek_pos(mark_pos));
+  }
+}

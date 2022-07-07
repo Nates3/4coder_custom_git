@@ -1632,6 +1632,37 @@ view_set_buffer_scroll(Application_Links *app, View_ID view_id, Buffer_Scroll sc
   return(result);
 }
 
+
+api(custom) function Mark_History *
+view_get_mark_history(Application_Links *app, View_ID view_id)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  Mark_History *result = &view->mark_history;
+  return(result);
+}
+
+api(custom) function void
+view_record_mark(Application_Links *app, View_ID view_id)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  Mark_History *history = &view->mark_history;
+  
+  // TODO(nates): Find where init code is for View and put this there
+  history->max_mark_count = MARK_HISTORY_ARRAY_COUNT;
+  
+  history->recent_index += 1;
+  if(history->recent_index > MARK_HISTORY_ARRAY_COUNT - 1)
+  {
+    history->recent_index = 0;
+  }
+  
+  history->marks[history->recent_index] = view->mark;
+  history->mark_count++;
+  history->mark_count = clamp_top(history->mark_count, MARK_HISTORY_ARRAY_COUNT);
+}
+
 api(custom) function b32
 view_set_mark(Application_Links *app, View_ID view_id, Buffer_Seek seek)
 {

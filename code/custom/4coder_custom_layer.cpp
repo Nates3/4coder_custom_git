@@ -77,6 +77,14 @@ view_set_buffer_modal(Application_Links *app, View_ID view, Buffer_ID buffer, Se
   return(result);
 }
 
+internal b32 
+view_set_mark_record(Application_Links *app, View_ID view, Buffer_Seek seek)
+{
+  b32 result = view_set_mark(app, view, seek);
+  view_record_mark(app, view);
+  return(result);
+}
+
 // NOTE(nates): Look at 4coder_custom_variables.h
 //              and 4coder_custom_functions.cpp
 

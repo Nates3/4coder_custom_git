@@ -117,7 +117,7 @@ CUSTOM_DOC("Sets the mark to the current position of the cursor.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   i64 pos = view_get_cursor_pos(app, view);
-  view_set_mark(app, view, seek_pos(pos));
+  view_set_mark_record(app, view, seek_pos(pos));
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
 }
 
@@ -128,7 +128,7 @@ CUSTOM_DOC("Swaps the position of the cursor and the mark.")
   i64 cursor = view_get_cursor_pos(app, view);
   i64 mark = view_get_mark_pos(app, view);
   view_set_cursor_and_preferred_x(app, view, seek_pos(mark));
-  view_set_mark(app, view, seek_pos(cursor));
+  view_set_mark_record(app, view, seek_pos(cursor));
 }
 
 CUSTOM_COMMAND_SIG(delete_range)
@@ -229,8 +229,10 @@ CUSTOM_DOC("Sets the cursor position and mark to the mouse position.")
   Mouse_State mouse = get_mouse_state(app);
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
-  view_set_mark(app, view, seek_pos(pos));
+  view_set_mark_record(app, view, seek_pos(pos));
   set_modal_mode_view(app, view, get_modal_mapid());
+  Mark_History *history = view_get_mark_history(app, view);
+  global_relative_mark_history_index = history->recent_index;
 }
 
 CUSTOM_COMMAND_SIG(click_set_cursor)
@@ -264,9 +266,11 @@ CUSTOM_DOC("Sets the mark position to the mouse position.")
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mouse_State mouse = get_mouse_state(app);
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
-  view_set_mark(app, view, seek_pos(pos));
+  view_set_mark_record(app, view, seek_pos(pos));
   no_mark_snap_to_cursor(app, view);
   set_modal_mode_view(app, view, get_modal_mapid());
+  Mark_History *history = view_get_mark_history(app, view);
+  global_relative_mark_history_index = history->recent_index;
 }
 
 CUSTOM_COMMAND_SIG(mouse_wheel_scroll)
@@ -551,7 +555,7 @@ CUSTOM_DOC("Puts the cursor at the top of the file, and the mark at the bottom o
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
   i32 buffer_size = (i32)buffer_get_size(app, buffer);
   view_set_cursor_and_preferred_x(app, view, seek_pos(0));
-  view_set_mark(app, view, seek_pos(buffer_size));
+  view_set_mark_record(app, view, seek_pos(buffer_size));
   no_mark_snap_to_cursor(app, view);
 }
 

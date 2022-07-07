@@ -355,6 +355,8 @@ change_active_panel_send_command(Application_Links *app, Custom_Command_Function
     view_enqueue_command_function(app, view, custom_func);
   }
   
+  Mark_History *history = view_get_mark_history(app, view);
+  global_relative_mark_history_index = history->recent_index;
   set_modal_mode_view(app, view, get_modal_mapid());
 }
 
