@@ -9,6 +9,18 @@
 #include "generated/managed_id_metadata.cpp"
 #endif
 
+internal void
+set_modal_mode_color()
+{
+  if(global_is_command_mode)
+  {
+    active_color_table.arrays[defcolor_margin_active].vals[0] = COMMAND_MODE_BUFFER_MARGIN_COLOR;
+  }
+  else
+  {
+    active_color_table.arrays[defcolor_margin_active].vals[0] = TEXT_MODE_BUFFER_MARGIN_COLOR;
+  }
+}
 
 internal void
 set_modal_mode_buffer(Application_Links *app, Buffer_ID buffer,
@@ -17,6 +29,7 @@ set_modal_mode_buffer(Application_Links *app, Buffer_ID buffer,
   Managed_Scope scope = buffer_get_managed_scope(app, buffer);
   Command_Map_ID *map_id_ptr = scope_attachment(app, scope, buffer_map_id, Command_Map_ID);
   *map_id_ptr = mapid;
+  set_modal_mode_color();
 }
 
 internal void
@@ -67,10 +80,6 @@ view_set_buffer_modal(Application_Links *app, View_ID view, Buffer_ID buffer, Se
 // NOTE(nates): Look at 4coder_custom_variables.h
 //              and 4coder_custom_functions.cpp
 
-// TODO(nates): Add support for these using theme-name.4coder file
-#define COMMAND_MODE_BUFFER_MARGIN_COLOR 0xffff0000
-#define TEXT_MODE_BUFFER_MARGIN_COLOR 0xff00ff00
-
 // NOTE(nates): All these CUSTOM_COMMAND_SIGS's are just functions
 // you can call them if you want to!
 CUSTOM_COMMAND_SIG(change_to_command_mode)
@@ -78,8 +87,6 @@ CUSTOM_DOC("all the commands in the world, right here!")
 {
   global_is_command_mode = true;
   bind_mapping_to_all_view_buffers(app, command_mode_mapid);
-  // active_color_table.arrays[defcolor_cursor].vals[0] = something;
-  active_color_table.arrays[defcolor_margin_active].vals[0] = COMMAND_MODE_BUFFER_MARGIN_COLOR;
 }
 
 CUSTOM_COMMAND_SIG(change_to_text_mode)
@@ -87,8 +94,6 @@ CUSTOM_DOC("alll the text in the world, right here!")
 {
   global_is_command_mode = false;
   bind_mapping_to_all_view_buffers(app, text_mode_mapid);
-  // active_color_table.arrays[defcolor_cursor].vals[0] = something;
-  active_color_table.arrays[defcolor_margin_active].vals[0] = TEXT_MODE_BUFFER_MARGIN_COLOR;
 }
 
 CUSTOM_COMMAND_SIG(change_to_text_mode_2)
@@ -96,8 +101,6 @@ CUSTOM_DOC("alll the text in the world, right here!")
 {
   global_is_command_mode = false;
   bind_mapping_to_all_view_buffers(app, text_mode_mapid);
-  // active_color_table.arrays[defcolor_cursor].vals[0] = something;
-  active_color_table.arrays[defcolor_margin_active].vals[0] = TEXT_MODE_BUFFER_MARGIN_COLOR;
 }
 
 CUSTOM_COMMAND_SIG(jump_from_brace_to_brace)
