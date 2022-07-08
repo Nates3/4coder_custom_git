@@ -69,7 +69,7 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(goto_next_mark, KeyCode_Equal);
   Bind(goto_prev_mark, KeyCode_Minus);
   Bind(delete_range, KeyCode_D);
-  //Bind(select_entire_line, KeyCode_V, KeyCode_Shift);
+  Bind(select_lines, KeyCode_V, KeyCode_Shift);
   Bind(combine_two_lines, KeyCode_J, KeyCode_Shift);
   Bind(undo, KeyCode_U);
   Bind(redo, KeyCode_R, KeyCode_Control);

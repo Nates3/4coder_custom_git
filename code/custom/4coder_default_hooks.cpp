@@ -519,6 +519,10 @@ default_render_caller(Application_Links *app, Frame_Info frame_info, View_ID vie
   if (show_line_number_margins){
     draw_line_number_margin(app, view_id, buffer, face_id, text_layout_id, line_number_rect);
   }
+
+  // TODO: Draw vim slection mode
+  // draw_rectangle_fcolor(app, {100.0f, 100.0f, 200.0f, 200.0f}, 0.f, fcolor_id(defcolor_highlight_cursor_line));
+  draw_rectangle(app, {100.0f, 100.0f, 200.0f, 200.0f}, 0.f,0xFF1E1E2E);
   
   // NOTE(allen): draw the buffer
   default_render_buffer(app, view_id, face_id, buffer, text_layout_id, region);
@@ -1120,7 +1124,7 @@ default_view_change_buffer(Application_Links *app, View_ID view_id,
 internal void
 set_all_default_hooks(Application_Links *app){
   set_custom_hook(app, HookID_BufferViewerUpdate, default_view_adjust);
-  
+ 
   set_custom_hook(app, HookID_ViewEventHandler, default_view_input_handler);
   set_custom_hook(app, HookID_Tick, default_tick);
   set_custom_hook(app, HookID_RenderCaller, default_render_caller);

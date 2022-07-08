@@ -2,22 +2,89 @@
 ///////////////////////////////////////
 // NOTE(nates): Own custom commands
 
+// NOTE(nates): Look at 4coder_custom_variables.h
+//              and 4coder_custom_functions.cpp
 
-#if 0
+// NOTE(nates): All these CUSTOM_COMMAND_SIGS's are just functions
+// you can call them if you want to!
+
+CUSTOM_COMMAND_SIG(change_to_command_mode)
+CUSTOM_DOC("all the commands in the world, right here!")
+{
+  // global_is_command_mode = true;
+  bind_mapping_to_all_view_buffers(app, command_mode_mapid);
+}
+
+CUSTOM_COMMAND_SIG(change_to_text_mode)
+CUSTOM_DOC("alll the text in the world, right here!")
+{
+  // global_is_command_mode = false;
+  bind_mapping_to_all_view_buffers(app, text_mode_mapid);
+}
+
+CUSTOM_COMMAND_SIG(change_to_text_mode_2)
+CUSTOM_DOC("alll the text in the world, right here!")
+{
+  View_ID viewID = get_active_view(app, 0);
+  Buffer_ID bufferID = view_get_buffer(app, viewID, 0);
+
+  // View_State_ID viewState = view_get_state()
+
+  // global_is_command_mode = false;
+}
+
+CUSTOM_COMMAND_SIG(jump_from_brace_to_brace)
+CUSTOM_DOC("Jump from Brace to brace")
+{
+  View_ID viewID = get_active_view(app, 0);
+  Buffer_ID bufferID = view_get_buffer(app, viewID, 0);
+  i64 cursorPos = view_get_cursor_pos(app, viewID);
+  u8 charUnderCursor = buffer_get_char(app, bufferID, cursorPos);
+  u8 prevCharUnderCursor = buffer_get_char(app, bufferID, cursorPos - 1);
+  i64 bracePos;
+  
+  if (charUnderCursor == '{' || prevCharUnderCursor == '{')
+  {
+    if (find_nest_side(app, bufferID, prevCharUnderCursor == '{' ? cursorPos : cursorPos + 1,
+                       FindNest_Scope | FindNest_Balanced | FindNest_EndOfToken,
+                       Scan_Forward, NestDelim_Close, &bracePos))
+    {
+      view_set_cursor(app, viewID, Buffer_Seek{buffer_seek_pos, bracePos - 1});
+    }
+  }
+  else if (charUnderCursor == '}' || prevCharUnderCursor == '}')
+  {
+    if (find_nest_side(app, bufferID, prevCharUnderCursor == '}' ? cursorPos - 2 : cursorPos - 1,
+                       FindNest_Scope | FindNest_Balanced,
+                       Scan_Backward, NestDelim_Open, &bracePos))
+    {
+      view_set_cursor(app, viewID, Buffer_Seek{buffer_seek_pos, bracePos});
+    }
+  }
+  else
+  {
+    if (find_nest_side(app, bufferID, cursorPos, FindNest_Scope,
+                       Scan_Forward, NestDelim_Open, &bracePos))
+    {
+      view_set_cursor(app, viewID, Buffer_Seek{buffer_seek_pos, bracePos});
+    }
+  }
+}
+
+
 CUSTOM_COMMAND_SIG(select_lines)
-CUSTOM_DOC("selects entire line")
+CUSTOM_DOC("Selects entire lines")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
   i64 cursor_pos = view_get_cursor_pos(app, view);
   i64 line_number = get_line_number_from_pos(app, buffer, cursor_pos);
   i64 line_end_pos = get_line_end_pos(app, buffer, line_number);
-  
+  i64 line_start_pos = get_line_start_pos(app, buffer, line_number);
   
   view_set_cursor_and_preferred_x(app, view, seek_pos(line_end_pos));
   view_set_mark(app, view, seek_pos(line_start_pos));
 }
-#endif
 
 CUSTOM_COMMAND_SIG(combine_two_lines)
 CUSTOM_DOC("combine some lines yo")

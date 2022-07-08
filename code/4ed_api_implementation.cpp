@@ -1172,9 +1172,42 @@ api(custom) function i64
 view_get_mark_pos(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  i64 result = 0;;
+  i64 result = 0;
   if (api_check_view(view)){
     result = view->mark;
+  }
+  return(result);
+}
+
+api(custom) function i64
+view_get_selection_begin(Application_Links *app, View_ID view_id){
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  i64 result = 0;
+  if (api_check_view(view)){
+    result = view->selectionBegin;
+  }
+  return(result);
+}
+
+api(custom) function i64
+view_get_selection_end(Application_Links *app, View_ID view_id){
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  i64 result = 0;
+  if (api_check_view(view)){
+    result = view->selectionEnd;
+  }
+  return(result);
+}
+
+api(custom) function View_State_ID
+view_get_state(Application_Links *app, View_ID view_id){
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  View_State_ID result = View_State_Command;
+  if (api_check_view(view)){
+    result = view->state;
   }
   return(result);
 }
@@ -1678,6 +1711,72 @@ view_set_mark(Application_Links *app, View_ID view_id, Buffer_Seek seek)
       else{
         view->mark = seek.pos;
       }
+      result = true;
+    }
+  }
+  return(result);
+}
+
+api(custom) function b32
+view_set_selection_begin(Application_Links *app, View_ID view_id, Buffer_Seek seek)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  
+  b32 result = false;
+  if (api_check_view(view)){
+    Editing_File *file = view->file;
+    Assert(file != 0);
+    if (api_check_buffer(file)){
+      if (seek.type != buffer_seek_pos){
+        Buffer_Cursor cursor = file_compute_cursor(file, seek);
+        view->selectionBegin = cursor.pos;
+      }
+      else{
+        view->selectionBegin = seek.pos;
+      }
+      result = true;
+    }
+  }
+  return(result);
+}
+
+api(custom) function b32
+view_set_selection_end(Application_Links *app, View_ID view_id, Buffer_Seek seek)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  
+  b32 result = false;
+  if (api_check_view(view)){
+    Editing_File *file = view->file;
+    Assert(file != 0);
+    if (api_check_buffer(file)){
+      if (seek.type != buffer_seek_pos){
+        Buffer_Cursor cursor = file_compute_cursor(file, seek);
+        view->selectionEnd = cursor.pos;
+      }
+      else{
+        view->selectionEnd = seek.pos;
+      }
+      result = true;
+    }
+  }
+  return(result);
+}
+
+api(custom) function b32
+view_set_state(Application_Links *app, View_ID view_id, View_State_ID state)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  
+  b32 result = false;
+  if (api_check_view(view)){
+    Editing_File *file = view->file;
+    Assert(file != 0);
+    if (api_check_buffer(file)){
+      view->state = state;
       result = true;
     }
   }

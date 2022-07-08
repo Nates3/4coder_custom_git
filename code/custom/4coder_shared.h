@@ -11,4 +11,9 @@ struct Mark_History
   i32 mark_count;
 };
 
+enum View_State_ID{
+  View_State_Insert,
+  View_State_Command
+};
+
 #endif //4CODER_SHARED_H

@@ -58,6 +58,7 @@ struct View_Context_Node{
 };
 
 struct View{
+  View_State_ID state;
   View *next;
   View *prev;
   struct Panel *panel;
@@ -68,6 +69,8 @@ struct View{
   
   File_Edit_Positions edit_pos_;
   i64 mark;
+  i64 selectionBegin;
+  i64 selectionEnd;
   Mark_History mark_history;
   
   f32 preferred_x;
