@@ -9,7 +9,6 @@ struct Mark_History
   i64 marks[MARK_HISTORY_ARRAY_COUNT];
   i32 recent_index;
   i32 mark_count;
-  i32 max_mark_count;
 };
 
 #endif //4CODER_SHARED_H

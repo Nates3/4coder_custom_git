@@ -283,13 +283,16 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
   
   // NOTE(allen): Token colorizing
   Token_Array token_array = get_token_array_from_buffer(app, buffer);
-  if (token_array.tokens != 0){
+  if (token_array.tokens != 0)
+  {
     draw_cpp_token_colors(app, text_layout_id, &token_array);
     
     // NOTE(allen): Scan for TODOs and NOTEs
     b32 use_comment_keyword = def_get_config_b32(vars_save_string_lit("use_comment_keyword"));
-    if (use_comment_keyword){
-      Comment_Highlight_Pair pairs[] = {
+    if (use_comment_keyword)
+    {
+      Comment_Highlight_Pair pairs[] = 
+      {
         {string_u8_litexpr("NOTE"), finalize_color(defcolor_comment_pop, 0)},
         {string_u8_litexpr("TODO"), finalize_color(defcolor_comment_pop, 1)},
       };
@@ -305,8 +308,17 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
     ARGB_Color argb = 0xff000000;
     
     Token_Iterator_Array it = token_iterator_pos(0, &token_array, visible_range.first);
-    for (;;){
-      if (!token_it_inc_non_whitespace(&it)){
+    Token_Iterator_Array end = token_iterator_pos(0, &token_array, visible_range.one_past_last);
+    
+    // NOTE(nates): TODO Fix this, this count includes whitespace tokens, but in the for
+    // loop we skip those, so the count should be diff_count - whitespace_count
+    i64 diff_count = ((i64)end.ptr - (i64)it.ptr)/sizeof(Token);
+    for (i64 token_skip_index = 0;
+         token_skip_index < diff_count;
+         ++token_skip_index)
+    {
+      if (!token_it_inc_non_whitespace(&it))
+      {
         break;
       }
       Token *token = token_it_read(&it);
@@ -342,7 +354,8 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
     }
 #endif
   }
-  else{
+  else
+  {
     paint_text_color_fcolor(app, text_layout_id, visible_range, fcolor_id(defcolor_text_default));
   }
   
@@ -351,7 +364,8 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
   
   // NOTE(allen): Scope highlight
   b32 use_scope_highlight = def_get_config_b32(vars_save_string_lit("use_scope_highlight"));
-  if (use_scope_highlight){
+  if (use_scope_highlight)
+  {
     Color_Array colors = finalize_color_array(defcolor_back_cycle);
     draw_scope_highlight(app, buffer, text_layout_id, cursor_pos, colors.vals, colors.count);
   }
@@ -1112,7 +1126,7 @@ set_all_default_hooks(Application_Links *app){
   set_custom_hook(app, HookID_RenderCaller, default_render_caller);
   set_custom_hook(app, HookID_WholeScreenRenderCaller, default_whole_screen_render_caller);
   
-  set_custom_hook(app, HookID_DeltaRule, fixed_time_cubic_delta);
+  set_custom_hook(app, HookID_DeltaRule, snap_delta);
   set_custom_hook_memory_size(app, HookID_DeltaRule,
                               delta_ctx_size(fixed_time_cubic_delta_memory_size));
   

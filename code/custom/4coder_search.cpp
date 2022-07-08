@@ -636,7 +636,7 @@ get_word_complete_from_user_drop_down(Application_Links *app){
               keep_looping_menu = false;
             }break;
             
-            case KeyCode_J:
+            case KEYCODE_AUTO_COMPLETE_UP:
             case KeyCode_Up:
             {
               if(has_modifier(&in.event.key.modifiers, KeyCode_Control))
@@ -650,9 +650,13 @@ get_word_complete_from_user_drop_down(Application_Links *app){
                   menu_f1_index = (menu.count - 1);
                 }
               }
+              else
+              {
+                handled = false;
+              }
             }break;
             
-            case KeyCode_K:
+            case KEYCODE_AUTO_COMPLETE_DOWN:
             case KeyCode_Down:
             {
               if(has_modifier(&in.event.key.modifiers, KeyCode_Control))
@@ -665,6 +669,10 @@ get_word_complete_from_user_drop_down(Application_Links *app){
                 {
                   menu_f1_index = 0;
                 }
+              }
+              else
+              {
+                handled = false;
               }
             }break;
             

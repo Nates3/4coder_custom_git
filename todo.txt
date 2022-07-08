@@ -5,6 +5,11 @@
 [ ] - Bug: When opening a lister panel you can't execute any other cammands as if the
 			leave_event_unhandled() function wasn't invoked. 
 
+[ ] - Bug: Mark history is stored in the View and isn't associated with every individual buffer
+      fix it so marks are stored with every buffer and you can change the buffer on your view panel
+      without loosing your marks on the previous buffer you were working on
+
+
 //////////////////////////////
 ---------- TODOS -------------
 
@@ -44,6 +49,14 @@
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
 
+[x] - Bug: BIG SLOWDOWN on large text files??? Made a completely new 4ed source build
+      with no custom code, and the performance is out the window. We are wasting a lot of work every 
+      frame
+      (slowdown was because we were looping over _all_ tokens in the _entire_ file and _not_
+      the visible range of the view "camera")
+
+[X] - Implement a mark history system that records marks
+
 [x] - Make there keymaps (keybind groups): "shared_bindings", "command_mode_bindings", "text_input_mode"
 
 [x] - Syntax Highlighting for identifiers (it already had a basic implementation!)
@@ -63,5 +76,3 @@
 [x] - Bug?: When you open a new file it sets text mode 
   		see custom\4coder_default_hooks.cpp -> default_begin_buffer
 			we should probably only do this on startup
-
-[ ] - Implement a mark history system that records marks

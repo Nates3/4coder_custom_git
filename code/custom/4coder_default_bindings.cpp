@@ -3,7 +3,6 @@
 */
 
 // TOP
-#if 0
 #if !defined(FCODER_DEFAULT_BINDINGS_CPP)
 #define FCODER_DEFAULT_BINDINGS_CPP
 
@@ -36,7 +35,6 @@ custom_layer_init(Application_Links *app)
 #endif
 	setup_essential_mapping(&framework_mapping, global_map_id, file_map_id, code_map_id);
 }
-#endif
 
 #endif //FCODER_DEFAULT_BINDINGS
 

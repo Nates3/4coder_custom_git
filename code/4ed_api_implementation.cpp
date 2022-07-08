@@ -1649,9 +1649,6 @@ view_record_mark(Application_Links *app, View_ID view_id)
   View *view = imp_get_view(models, view_id);
   Mark_History *history = &view->mark_history;
   
-  // TODO(nates): Find where init code is for View and put this there
-  history->max_mark_count = MARK_HISTORY_ARRAY_COUNT;
-  
   history->recent_index += 1;
   if(history->recent_index > MARK_HISTORY_ARRAY_COUNT - 1)
   {

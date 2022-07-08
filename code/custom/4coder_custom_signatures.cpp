@@ -33,7 +33,7 @@ CUSTOM_DOC("dummy_wrapper for return")
   char Value = in.event.text.string.str[0];
   if(Value == 10)
   {
-    write_text_input(app);
+    write_text_and_auto_indent(app);
   }
   else
   {
@@ -141,6 +141,15 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 }
 
 
+
+// NOTE(nates): so I had to edit 4coder source to make the Mark_History stuff.
+// and I stored all this info in the "View" structure.
+// the only way to access it from the custom code are through id's which sucks
+// normaly you'd just direct access everthing off the view and you can do that
+// from the source code but not the custom code becasue it doesn't know a lot of stuff.
+// So I just created functions that can be called from custom to get the "Mark_History" structure
+
+
 CUSTOM_COMMAND_SIG(goto_next_mark)
 CUSTOM_DOC("moves forward in mark history if user has searched backwards in history")
 {
@@ -153,7 +162,7 @@ CUSTOM_DOC("moves forward in mark history if user has searched backwards in hist
     i32 index = mark_history->recent_index + global_relative_mark_history_index;
     if(index < 0)
     {
-      index += mark_history->max_mark_count;
+      index += MARK_HISTORY_ARRAY_COUNT;
     }
     
     i64 mark_pos = mark_history->marks[index];
@@ -174,7 +183,7 @@ CUSTOM_DOC("moves backward in mark history")
     i32 index = mark_history->recent_index + global_relative_mark_history_index;
     if(index < 0)
     {
-      index += mark_history->max_mark_count;
+      index += MARK_HISTORY_ARRAY_COUNT;
     }
     
     i64 mark_pos = mark_history->marks[index];

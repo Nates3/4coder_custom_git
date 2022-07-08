@@ -32,7 +32,7 @@ commands = {
 	.full_build = {
         .win = "full_build.bat",
         .out = "*compilation*",
-        .footer_panel = true,
+        .footer_panel = false,
         .save_dirty_files = true,
         .cursor_at_end = false,
     },
