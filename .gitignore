@@ -1,1 +1,14 @@
 .vscode
+build/4ed_app_target.obj
+build/4ed_app.exp
+build/4ed_app.lib
+build/4ed_app.pdb
+build/4ed.pdb
+build/build.exe
+build/build.ilk
+build/build.pdb
+build/custom_4coder.pdb
+build/vc140.pdb
+build/win32_4ed.obj
+code/custom/generated/command_metadata.h
+code/custom/generated/managed_id_metadata.cpp
