@@ -260,7 +260,8 @@ list_all_functions(Application_Links *app, Buffer_ID optional_target_buffer){
   end_buffer_insertion(&out);
   
   View_ID view = get_active_view(app, Access_Always);
-  view_set_buffer_modal(app, view, decls_buffer, 0);
+  view_set_buffer(app, view, decls_buffer, 0);
+  //view_state_set_mapid(app, view);
   
   lock_jump_buffer(app, decls_name);
 }

@@ -333,9 +333,10 @@ view_buffer_set(Application_Links *app, Buffer_ID *buffers, i64 *positions, i32 
     View_Node *node = primary_view_first;
     for (i32 i = 0; i < buffer_set_count; i += 1, node = node->next)
     {
-      if (view_set_buffer_modal(app, node->view_id, buffers[i], 0))
+      if (view_set_buffer(app, node->view_id, buffers[i], 0))
       {
         view_set_cursor_and_preferred_x(app, node->view_id, seek_pos(positions[i]));
+        //view_state_set_mapid(app, node->view_id);
       }
     }
   }
@@ -357,7 +358,6 @@ change_active_panel_send_command(Application_Links *app, Custom_Command_Function
   
   Mark_History *history = view_get_mark_history(app, view);
   global_relative_mark_history_index = history->recent_index;
-  set_modal_mode_view(app, view, get_modal_mapid());
 }
 
 CUSTOM_COMMAND_SIG(change_active_panel)
@@ -383,7 +383,8 @@ CUSTOM_DOC("Create a new panel by vertically splitting the active panel.")
   View_ID new_view = open_view(app, view, ViewSplit_Right);
   new_view_settings(app, new_view);
   Buffer_ID buffer = view_get_buffer(app, view, Access_Always);
-  view_set_buffer_modal(app, new_view, buffer, 0);
+  view_set_buffer(app, new_view, buffer, 0);
+  //view_state_set_mapid(app, view);
 }
 
 CUSTOM_COMMAND_SIG(open_panel_hsplit)
@@ -393,7 +394,8 @@ CUSTOM_DOC("Create a new panel by horizontally splitting the active panel.")
   View_ID new_view = open_view(app, view, ViewSplit_Bottom);
   new_view_settings(app, new_view);
   Buffer_ID buffer = view_get_buffer(app, view, Access_Always);
-  view_set_buffer_modal(app, new_view, buffer, 0);
+  view_set_buffer(app, new_view, buffer, 0);
+  //view_state_set_mapid(app, view);
 }
 
 ////////////////////////////////
@@ -416,7 +418,8 @@ create_or_switch_to_buffer_and_clear_by_name(Application_Links *app, String_Cons
       //view_end_ui_mode(app, target_view);
     }
     else{
-      view_set_buffer_modal(app, target_view, search_buffer, 0);
+      view_set_buffer(app, target_view, search_buffer, 0);
+      //view_state_set_mapid(app, target_view);
     }
     view_set_active(app, target_view);
     
@@ -430,8 +433,9 @@ create_or_switch_to_buffer_and_clear_by_name(Application_Links *app, String_Cons
 #if 0
     buffer_set_setting(app, search_buffer, BufferSetting_WrapLine, false);
 #endif
-    view_set_buffer_modal(app, default_target_view, search_buffer, 0);
+    view_set_buffer(app, default_target_view, search_buffer, 0);
     view_set_active(app, default_target_view);
+    //view_state_set_mapid(app, default_target_view);
   }
   
   return(search_buffer);
@@ -698,12 +702,14 @@ default_4coder_side_by_side_panels(Application_Links *app,
   // Left Panel
   View_ID view = get_active_view(app, Access_Always);
   new_view_settings(app, view);
-  view_set_buffer_modal(app, view, left_id, 0);
+  view_set_buffer(app, view, left_id, 0);
+  //view_state_set_mapid(app, view);
   
   // Right Panel
   open_panel_vsplit(app);
   View_ID right_view = get_active_view(app, Access_Always);
-  view_set_buffer_modal(app, right_view, right_id, 0);
+  view_set_buffer(app, right_view, right_id, 0);
+  //view_state_set_mapid(app, view);
   
   // Restore Active to Left
   view_set_active(app, view);
@@ -740,7 +746,8 @@ default_4coder_one_panel(Application_Links *app, Buffer_Identifier buffer){
   Buffer_ID id = buffer_identifier_to_id(app, buffer);
   View_ID view = get_active_view(app, Access_Always);
   new_view_settings(app, view);
-  view_set_buffer_modal(app, view, id, 0);
+  view_set_buffer(app, view, id, 0);
+  //view_state_set_mapid(app, view);
 }
 
 function void

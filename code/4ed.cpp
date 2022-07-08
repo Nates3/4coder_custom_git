@@ -626,6 +626,9 @@ App_Step_Sig(app_step){
             // NOTE(allen): run deactivate command
             co_send_core_event(tctx, models, view, CoreCode_ClickDeactivateView);
             
+            // NOTE(nates): In order to change margin color immediately upon 
+            // click, this is where we would touch
+            
             layout->active_panel = mouse_panel;
             models->animate_next_frame = true;
             active_panel = mouse_panel;

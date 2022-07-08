@@ -9,61 +9,55 @@
 // you can call them if you want to!
 
 CUSTOM_COMMAND_SIG(change_to_command_mode)
-CUSTOM_DOC("all the commands in the world, right here!")
+CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
 {
   View_ID view = get_active_view(app, 0);
   Buffer_ID buffer = view_get_buffer(app, view, 0);
-
+  
   // TODO(cakez77): Switch on the view type? Only change in certain views?
   if (view_get_state(app, view) != View_State_Command)
   {
     view_set_state(app, view, View_State_Command);
-
+    
     // Set Keybinds for Command Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
-    set_command_map_ID(app, buffer, (Command_Map_ID)command_mode_mapid);
-
-    // Set the Color of the Border to Red
-    active_color_table.arrays[defcolor_margin_active].vals[0] = 0xffff0000;
+    set_command_map_id(app, buffer, (Command_Map_ID)command_mapid);
+    set_margin_color(0xffff0000);
   }
 }
 
 CUSTOM_COMMAND_SIG(change_to_text_mode)
-CUSTOM_DOC("alll the text in the world, right here!")
+CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
   View_ID view = get_active_view(app, 0);
   Buffer_ID buffer = view_get_buffer(app, view, 0);
-
+  
   if (view_get_state(app, view) != View_State_Insert)
   {
     view_set_state(app, view, View_State_Insert);
-
+    
     // Set Keybinds for Intert Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
-    set_command_map_ID(app, buffer, (Command_Map_ID)text_mode_mapid);
-
-    // Set the Color of the Border to Green ish?
-    active_color_table.arrays[defcolor_margin_active].vals[0] = 0xff00ff00;
+    set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
+    set_margin_color(0xff00ff00);
   }
 }
 
 // TODO(cakez77): Better naming and different behaviour (place cursor in front and back)
 CUSTOM_COMMAND_SIG(change_to_text_mode_2)
-CUSTOM_DOC("alll the text in the world, right here!")
+CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
   View_ID view = get_active_view(app, 0);
   Buffer_ID buffer = view_get_buffer(app, view, 0);
-
+  
   if (view_get_state(app, view) != View_State_Insert)
   {
     view_set_state(app, view, View_State_Insert);
-
+    
     // Set Keybinds for Intert Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
-    set_command_map_ID(app, buffer, (Command_Map_ID)text_mode_mapid);
-
-    // Set the Color of the Border to Green ish?
-    active_color_table.arrays[defcolor_margin_active].vals[0] = 0xff00ff00;
+    set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
+    set_margin_color(0xff00ff00);
   }
 }
 
@@ -76,7 +70,7 @@ CUSTOM_DOC("Jump from Brace to brace")
   u8 char_under_cursor = buffer_get_char(app, buffer, cursor_pos);
   u8 prev_char_under_cursor = buffer_get_char(app, buffer, cursor_pos - 1);
   i64 bracePos;
-
+  
   if (char_under_cursor == '{' || prev_char_under_cursor == '{')
   {
     if (find_nest_side(app, buffer, prev_char_under_cursor == '{' ? cursor_pos : cursor_pos + 1,
@@ -114,7 +108,7 @@ CUSTOM_DOC("Selects entire lines")
   i64 line_number = get_line_number_from_pos(app, buffer, cursor_pos);
   i64 line_end_pos = get_line_end_pos(app, buffer, line_number);
   i64 line_start_pos = get_line_start_pos(app, buffer, line_number);
-
+  
   view_set_cursor_and_preferred_x(app, view, seek_pos(line_end_pos));
   view_set_mark(app, view, seek_pos(line_start_pos));
 }
@@ -156,32 +150,32 @@ CUSTOM_UI_COMMAND_SIG(jump_to_definition_sorted)
 CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 {
   Scratch_Block scratch(app);
-
+  
   Lister_Block sort_lister(app, scratch);
   char *sort_query = "Type:";
   lister_set_query(sort_lister, sort_query);
   lister_set_default_handlers(sort_lister);
-
+  
   Code_Index_Note_Kind type_kind = CodeIndexNote_Type;
   Code_Index_Note_Kind function_kind = CodeIndexNote_Function;
   Code_Index_Note_Kind macro_kind = CodeIndexNote_Macro;
   Code_Index_Note_Kind enum_kind = CodeIndexNote_Enum;
-
+  
   lister_add_item(sort_lister, SCu8("types"), SCu8(""), &type_kind, 0);
   lister_add_item(sort_lister, SCu8("functions"), SCu8(""), &function_kind, 0);
   lister_add_item(sort_lister, SCu8("macros"), SCu8(""), &macro_kind, 0);
   lister_add_item(sort_lister, SCu8("enums"), SCu8(""), &enum_kind, 0);
-
+  
   Lister_Result sort_result = run_lister(app, sort_lister);
   if (!sort_result.canceled)
   {
     Code_Index_Note_Kind users_type = *(Code_Index_Note_Kind *)sort_result.user_data;
-
+    
     char *query = "Definition:";
     Lister_Block lister(app, scratch);
     lister_set_query(lister, query);
     lister_set_default_handlers(lister);
-
+    
     code_index_lock();
     for (Buffer_ID buffer = get_buffer_next(app, 0, Access_Always);
          buffer != 0;
@@ -196,32 +190,32 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
           Tiny_Jump *jump = push_array(scratch, Tiny_Jump, 1);
           jump->buffer = buffer;
           jump->pos = note->pos.first;
-
+          
           String_Const_u8 sort = {};
           if (users_type == note->note_kind)
           {
             switch (note->note_kind)
             {
-            case CodeIndexNote_Type:
-            {
-              sort = string_u8_litexpr("type");
-            }
-            break;
-            case CodeIndexNote_Function:
-            {
-              sort = string_u8_litexpr("function");
-            }
-            break;
-            case CodeIndexNote_Macro:
-            {
-              sort = string_u8_litexpr("macro");
-            }
-            break;
-            case CodeIndexNote_Enum:
-            {
-              sort = string_u8_litexpr("enum");
-            }
-            break;
+              case CodeIndexNote_Type:
+              {
+                sort = string_u8_litexpr("type");
+              }
+              break;
+              case CodeIndexNote_Function:
+              {
+                sort = string_u8_litexpr("function");
+              }
+              break;
+              case CodeIndexNote_Macro:
+              {
+                sort = string_u8_litexpr("macro");
+              }
+              break;
+              case CodeIndexNote_Enum:
+              {
+                sort = string_u8_litexpr("enum");
+              }
+              break;
             }
             lister_add_item(lister, note->text, sort, jump, 0);
           }
@@ -229,14 +223,14 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
       }
     }
     code_index_unlock();
-
+    
     Lister_Result l_result = run_lister(app, lister);
     Tiny_Jump result = {};
     if (!l_result.canceled && l_result.user_data != 0)
     {
       block_copy_struct(&result, (Tiny_Jump *)l_result.user_data);
     }
-
+    
     if (result.buffer != 0)
     {
       View_ID view = get_this_ctx_view(app, Access_Always);
@@ -258,7 +252,7 @@ CUSTOM_DOC("moves forward in mark history if user has searched backwards in hist
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mark_History *mark_history = view_get_mark_history(app, view);
-
+  
   if (global_relative_mark_history_index < 0)
   {
     global_relative_mark_history_index++;
@@ -267,7 +261,7 @@ CUSTOM_DOC("moves forward in mark history if user has searched backwards in hist
     {
       index += MARK_HISTORY_ARRAY_COUNT;
     }
-
+    
     i64 mark_pos = mark_history->marks[index];
     view_set_cursor_and_preferred_x(app, view, seek_pos(mark_pos));
   }
@@ -278,7 +272,7 @@ CUSTOM_DOC("moves backward in mark history")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mark_History *mark_history = view_get_mark_history(app, view);
-
+  
   if (global_relative_mark_history_index > -(mark_history->mark_count - 1))
   {
     global_relative_mark_history_index--;
@@ -287,7 +281,7 @@ CUSTOM_DOC("moves backward in mark history")
     {
       index += MARK_HISTORY_ARRAY_COUNT;
     }
-
+    
     i64 mark_pos = mark_history->marks[index];
     view_set_cursor_and_preferred_x(app, view, seek_pos(mark_pos));
   }

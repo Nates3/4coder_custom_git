@@ -113,7 +113,7 @@ commands = {
     .build_api_parser = {
         .win = "custom\bin\build_one_time 4ed_api_parser_main.cpp ..\build & copy /B ..\build\one_time.exe ..\build\api_parser.exe",
         .out = "*compilation*",
-        .footer_panel = true,
+        .footer_panel = false,
         .save_dirty_files = true,
         .cursor_at_end = false,
     },

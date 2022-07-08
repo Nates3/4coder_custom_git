@@ -1812,7 +1812,8 @@ view_open_file(Application_Links *app, View_ID view, String_Const_u8 file_name, 
   if (view != 0){
     Buffer_ID buffer = 0;
     if (open_file(app, &buffer, file_name, false, never_new)){
-      view_set_buffer_modal(app, view, buffer, 0);
+      view_set_buffer(app, view, buffer, 0);
+      //view_state_set_mapid(app, view);
       result = true;
     }
   }
@@ -2498,8 +2499,9 @@ exec_system_command(Application_Links *app, View_ID view, Buffer_Identifier buff
     if (buffer_attach_id != 0){
       if (set_buffer_system_command(app, child_process_id, buffer_attach_id, flags)){
         if (view != 0){
-          view_set_buffer_modal(app, view, buffer_attach_id, 0);
+          view_set_buffer(app, view, buffer_attach_id, 0);
           view_set_cursor(app, view, seek_pos(0));
+          //view_state_set_mapid(app, view);
         }
       }
     }

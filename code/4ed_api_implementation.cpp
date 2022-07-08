@@ -1463,6 +1463,7 @@ view_set_active(Application_Links *app, View_ID view_id)
     models->layout.active_panel = view->panel;
     result = true;
   }
+  
   return(result);
 }
 
@@ -1780,6 +1781,7 @@ view_set_state(Application_Links *app, View_ID view_id, View_State_ID state)
       result = true;
     }
   }
+  
   return(result);
 }
 
@@ -1813,6 +1815,7 @@ view_set_buffer(Application_Links *app, View_ID view_id, Buffer_ID buffer_id, Se
       result = true;
     }
   }
+  
   return(result);
 }
 

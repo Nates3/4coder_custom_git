@@ -514,7 +514,8 @@ CUSTOM_DOC("Interactively switch to an open buffer.")
   Buffer_ID buffer = get_buffer_from_user(app, "Switch:");
   if (buffer != 0){
     View_ID view = get_this_ctx_view(app, Access_Always);
-    view_set_buffer_modal(app, view, buffer, 0);
+    view_set_buffer(app, view, buffer, 0);
+    //view_state_set_mapid(app, view);
   }
 }
 
@@ -600,7 +601,8 @@ activate_open_or_new__generic(Application_Links *app, View_ID view,
     else{
       Buffer_ID buffer = create_buffer(app, full_file_name, flags);
       if (buffer != 0){
-        view_set_buffer_modal(app, view, buffer, SetBuffer_KeepOriginalGUI);
+        view_set_buffer(app, view, buffer, SetBuffer_KeepOriginalGUI);
+        //view_state_set_mapid(app, view);
       }
       result = ListerActivation_Finished;
     }
@@ -652,7 +654,8 @@ CUSTOM_DOC("Interactively open a file out of the file system.")
     
     Buffer_ID buffer = create_buffer(app, full_file_name, 0);
     if (buffer != 0){
-      view_set_buffer_modal(app, view, buffer, 0);
+      view_set_buffer(app, view, buffer, 0);
+      view_state_set_mapid(app, view);
     }
     break;
   }
@@ -706,7 +709,8 @@ CUSTOM_DOC("Interactively creates a new file.")
     Buffer_Create_Flag flags = BufferCreate_AlwaysNew;
     Buffer_ID buffer = create_buffer(app, full_file_name, flags);
     if (buffer != 0){
-      view_set_buffer_modal(app, view, buffer, 0);
+      view_set_buffer(app, view, buffer, 0);
+      //view_state_set_mapid(app, view);
     }
     break;
   }
@@ -750,7 +754,8 @@ CUSTOM_DOC("Interactively opens a file.")
     Buffer_Create_Flag flags = BufferCreate_NeverNew;
     Buffer_ID buffer = create_buffer(app, full_file_name, flags);
     if (buffer != 0){
-      view_set_buffer_modal(app, view, buffer, 0);
+      view_set_buffer(app, view, buffer, 0);
+      //view_state_set_mapid(app, view);
     }
     break;
   }

@@ -6,9 +6,11 @@ global i32 menu_f1_index;
 global i32 global_relative_mark_history_index;
 
 String_ID shared_mapid;
-String_ID command_mode_mapid;
-String_ID text_mode_mapid;
+String_ID command_mapid;
+String_ID insert_mapid;
 
+#define INSERT_MODE_MARGIN_COLOR 0xff00ff00
+#define COMMAND_MODE_MARGIN_COLOR 0xffff0000
 
 #define CAKEZ 1
 #if defined(CAKEZ)

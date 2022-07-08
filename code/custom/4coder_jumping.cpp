@@ -236,7 +236,8 @@ function void
 set_view_to_location(Application_Links *app, View_ID view, Buffer_ID buffer, Buffer_Seek seek){
   Buffer_ID current_buffer = view_get_buffer(app, view, Access_Always);
   if (current_buffer != buffer){
-    view_set_buffer_modal(app, view, buffer, 0);
+    view_set_buffer(app, view, buffer, 0);
+    //view_state_set_mapid(app, view);
   }
   view_set_cursor_and_preferred_x(app, view, seek);
 }

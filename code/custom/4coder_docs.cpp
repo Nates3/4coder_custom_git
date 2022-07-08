@@ -182,7 +182,8 @@ CUSTOM_DOC("Prompts the user to select a Custom API item then loads a doc buffer
     Doc_Page *page = get_doc_page_from_user(app, docs, "Doc Page:");
 		if (page != 0){
       Buffer_ID buffer = render_doc_page(app, page);
-      view_set_buffer_modal(app, view, buffer, 0);
+      view_set_buffer(app, view, buffer, 0);
+      //view_state_set_mapid(app, view);
     }
   }
 }
@@ -197,7 +198,8 @@ CUSTOM_DOC("Prompts the user to select a command then loads a doc buffer for tha
     Doc_Page *page = get_doc_page_from_user(app, docs, "Doc Page:");
     if (page != 0){
       Buffer_ID buffer = render_doc_page(app, page);
-      view_set_buffer_modal(app, view, buffer, 0);
+      view_set_buffer(app, view, buffer, 0);
+      //view_state_set_mapid(app, view);
     }
   }
 }

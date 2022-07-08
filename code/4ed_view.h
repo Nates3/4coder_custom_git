@@ -59,6 +59,7 @@ struct View_Context_Node{
 
 struct View{
   View_State_ID state;
+  
   View *next;
   View *prev;
   struct Panel *panel;

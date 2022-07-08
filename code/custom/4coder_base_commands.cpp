@@ -229,10 +229,9 @@ CUSTOM_DOC("Sets the cursor position and mark to the mouse position.")
   Mouse_State mouse = get_mouse_state(app);
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
+  
   view_set_mark_record(app, view, seek_pos(pos));
-  set_modal_mode_view(app, view, get_modal_mapid());
-  Mark_History *history = view_get_mark_history(app, view);
-  global_relative_mark_history_index = history->recent_index;
+  set_global_rel_mark_index(app, view);
 }
 
 CUSTOM_COMMAND_SIG(click_set_cursor)
@@ -243,7 +242,6 @@ CUSTOM_DOC("Sets the cursor position to the mouse position.")
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
   no_mark_snap_to_cursor(app, view);
-  set_modal_mode_view(app, view, get_modal_mapid());
 }
 
 CUSTOM_COMMAND_SIG(click_set_cursor_if_lbutton)
@@ -257,7 +255,6 @@ CUSTOM_DOC("If the mouse left button is pressed, sets the cursor position to the
   }
   no_mark_snap_to_cursor(app, view);
   set_next_rewrite(app, view, Rewrite_NoChange);
-  set_modal_mode_view(app, view, get_modal_mapid());
 }
 
 CUSTOM_COMMAND_SIG(click_set_mark)
@@ -266,11 +263,10 @@ CUSTOM_DOC("Sets the mark position to the mouse position.")
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mouse_State mouse = get_mouse_state(app);
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
-  view_set_mark_record(app, view, seek_pos(pos));
   no_mark_snap_to_cursor(app, view);
-  set_modal_mode_view(app, view, get_modal_mapid());
-  Mark_History *history = view_get_mark_history(app, view);
-  global_relative_mark_history_index = history->recent_index;
+  
+  view_set_mark_record(app, view, seek_pos(pos));
+  set_global_rel_mark_index(app, view);
 }
 
 CUSTOM_COMMAND_SIG(mouse_wheel_scroll)
@@ -1362,8 +1358,9 @@ CUSTOM_DOC("Read from the top of the point stack and jump there; if already ther
       if (point_stack_read_top(app, &stack_buffer, &stack_pos)){
         if (stack_buffer != 0 &&
             (stack_buffer != buffer || stack_pos != pos)){
-          view_set_buffer_modal(app, view, stack_buffer, 0);
+          view_set_buffer(app, view, stack_buffer, 0);
           view_set_cursor_and_preferred_x(app, view, seek_pos(stack_pos));
+          //view_state_set_mapid(app, view);
           break;
         }
         point_stack_pop(app);
@@ -1465,7 +1462,8 @@ CUSTOM_DOC("Queries the user for a file name and saves the contents of the curre
         Buffer_ID new_buffer = create_buffer(app, new_file_name, BufferCreate_NeverNew|BufferCreate_JustChangedFile);
         if (new_buffer != 0 && new_buffer != buffer){
           buffer_kill(app, buffer, BufferKill_AlwaysKill);
-          view_set_buffer_modal(app, view, new_buffer, 0);
+          view_set_buffer(app, view, new_buffer, 0);
+          //view_state_set_mapid(app, view);
         }
       }
     }
@@ -1500,7 +1498,8 @@ CUSTOM_DOC("Queries the user for a new name and renames the file of the current 
         Buffer_ID new_buffer = create_buffer(app, new_file_name, BufferCreate_NeverNew|BufferCreate_JustChangedFile);
         if (new_buffer != 0 && new_buffer != buffer){
           delete_file_base(app, file_name, buffer);
-          view_set_buffer_modal(app, view, new_buffer, 0);
+          view_set_buffer(app, view, new_buffer, 0);
+          //view_state_set_mapid(app, view);
         }
       }
     }
@@ -1679,8 +1678,9 @@ CUSTOM_DOC("If the current file is a *.cpp or *.h, attempts to open the correspo
   Buffer_ID new_buffer = 0;
   if (get_cpp_matching_file(app, buffer, &new_buffer)){
     view = get_next_view_looped_primary_panels(app, view, Access_Always);
-    view_set_buffer_modal(app, view, new_buffer, 0);
+    view_set_buffer(app, view, new_buffer, 0);
     view_set_active(app, view);
+    //view_state_set_mapid(app, view);
   }
 }
 
@@ -1692,8 +1692,9 @@ CUSTOM_DOC("Set the other non-active panel to view the buffer that the active pa
   i64 pos = view_get_cursor_pos(app, view);
   change_active_panel(app);
   view = get_active_view(app, Access_Always);
-  view_set_buffer_modal(app, view, buffer, 0);
+  view_set_buffer(app, view, buffer, 0);
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
+  //view_state_set_mapid(app, view);
 }
 
 CUSTOM_COMMAND_SIG(swap_panels)
@@ -1726,14 +1727,16 @@ CUSTOM_DOC("Change to the most recently used buffer in this view - or to the top
   Buffer_ID *prev_buffer = scope_attachment(app, scope, view_previous_buffer, Buffer_ID);
   b32 fallback = true;
   if (prev_buffer != 0 && *prev_buffer != 0){
-    if (view_set_buffer_modal(app, view, *prev_buffer, 0)){
+    if (view_set_buffer(app, view, *prev_buffer, 0)){
       fallback = false;
     }
   }
   if (fallback){
     Buffer_ID top_buffer = get_buffer_next(app, 0, Access_Always);
-    view_set_buffer_modal(app, view, top_buffer, 0);
+    view_set_buffer(app, view, top_buffer, 0);
   }
+  
+  //view_state_set_mapid(app, view);
 }
 
 ////////////////////////////////
