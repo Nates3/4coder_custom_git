@@ -169,3 +169,10 @@ nates_bind_text_input(Mapping *m, Command_Map *map)
 {
   BindTextInput(write_text_and_auto_indent);
 }
+
+internal void
+vedant_bind_command_keys(Mapping *m, Command_Map *map) {
+  Bind(goto_beginning_of_file, KeyCode_G, KeyCode_Alt);
+  Bind(goto_end_of_file, KeyCode_G, KeyCode_Shift);
+  Bind(change_to_append_mode, KeyCode_A);
+}

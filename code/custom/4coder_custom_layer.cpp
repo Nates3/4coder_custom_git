@@ -1,5 +1,3 @@
-
-
 #if !defined(FCODER_CUSTOM_LAYER_CPP)
 #define FCODER_CUSTOM_LAYER_CPP
 
@@ -12,13 +10,17 @@
 internal void
 set_modal_mode_color()
 {
-  if(global_is_command_mode)
+  if(global_mode == Modes::kCommandMode)
   {
     active_color_table.arrays[defcolor_margin_active].vals[0] = COMMAND_MODE_BUFFER_MARGIN_COLOR;
   }
-  else
+  else if (global_mode == Modes::kInsertMode)
   {
     active_color_table.arrays[defcolor_margin_active].vals[0] = TEXT_MODE_BUFFER_MARGIN_COLOR;
+  }
+  else // Visual Mode
+  {
+    active_color_table.arrays[defcolor_margin_active].vals[0] = VISUAL_MODE_BUFFER_MARGIN_COLOR;
   }
 }
 
@@ -43,9 +45,13 @@ internal Command_Map_ID
 get_modal_mapid(void)
 {
   Command_Map_ID result = 0;
-  if(global_is_command_mode)
+  if(global_mode == Modes::kCommandMode)
   {
     result = (Command_Map_ID)command_mode_mapid;
+  }
+  else if (global_mode == Modes::kVisualMode)
+  {
+    result = (Command_Map_ID)visual_mode_mapid;
   }
   else
   {
@@ -93,21 +99,32 @@ view_set_mark_record(Application_Links *app, View_ID view, Buffer_Seek seek)
 CUSTOM_COMMAND_SIG(change_to_command_mode)
 CUSTOM_DOC("all the commands in the world, right here!")
 {
-  global_is_command_mode = true;
+  global_mode = Modes::kCommandMode;
   bind_mapping_to_all_view_buffers(app, command_mode_mapid);
 }
 
 CUSTOM_COMMAND_SIG(change_to_text_mode)
 CUSTOM_DOC("alll the text in the world, right here!")
 {
-  global_is_command_mode = false;
+  global_mode = Modes::kInsertMode;
   bind_mapping_to_all_view_buffers(app, text_mode_mapid);
 }
 
 CUSTOM_COMMAND_SIG(change_to_text_mode_2)
 CUSTOM_DOC("alll the text in the world, right here!")
 {
-  global_is_command_mode = false;
+  global_mode = Modes::kInsertMode;
+  bind_mapping_to_all_view_buffers(app, text_mode_mapid);
+}
+
+CUSTOM_COMMAND_SIG(change_to_append_mode)
+CUSTOM_DOC("Just add something Duh")
+{
+  View_ID viewId = get_active_view(app, 0);
+  Buffer_ID bufferId = view_get_buffer(app, viewId, 0);
+  i64 cursorPos = view_get_cursor_pos(app, viewId);
+  global_mode = Modes::kInsertMode;
+  view_set_cursor(app, viewId, Buffer_Seek{buffer_seek_pos, cursorPos+1});
   bind_mapping_to_all_view_buffers(app, text_mode_mapid);
 }
 
@@ -188,6 +205,10 @@ void custom_layer_init(Application_Links *app)
   SelectMap(text_mode_mapid);
   ParentMap(shared_mapid);
   cakez_bind_text_input(m, map);
+  
+  SelectMap(command_mode_mapid);
+  ParentMap(shared_mapid);
+  vedant_bind_command_keys(m, map);
   
   // NOTE(nates): You have to bind the "global_map, file_map, and code_map for some reason"
   SelectMap(file_map_id);
