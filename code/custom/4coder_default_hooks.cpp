@@ -899,7 +899,7 @@ BUFFER_HOOK_SIG(default_begin_buffer){
     }
   }
   
-  set_modal_mode_buffer(app, buffer_id, get_modal_mapid());
+  set_command_map_ID(app, buffer_id, get_modal_mapid());
   
   // no meaning for return
   return(0);

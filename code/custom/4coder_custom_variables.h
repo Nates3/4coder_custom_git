@@ -9,9 +9,6 @@ String_ID shared_mapid;
 String_ID command_mode_mapid;
 String_ID text_mode_mapid;
 
-// TODO(nates): Add support for these using theme-name.4coder file
-#define COMMAND_MODE_BUFFER_MARGIN_COLOR 0xffff0000
-#define TEXT_MODE_BUFFER_MARGIN_COLOR 0xff00ff00
 
 #define CAKEZ 1
 #if defined(CAKEZ)

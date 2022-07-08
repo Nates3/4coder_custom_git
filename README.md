@@ -5,11 +5,11 @@ HTTPS: `git clone --recursive https://github.com/Nates3/4coder_custom_git.git`
 SSH: `git clone --recursive git@github.com:Nates3/4coder_custom_git.git`
 
 ## Step2 
-Navigate to `{rootDir}/code`  
+Navigate to `{rootDir}/code` (IMPORTANT!)  
 Insert call to `vcvarsall.bat` in `{rootDir}\code\full_build.bat` file
 
 ## Step3 
-call `{rootDir}code\full_build.bat`
+call `full_build.bat`
 
 ## Info
 To learn how to make custom commands you can look at code\custom\4coder_examples.cpp

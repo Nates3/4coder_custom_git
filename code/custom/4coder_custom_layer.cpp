@@ -23,20 +23,19 @@ set_modal_mode_color()
 }
 
 internal void
-set_modal_mode_buffer(Application_Links *app, Buffer_ID buffer,
+set_command_map_ID(Application_Links *app, Buffer_ID buffer,
                       Command_Map_ID mapid)
 {
   Managed_Scope scope = buffer_get_managed_scope(app, buffer);
   Command_Map_ID *map_id_ptr = scope_attachment(app, scope, buffer_map_id, Command_Map_ID);
   *map_id_ptr = mapid;
-  set_modal_mode_color();
 }
 
 internal void
 set_modal_mode_view(Application_Links *app, View_ID view, Command_Map_ID mapid)
 {
   Buffer_ID buffer = view_get_buffer(app, view, 0);
-  set_modal_mode_buffer(app, buffer, mapid);
+  set_command_map_ID(app, buffer, mapid);
 }
 
 internal Command_Map_ID
@@ -45,7 +44,7 @@ get_modal_mapid(void)
   Command_Map_ID result = 0;
   // if(global_is_command_mode)
   // {
-  //   result = (Command_Map_ID)command_mode_mapid;
+    result = (Command_Map_ID)command_mode_mapid;
   // }
   // else
   // {
@@ -65,7 +64,7 @@ bind_mapping_to_all_view_buffers(Application_Links *app, Command_Map_ID mapid)
        view = get_view_next(app, view, 0))
   {
     Buffer_ID buffer = view_get_buffer(app, view, 0);
-    set_modal_mode_buffer(app, buffer, mapid);
+    set_command_map_ID(app, buffer, mapid);
   }
 }
 
@@ -73,7 +72,7 @@ internal b32
 view_set_buffer_modal(Application_Links *app, View_ID view, Buffer_ID buffer, Set_Buffer_Flag flags)
 {
   b32 result = view_set_buffer(app, view, buffer, flags);
-  set_modal_mode_buffer(app, buffer, get_modal_mapid());
+  set_command_map_ID(app, buffer, get_modal_mapid());
   return(result);
 }
 
