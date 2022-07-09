@@ -12,6 +12,7 @@
 
 //////////////////////////////
 ---------- TODOS -------------
+[ ] - Jumping to definition changes the Keybinds somehow? Vim command -> jump -> Insert, can't change back to Command again (Bug)
 
 [ ] - Assign more keybinds
 
