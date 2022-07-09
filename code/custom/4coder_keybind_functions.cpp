@@ -15,6 +15,7 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(backspace_char, KeyCode_Backspace);
   Bind(delete_char, KeyCode_Delete);
   Bind(interactive_open_or_new, KeyCode_O, KeyCode_Control);
+  Bind(interactive_open_or_new, KeyCode_Tab, KeyCode_Control);
   Bind(interactive_switch_buffer, KeyCode_I, KeyCode_Control);
   Bind(word_complete, KeyCode_Tab);
   Bind(word_complete_drop_down, KeyCode_Tab, KeyCode_Shift);
@@ -52,7 +53,7 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(project_fkey_command, KeyCode_F8);
   Bind(project_fkey_command, KeyCode_F9);
   Bind(project_fkey_command, KeyCode_F10);
-  Bind(project_fkey_command, KeyCode_F11);
+  // Bind(project_fkey_command, KeyCode_F11);
   Bind(project_fkey_command, KeyCode_F12);
   Bind(project_fkey_command, KeyCode_F13);
   Bind(project_fkey_command, KeyCode_F14);

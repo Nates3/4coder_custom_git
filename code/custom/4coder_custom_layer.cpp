@@ -121,11 +121,10 @@ void custom_layer_init(Application_Links *app)
   
   // NOTE(nates): You have to bind the "global_map, file_map, and code_map for some reason"
   SelectMap(file_map_id);
-  ParentMap(command_mapid);
+  ParentMap(insert_mapid);
   
   SelectMap(code_map_id);
-  ParentMap(command_mapid);
-  
+  ParentMap(insert_mapid);
 }
 
 #endif

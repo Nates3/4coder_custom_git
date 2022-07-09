@@ -47,7 +47,7 @@ setup_default_mapping(Mapping *mapping, i64 global_id, i64 file_id, i64 code_id)
     Bind(project_fkey_command, KeyCode_F8);
     Bind(project_fkey_command, KeyCode_F9);
     Bind(project_fkey_command, KeyCode_F10);
-    Bind(project_fkey_command, KeyCode_F11);
+    // Bind(project_fkey_command, KeyCode_F11);
     Bind(project_fkey_command, KeyCode_F12);
     Bind(project_fkey_command, KeyCode_F13);
     Bind(project_fkey_command, KeyCode_F14);

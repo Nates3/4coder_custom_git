@@ -155,5 +155,5 @@ fkey_command = {
     .F5 = "build_C___lexer_generator",
     .F6 = "build_token_tester",
     .F7 = "build_api_parser",
-    .F11 = "package",
+    .F10 = "package",
 };

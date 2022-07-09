@@ -13,8 +13,7 @@ struct Mark_History
 
 enum View_State_ID{
   View_State_Insert,
-  View_State_Command,
+  View_State_Command
 };
-
 
 #endif //4CODER_SHARED_H
