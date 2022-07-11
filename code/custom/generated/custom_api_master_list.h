@@ -95,6 +95,7 @@ api(custom) function b32 view_set_mark(Application_Links* app, View_ID view_id, 
 api(custom) function b32 view_set_selection_begin(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 api(custom) function b32 view_set_selection_end(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 api(custom) function b32 view_set_state(Application_Links* app, View_ID view_id, View_State_ID state);
+api(custom) function void app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 api(custom) function b32 view_quit_ui(Application_Links* app, View_ID view_id);
 api(custom) function b32 view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
 api(custom) function b32 view_push_context(Application_Links* app, View_ID view_id, View_Context* ctx);

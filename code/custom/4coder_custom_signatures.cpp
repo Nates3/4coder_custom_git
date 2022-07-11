@@ -22,7 +22,6 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
     // Set Keybinds for Command Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
     set_command_map_id(app, buffer, (Command_Map_ID)command_mapid);
-    set_margin_color(0xffff0000);
   }
 }
 
@@ -39,7 +38,6 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
     // Set Keybinds for Intert Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
     set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
-    set_margin_color(0xff00ff00);
   }
 }
 
@@ -57,7 +55,6 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
     // Set Keybinds for Intert Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
     set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
-    set_margin_color(0xff00ff00);
   }
 }
 
@@ -114,14 +111,14 @@ CUSTOM_DOC("Selects entire lines")
 }
 
 CUSTOM_COMMAND_SIG(combine_two_lines)
-CUSTOM_DOC("combine some lines yo")
+CUSTOM_DOC("combine two lines")
 {
   seek_end_of_line(app);
   delete_char(app);
 }
 
 CUSTOM_COMMAND_SIG(insert_return)
-CUSTOM_DOC("dummy_wrapper for return")
+CUSTOM_DOC("copy of text input but just for return, so you can hit return in command mode")
 {
   User_Input in = get_current_input(app);
   char Value = in.event.text.string.str[0];
@@ -161,13 +158,19 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
   Code_Index_Note_Kind macro_kind = CodeIndexNote_Macro;
   Code_Index_Note_Kind enum_kind = CodeIndexNote_Enum;
   
-  lister_add_item(sort_lister, SCu8("types"), SCu8(""), &type_kind, 0);
-  lister_add_item(sort_lister, SCu8("functions"), SCu8(""), &function_kind, 0);
-  lister_add_item(sort_lister, SCu8("macros"), SCu8(""), &macro_kind, 0);
-  lister_add_item(sort_lister, SCu8("enums"), SCu8(""), &enum_kind, 0);
+  
+  String_Const_u8 types_str = SCu8("types");
+  String_Const_u8 functions_str = SCu8("functions");
+  String_Const_u8 macros_str = SCu8("macros");
+  String_Const_u8 enums_str = SCu8("enums");
+  lister_add_item(sort_lister, types_str, SCu8(""), &type_kind, 0);
+  lister_add_item(sort_lister, functions_str, SCu8(""), &function_kind, 0);
+  lister_add_item(sort_lister, macros_str, SCu8(""), &macro_kind, 0);
+  lister_add_item(sort_lister, enums_str, SCu8(""), &enum_kind, 0);
   
   Lister_Result sort_result = run_lister(app, sort_lister);
-  if (!sort_result.canceled)
+  if (!sort_result.canceled && 
+      sort_result.user_data)
   {
     Code_Index_Note_Kind users_type = *(Code_Index_Note_Kind *)sort_result.user_data;
     

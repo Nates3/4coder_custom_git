@@ -1459,9 +1459,52 @@ view_set_active(Application_Links *app, View_ID view_id)
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   b32 result = false;
-  if (api_check_view(view)){
+  if (api_check_view(view))
+  {
     models->layout.active_panel = view->panel;
     result = true;
+    
+    {
+      Buffer_ID buffer_id = view_get_buffer(app, view_id, 0);
+      Managed_Scope scope = buffer_get_managed_scope(app, buffer_id);
+      
+      Dynamic_Workspace *workspace = 0;
+      Table_Lookup lookup = table_lookup(&models->lifetime_allocator.scope_id_to_scope_ptr_table, scope);
+      if (lookup.found_match){
+        u64 val = 0;
+        table_read(&models->lifetime_allocator.scope_id_to_scope_ptr_table, lookup, &val);
+        workspace = (Dynamic_Workspace*)IntAsPtr(val);
+      }
+      
+      
+      Command_Map_ID *map_id_ptr = 0;
+      if (workspace != 0)
+      {
+        Dynamic_Variable_Block *var_block = &workspace->var_block;
+        Managed_ID buffer_map_id = managed_id_get(app, SCu8("attachment"), SCu8("buffer_map_id"));
+        String_Const_u8 data = dynamic_variable_get(var_block, buffer_map_id, sizeof(i64));
+        if (data.size >= sizeof(i64))
+        {
+          map_id_ptr = (Command_Map_ID *)data.str;
+        }
+      }
+      
+      i64 mapid = 0;
+      switch(view->state)
+      {
+        case View_State_Insert:
+        {
+          mapid = models->insert_mapid;
+        } break;
+        
+        case View_State_Command:
+        {
+          mapid = models->command_mapid;
+        } break;
+      }
+      
+      *map_id_ptr = mapid;
+    }
   }
   
   return(result);
@@ -1783,6 +1826,14 @@ view_set_state(Application_Links *app, View_ID view_id, View_State_ID state)
   }
   
   return(result);
+}
+
+api(custom) function void
+app_set_maps(Application_Links *app, i64 command_mapid, i64 insert_mapid)
+{
+  Models *models = (Models *)app->cmd_context;
+  models->command_mapid = command_mapid;
+  models->insert_mapid = insert_mapid;
 }
 
 api(custom) function b32

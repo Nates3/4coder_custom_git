@@ -655,7 +655,6 @@ CUSTOM_DOC("Interactively open a file out of the file system.")
     Buffer_ID buffer = create_buffer(app, full_file_name, 0);
     if (buffer != 0){
       view_set_buffer(app, view, buffer, 0);
-      view_state_set_mapid(app, view);
     }
     break;
   }

@@ -584,6 +584,12 @@ api_param(arena, call, "View_ID", "view_id");
 api_param(arena, call, "View_State_ID", "state");
 }
 {
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_set_maps"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "i64", "command_mapid");
+api_param(arena, call, "i64", "insert_mapid");
+}
+{
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_quit_ui"), string_u8_litexpr("b32"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");

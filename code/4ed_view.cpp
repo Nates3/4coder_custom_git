@@ -462,10 +462,11 @@ view_set_file(Thread_Context *tctx, Models *models, View *view, Editing_File *fi
   
   Editing_File *old_file = view->file;
   
+  Application_Links app = {};
+  app.tctx = tctx;
+  app.cmd_context = models;
+  
   if (models->view_change_buffer != 0){
-    Application_Links app = {};
-    app.tctx = tctx;
-    app.cmd_context = models;
     models->view_change_buffer(&app, view_get_id(&models->view_set, view),
                                (old_file != 0)?old_file->id:0, file->id);
   }
@@ -485,6 +486,51 @@ view_set_file(Thread_Context *tctx, Models *models, View *view, Editing_File *fi
   view->preferred_x = p.x;
   
   models->layout.panel_state_dirty = true;
+  
+  
+  // NOTE(nates): Crap code to set the correct map on the buffer based on the view->state
+  {
+    View_ID view_id = get_active_view(&app, 0);
+    Buffer_ID buffer_id = view_get_buffer(&app, view_id, 0);
+    Managed_Scope scope = buffer_get_managed_scope(&app, buffer_id);
+    
+    Dynamic_Workspace *workspace = 0;
+    Table_Lookup lookup = table_lookup(&models->lifetime_allocator.scope_id_to_scope_ptr_table, scope);
+    if (lookup.found_match){
+      u64 val = 0;
+      table_read(&models->lifetime_allocator.scope_id_to_scope_ptr_table, lookup, &val);
+      workspace = (Dynamic_Workspace*)IntAsPtr(val);
+    }
+    
+    
+    Command_Map_ID *map_id_ptr = 0;
+    if (workspace != 0)
+    {
+      Dynamic_Variable_Block *var_block = &workspace->var_block;
+      Managed_ID buffer_map_id = managed_id_get(&app, SCu8("attachment"), SCu8("buffer_map_id"));
+      String_Const_u8 data = dynamic_variable_get(var_block, buffer_map_id, sizeof(i64));
+      if (data.size >= sizeof(i64))
+      {
+        map_id_ptr = (Command_Map_ID *)data.str;
+      }
+    }
+    
+    i64 mapid = 0;
+    switch(view->state)
+    {
+      case View_State_Insert:
+      {
+        mapid = models->insert_mapid;
+      } break;
+      
+      case View_State_Command:
+      {
+        mapid = models->command_mapid;
+      } break;
+    }
+    
+    *map_id_ptr = mapid;
+  }
 }
 
 ////////////////////////////////

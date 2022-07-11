@@ -1,0 +1,9 @@
+
+
+
+(nates): .gitignore now ignores all the app_parser.exe files
+(nates): fixed bug that caused crash when typing in wrong thing in jump_to_definition_sorted command
+(nates): handled cases that caused desync between the view->mapid_state && the mapid on the view's buffer
+(nates): Added "command_mapid" and "insert_mapid" to models && app_set_maps function
+
+date-> 7/10/22

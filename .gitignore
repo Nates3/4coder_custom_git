@@ -15,3 +15,8 @@ build/one_time.pdb
 build/one_time.exe
 code/custom/generated/command_metadata.h
 code/custom/generated/managed_id_metadata.cpp
+code/custom/generated/custom_api_master_list.h
+code/custom/generated/custom_api.h
+code/custom/generated/custom_api.cpp
+code/custom/generated/custom_api_constructor.cpp
+

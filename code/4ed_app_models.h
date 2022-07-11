@@ -49,7 +49,11 @@ struct Model_Wind_Down_Co{
   Coroutine *co;
 };
 
-struct Models{
+struct Models
+{
+  i64 command_mapid;
+  i64 insert_mapid;
+  
   
   Arena arena_;
   Arena *arena;

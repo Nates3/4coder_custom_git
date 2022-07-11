@@ -25,6 +25,11 @@ set_command_map_id(Application_Links *app, Buffer_ID buffer,
   *map_id_ptr = mapid;
 }
 
+// NOTE(nates): So in default_render_caller, there is a call to render the active view
+// margin, and in there it gets the color, so I just call "view_state_set_margin_color"
+// *always* before it gets the color so it's correct. We don't even have to go through
+// the active_color_table anymore if we didn't want to. Function name that I added that to
+// is draw_background_and_margin(*app, view, is_active_view)
 internal void
 set_margin_color(u32 color_u32)
 {
@@ -47,28 +52,6 @@ view_state_set_margin_color(Application_Links *app, View_ID view)
       set_margin_color(0xffff0000);
     } break;
   }
-}
-
-internal void
-view_state_set_mapid(Application_Links *app, View_ID view)
-{
-  View_State_ID state = view_get_state(app, view);
-  Command_Map_ID mapid = 0;
-  switch(state)
-  {
-    case View_State_Insert:
-    {
-      mapid = insert_mapid;
-    } break;
-    
-    case View_State_Command:
-    {
-      mapid = command_mapid;
-    } break;
-  }
-  
-  Buffer_ID buffer = view_get_buffer(app, view, 0);
-  set_command_map_id(app, buffer, mapid);
 }
 
 internal b32 
@@ -125,6 +108,8 @@ void custom_layer_init(Application_Links *app)
   
   SelectMap(code_map_id);
   ParentMap(insert_mapid);
+  
+  app_set_maps(app, command_mapid, insert_mapid);
 }
 
 #endif

@@ -95,6 +95,7 @@
 #define custom_view_set_selection_begin_sig() b32 custom_view_set_selection_begin(Application_Links* app, View_ID view_id, Buffer_Seek seek)
 #define custom_view_set_selection_end_sig() b32 custom_view_set_selection_end(Application_Links* app, View_ID view_id, Buffer_Seek seek)
 #define custom_view_set_state_sig() b32 custom_view_set_state(Application_Links* app, View_ID view_id, View_State_ID state)
+#define custom_app_set_maps_sig() void custom_app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid)
 #define custom_view_quit_ui_sig() b32 custom_view_quit_ui(Application_Links* app, View_ID view_id)
 #define custom_view_set_buffer_sig() b32 custom_view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags)
 #define custom_view_push_context_sig() b32 custom_view_push_context(Application_Links* app, View_ID view_id, View_Context* ctx)
@@ -282,6 +283,7 @@ typedef b32 custom_view_set_mark_type(Application_Links* app, View_ID view_id, B
 typedef b32 custom_view_set_selection_begin_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 typedef b32 custom_view_set_selection_end_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 typedef b32 custom_view_set_state_type(Application_Links* app, View_ID view_id, View_State_ID state);
+typedef void custom_app_set_maps_type(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 typedef b32 custom_view_quit_ui_type(Application_Links* app, View_ID view_id);
 typedef b32 custom_view_set_buffer_type(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
 typedef b32 custom_view_push_context_type(Application_Links* app, View_ID view_id, View_Context* ctx);
@@ -470,6 +472,7 @@ custom_view_set_mark_type *view_set_mark;
 custom_view_set_selection_begin_type *view_set_selection_begin;
 custom_view_set_selection_end_type *view_set_selection_end;
 custom_view_set_state_type *view_set_state;
+custom_app_set_maps_type *app_set_maps;
 custom_view_quit_ui_type *view_quit_ui;
 custom_view_set_buffer_type *view_set_buffer;
 custom_view_push_context_type *view_push_context;
@@ -659,6 +662,7 @@ internal b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek 
 internal b32 view_set_selection_begin(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 internal b32 view_set_selection_end(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 internal b32 view_set_state(Application_Links* app, View_ID view_id, View_State_ID state);
+internal void app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 internal b32 view_quit_ui(Application_Links* app, View_ID view_id);
 internal b32 view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
 internal b32 view_push_context(Application_Links* app, View_ID view_id, View_Context* ctx);
@@ -848,6 +852,7 @@ global custom_view_set_mark_type *view_set_mark = 0;
 global custom_view_set_selection_begin_type *view_set_selection_begin = 0;
 global custom_view_set_selection_end_type *view_set_selection_end = 0;
 global custom_view_set_state_type *view_set_state = 0;
+global custom_app_set_maps_type *app_set_maps = 0;
 global custom_view_quit_ui_type *view_quit_ui = 0;
 global custom_view_set_buffer_type *view_set_buffer = 0;
 global custom_view_push_context_type *view_push_context = 0;

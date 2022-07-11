@@ -12,7 +12,9 @@
 
 //////////////////////////////
 ---------- TODOS -------------
-[ ] - Jumping to definition changes the Keybinds somehow? Vim command -> jump -> Insert, can't change back to Command again (Bug)
+
+[ ] - Have setting to sync states between views so that when you switch panels, you're view state gets
+      carried over
 
 [ ] - Assign more keybinds
 
@@ -20,6 +22,7 @@
 			i.e. all local variables to a function are highlighted in pink, but nowhere else?
 
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
+  [ ] - Add CodeIndexNote_Forward_Declare type
 	[x] - Add CodeIndexNote_Enum Type
   [ ] - Add CodeIndexNote_TODO type
 	[ ] - Add CodeIndexNote_NOTE type
@@ -50,6 +53,14 @@
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
 
+[x] - Jumping to definition changes the Keybinds somehow? Vim command -> jump -> 
+      Insert, can't change back to Command again (Bug)
+      (fixed) -> "can't change back again" was due to the view being in command mode
+      but the buffer associated with the view was in insert mode, there's an if check in
+      the "change_to_mode" signatures that prevented you from switching back.
+      Changed a few api functions to ensure that the correct map is set based on the view->state
+      changed_places -> "view_set_file", "view_set_active", and in 4ed.cpp where mouse_panel is set as the active_panel
+
 [x] - Bug: BIG SLOWDOWN on large text files??? Made a completely new 4ed source build
       with no custom code, and the performance is out the window. We are wasting a lot of work every 
       frame
@@ -77,3 +88,4 @@
 [x] - Bug?: When you open a new file it sets text mode 
   		see custom\4coder_default_hooks.cpp -> default_begin_buffer
 			we should probably only do this on startup
+
