@@ -444,7 +444,8 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
   
   // NOTE(allen): Line highlight
   b32 highlight_line_at_cursor = def_get_config_b32(vars_save_string_lit("highlight_line_at_cursor"));
-  if (highlight_line_at_cursor && is_active_view)
+  b32 *is_selecting = view_get_is_selecting(app, view_id);
+  if (highlight_line_at_cursor && is_active_view && !(*is_selecting))
   {
     i64 line_number = get_line_number_from_pos(app, buffer, cursor_pos);
     draw_line_highlight(app, text_layout_id, line_number, fcolor_id(defcolor_highlight_cursor_line));
@@ -585,13 +586,11 @@ default_render_caller(Application_Links *app, Frame_Info frame_info, View_ID vie
   // draw_rectangle_fcolor(app, {100.0f, 100.0f, 200.0f, 200.0f}, 0.f, fcolor_id(defcolor_highlight_cursor_line));
   // draw_rectangle(app, {100.0f, 100.0f, 200.0f, 200.0f}, 0.f, 0xFF1E1E2E);
   
-  i64 selection_begin_pos = view_get_selection_begin(app, view_id);
-  i64 selection_end_pos = view_get_selection_end(app, view_id);
-  
-  if (selection_begin_pos != selection_end_pos)
+  b32 *is_selecting = view_get_is_selecting(app, view_id);
+  if(*is_selecting)
   {
-    i64 start_line_number = get_line_number_from_pos(app, buffer, selection_begin_pos);
-    i64 end_line_number = get_line_number_from_pos(app, buffer, selection_end_pos);
+    i64 start_line_number = view_get_selection_begin(app, view_id);
+    i64 end_line_number = view_get_selection_end(app, view_id);
     
     if (start_line_number > end_line_number)
     {
@@ -605,7 +604,9 @@ default_render_caller(Application_Links *app, Frame_Info frame_info, View_ID vie
          line_number <= end_line_number;
          line_number += 1)
     {
-      draw_line_highlight(app, text_layout_id, line_number, fcolor_id(defcolor_highlight_cursor_line));
+      // NOTE(nates):                  r     g     b     a
+      FColor color = fcolor_argb(V4f32(1.0f, 0.0f, 0.0f, 0.2f));
+      draw_line_highlight(app, text_layout_id, line_number, color);//fcolor_id(defcolor_highlight_cursor_line));
     }
   }
   

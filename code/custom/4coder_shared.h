@@ -7,7 +7,9 @@
 struct Mark_History
 {
   i64 marks[MARK_HISTORY_ARRAY_COUNT];
-  i32 recent_index;
+  i32 recent_index; // NOTE(nates): This is the most recent mark set
+  i32 rel_index; // NOTE(nates): for this mark index, this is the rel index used by the user
+  // to index through the mark history
   i32 mark_count;
 };
 

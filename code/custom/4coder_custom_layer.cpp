@@ -13,7 +13,7 @@ internal void
 set_global_rel_mark_index(Application_Links *app, View_ID view)
 {
   Mark_History *history = view_get_mark_history(app, view);
-  global_relative_mark_history_index = history->recent_index;
+  history->rel_index = history->recent_index;
 }
 
 internal void

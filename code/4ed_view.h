@@ -70,9 +70,10 @@ struct View{
   
   File_Edit_Positions edit_pos_;
   i64 mark;
-  i64 selectionBegin;
-  i64 selectionEnd;
-  Mark_History mark_history;
+  
+  b32 is_selecting;
+  i64 selection_begin;
+  i64 selection_end;
   
   f32 preferred_x;
   Vec2_f32 cursor_margin;

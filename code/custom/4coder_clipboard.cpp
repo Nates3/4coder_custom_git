@@ -111,8 +111,32 @@ CUSTOM_COMMAND_SIG(copy)
 CUSTOM_DOC("Copy the text in the range from the cursor to the mark onto the clipboard.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
+  Range_i64 range = {};
+  
+  b32 *is_selecting = view_get_is_selecting(app, view);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-  Range_i64 range = get_view_range(app, view);
+  if(*is_selecting)
+  {
+    i64 min_line = view_get_selection_begin(app, view);
+    i64 max_line = view_get_selection_end(app, view);
+    
+    if(min_line > max_line)
+    {
+      min_line ^= max_line; 
+      max_line ^= min_line;
+      min_line ^= max_line;
+    }
+    
+    Range_i64 line_range = {min_line, max_line};
+    range = get_pos_range_from_line_range(app, buffer, line_range);
+    
+    *is_selecting = false;
+  }
+  else
+  {
+    range = get_view_range(app, view);
+  }
+  
   clipboard_post_buffer_range(app, 0, buffer, range);
 }
 
@@ -120,8 +144,32 @@ CUSTOM_COMMAND_SIG(cut)
 CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipboard.")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
+  Range_i64 range = {};
+  
+  b32 *is_selecting = view_get_is_selecting(app, view);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-  Range_i64 range = get_view_range(app, view);
+  if(*is_selecting)
+  {
+    i64 min_line = view_get_selection_begin(app, view);
+    i64 max_line = view_get_selection_end(app, view);
+    
+    if(min_line > max_line)
+    {
+      min_line ^= max_line; 
+      max_line ^= min_line;
+      min_line ^= max_line;
+    }
+    
+    Range_i64 line_range = {min_line, max_line};
+    range = get_pos_range_from_line_range(app, buffer, line_range);
+    
+    *is_selecting = false;
+  }
+  else
+  {
+    range = get_view_range(app, view);
+  }
+  
   if (clipboard_post_buffer_range(app, 0, buffer, range)){
     buffer_replace_range(app, buffer, range, string_u8_empty);
   }

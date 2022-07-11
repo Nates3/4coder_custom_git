@@ -357,7 +357,7 @@ change_active_panel_send_command(Application_Links *app, Custom_Command_Function
   }
   
   Mark_History *history = view_get_mark_history(app, view);
-  global_relative_mark_history_index = history->recent_index;
+  history->rel_index = history->recent_index;
 }
 
 CUSTOM_COMMAND_SIG(change_active_panel)

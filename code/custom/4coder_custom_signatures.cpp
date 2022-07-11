@@ -101,13 +101,22 @@ CUSTOM_DOC("Selects entire lines")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-  i64 cursor_pos = view_get_cursor_pos(app, view);
-  i64 line_number = get_line_number_from_pos(app, buffer, cursor_pos);
-  i64 line_end_pos = get_line_end_pos(app, buffer, line_number);
-  i64 line_start_pos = get_line_start_pos(app, buffer, line_number);
   
-  view_set_cursor_and_preferred_x(app, view, seek_pos(line_end_pos));
-  view_set_mark(app, view, seek_pos(line_start_pos));
+  b32 *is_selecting = view_get_is_selecting(app, view);
+  if(!(*is_selecting))
+  {
+    *is_selecting = true;
+    i64 cursor_pos = view_get_cursor_pos(app, view);
+    i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
+    
+    view_set_selection_begin(app, view, cursor_line);
+    view_set_selection_end(app, view, cursor_line);
+  }
+  else
+  {
+    *is_selecting = false;
+    // NOTE(nates): Let copy && cut handle this
+  }
 }
 
 CUSTOM_COMMAND_SIG(combine_two_lines)
@@ -159,14 +168,10 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
   Code_Index_Note_Kind enum_kind = CodeIndexNote_Enum;
   
   
-  String_Const_u8 types_str = SCu8("types");
-  String_Const_u8 functions_str = SCu8("functions");
-  String_Const_u8 macros_str = SCu8("macros");
-  String_Const_u8 enums_str = SCu8("enums");
-  lister_add_item(sort_lister, types_str, SCu8(""), &type_kind, 0);
-  lister_add_item(sort_lister, functions_str, SCu8(""), &function_kind, 0);
-  lister_add_item(sort_lister, macros_str, SCu8(""), &macro_kind, 0);
-  lister_add_item(sort_lister, enums_str, SCu8(""), &enum_kind, 0);
+  lister_add_item(sort_lister, SCu8("types"), SCu8(""), &type_kind, 0);
+  lister_add_item(sort_lister, SCu8("functions"), SCu8(""), &function_kind, 0);
+  lister_add_item(sort_lister, SCu8("macros"), SCu8(""), &macro_kind, 0);
+  lister_add_item(sort_lister, SCu8("enums"), SCu8(""), &enum_kind, 0);
   
   Lister_Result sort_result = run_lister(app, sort_lister);
   if (!sort_result.canceled && 
@@ -256,10 +261,10 @@ CUSTOM_DOC("moves forward in mark history if user has searched backwards in hist
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mark_History *mark_history = view_get_mark_history(app, view);
   
-  if (global_relative_mark_history_index < 0)
+  if (mark_history->rel_index < 0)
   {
-    global_relative_mark_history_index++;
-    i32 index = mark_history->recent_index + global_relative_mark_history_index;
+    mark_history->rel_index++;
+    i32 index = mark_history->recent_index + mark_history->rel_index;
     if (index < 0)
     {
       index += MARK_HISTORY_ARRAY_COUNT;
@@ -276,10 +281,10 @@ CUSTOM_DOC("moves backward in mark history")
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mark_History *mark_history = view_get_mark_history(app, view);
   
-  if (global_relative_mark_history_index > -(mark_history->mark_count - 1))
+  if (mark_history->rel_index > -(mark_history->mark_count - 1))
   {
-    global_relative_mark_history_index--;
-    i32 index = mark_history->recent_index + global_relative_mark_history_index;
+    mark_history->rel_index--;
+    i32 index = mark_history->recent_index + mark_history->rel_index;
     if (index < 0)
     {
       index += MARK_HISTORY_ARRAY_COUNT;

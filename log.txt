@@ -1,5 +1,9 @@
 
 
+(nates): added line selecting, copy && cut set select_mode to false, shift+v toggles it
+(nates): Fixed mark history to be stored per file, _not_ per view && added rel_index to mark_history
+
+date-> 7/11/22
 
 (nates): .gitignore now ignores all the app_parser.exe files
 (nates): fixed bug that caused crash when typing in wrong thing in jump_to_definition_sorted command

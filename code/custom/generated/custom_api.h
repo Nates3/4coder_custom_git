@@ -92,8 +92,9 @@
 #define custom_view_get_mark_history_sig() Mark_History* custom_view_get_mark_history(Application_Links* app, View_ID view_id)
 #define custom_view_record_mark_sig() void custom_view_record_mark(Application_Links* app, View_ID view_id)
 #define custom_view_set_mark_sig() b32 custom_view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek)
-#define custom_view_set_selection_begin_sig() b32 custom_view_set_selection_begin(Application_Links* app, View_ID view_id, Buffer_Seek seek)
-#define custom_view_set_selection_end_sig() b32 custom_view_set_selection_end(Application_Links* app, View_ID view_id, Buffer_Seek seek)
+#define custom_view_get_is_selecting_sig() b32* custom_view_get_is_selecting(Application_Links* app, View_ID view_id)
+#define custom_view_set_selection_begin_sig() void custom_view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num)
+#define custom_view_set_selection_end_sig() void custom_view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num)
 #define custom_view_set_state_sig() b32 custom_view_set_state(Application_Links* app, View_ID view_id, View_State_ID state)
 #define custom_app_set_maps_sig() void custom_app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid)
 #define custom_view_quit_ui_sig() b32 custom_view_quit_ui(Application_Links* app, View_ID view_id)
@@ -280,8 +281,9 @@ typedef b32 custom_view_set_buffer_scroll_type(Application_Links* app, View_ID v
 typedef Mark_History* custom_view_get_mark_history_type(Application_Links* app, View_ID view_id);
 typedef void custom_view_record_mark_type(Application_Links* app, View_ID view_id);
 typedef b32 custom_view_set_mark_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
-typedef b32 custom_view_set_selection_begin_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
-typedef b32 custom_view_set_selection_end_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
+typedef b32* custom_view_get_is_selecting_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_set_selection_begin_type(Application_Links* app, View_ID view_id, i64 line_num);
+typedef void custom_view_set_selection_end_type(Application_Links* app, View_ID view_id, i64 line_num);
 typedef b32 custom_view_set_state_type(Application_Links* app, View_ID view_id, View_State_ID state);
 typedef void custom_app_set_maps_type(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 typedef b32 custom_view_quit_ui_type(Application_Links* app, View_ID view_id);
@@ -469,6 +471,7 @@ custom_view_set_buffer_scroll_type *view_set_buffer_scroll;
 custom_view_get_mark_history_type *view_get_mark_history;
 custom_view_record_mark_type *view_record_mark;
 custom_view_set_mark_type *view_set_mark;
+custom_view_get_is_selecting_type *view_get_is_selecting;
 custom_view_set_selection_begin_type *view_set_selection_begin;
 custom_view_set_selection_end_type *view_set_selection_end;
 custom_view_set_state_type *view_set_state;
@@ -659,8 +662,9 @@ internal b32 view_set_buffer_scroll(Application_Links* app, View_ID view_id, Buf
 internal Mark_History* view_get_mark_history(Application_Links* app, View_ID view_id);
 internal void view_record_mark(Application_Links* app, View_ID view_id);
 internal b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek);
-internal b32 view_set_selection_begin(Application_Links* app, View_ID view_id, Buffer_Seek seek);
-internal b32 view_set_selection_end(Application_Links* app, View_ID view_id, Buffer_Seek seek);
+internal b32* view_get_is_selecting(Application_Links* app, View_ID view_id);
+internal void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
+internal void view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num);
 internal b32 view_set_state(Application_Links* app, View_ID view_id, View_State_ID state);
 internal void app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 internal b32 view_quit_ui(Application_Links* app, View_ID view_id);
@@ -849,6 +853,7 @@ global custom_view_set_buffer_scroll_type *view_set_buffer_scroll = 0;
 global custom_view_get_mark_history_type *view_get_mark_history = 0;
 global custom_view_record_mark_type *view_record_mark = 0;
 global custom_view_set_mark_type *view_set_mark = 0;
+global custom_view_get_is_selecting_type *view_get_is_selecting = 0;
 global custom_view_set_selection_begin_type *view_set_selection_begin = 0;
 global custom_view_set_selection_end_type *view_set_selection_end = 0;
 global custom_view_set_state_type *view_set_state = 0;

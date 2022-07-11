@@ -1183,22 +1183,14 @@ api(custom) function i64
 view_get_selection_begin(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  i64 result = 0;
-  if (api_check_view(view)){
-    result = view->selectionBegin;
-  }
-  return(result);
+  return(view->selection_begin);
 }
 
 api(custom) function i64
 view_get_selection_end(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  i64 result = 0;
-  if (api_check_view(view)){
-    result = view->selectionEnd;
-  }
-  return(result);
+  return(view->selection_end);
 }
 
 api(custom) function View_State_ID
@@ -1665,15 +1657,24 @@ view_set_cursor(Application_Links *app, View_ID view_id, Buffer_Seek seek)
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   b32 result = false;
+  
+  Buffer_Cursor cursor = {};
   if (api_check_view(view)){
     Editing_File *file = view->file;
     Assert(file != 0);
     if (api_check_buffer(file)){
-      Buffer_Cursor cursor = file_compute_cursor(file, seek);
+      cursor = file_compute_cursor(file, seek);
       view_set_cursor(app->tctx, models, view, cursor.pos);
       result = true;
     }
   }
+  
+  if(view->is_selecting)
+  {
+    Buffer_ID buffer = view_get_buffer(app, view_id, Access_ReadVisible);
+    view_set_selection_end(app, view_id, cursor.line);
+  }
+  
   return(result);
 }
 
@@ -1715,7 +1716,7 @@ view_get_mark_history(Application_Links *app, View_ID view_id)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  Mark_History *result = &view->mark_history;
+  Mark_History *result = &view->file->mark_history;
   return(result);
 }
 
@@ -1724,7 +1725,7 @@ view_record_mark(Application_Links *app, View_ID view_id)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  Mark_History *history = &view->mark_history;
+  Mark_History *history = &view->file->mark_history;
   
   history->recent_index += 1;
   if(history->recent_index > MARK_HISTORY_ARRAY_COUNT - 1)
@@ -1761,52 +1762,30 @@ view_set_mark(Application_Links *app, View_ID view_id, Buffer_Seek seek)
   return(result);
 }
 
-api(custom) function b32
-view_set_selection_begin(Application_Links *app, View_ID view_id, Buffer_Seek seek)
+api(custom) function b32 *
+view_get_is_selecting(Application_Links *app, View_ID view_id)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   
-  b32 result = false;
-  if (api_check_view(view)){
-    Editing_File *file = view->file;
-    Assert(file != 0);
-    if (api_check_buffer(file)){
-      if (seek.type != buffer_seek_pos){
-        Buffer_Cursor cursor = file_compute_cursor(file, seek);
-        view->selectionBegin = cursor.pos;
-      }
-      else{
-        view->selectionBegin = seek.pos;
-      }
-      result = true;
-    }
-  }
+  b32 *result = &view->is_selecting;
   return(result);
 }
 
-api(custom) function b32
-view_set_selection_end(Application_Links *app, View_ID view_id, Buffer_Seek seek)
+api(custom) function void
+view_set_selection_begin(Application_Links *app, View_ID view_id, i64 line_num)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  
-  b32 result = false;
-  if (api_check_view(view)){
-    Editing_File *file = view->file;
-    Assert(file != 0);
-    if (api_check_buffer(file)){
-      if (seek.type != buffer_seek_pos){
-        Buffer_Cursor cursor = file_compute_cursor(file, seek);
-        view->selectionEnd = cursor.pos;
-      }
-      else{
-        view->selectionEnd = seek.pos;
-      }
-      result = true;
-    }
-  }
-  return(result);
+  view->selection_begin = line_num;
+}
+
+api(custom) function void
+view_set_selection_end(Application_Links *app, View_ID view_id, i64 line_num)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  view->selection_end = line_num;
 }
 
 api(custom) function b32

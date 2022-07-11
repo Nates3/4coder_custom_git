@@ -3,7 +3,6 @@
 #define FCODER_CUSTOM_VARIABLES_H
 
 global i32 menu_f1_index;
-global i32 global_relative_mark_history_index;
 
 String_ID shared_mapid;
 String_ID command_mapid;
