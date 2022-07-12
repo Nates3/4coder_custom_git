@@ -445,7 +445,7 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
   // NOTE(allen): Line highlight
   b32 highlight_line_at_cursor = def_get_config_b32(vars_save_string_lit("highlight_line_at_cursor"));
   b32 *is_selecting = view_get_is_selecting(app, view_id);
-  if (highlight_line_at_cursor && is_active_view && !(*is_selecting))
+  if (highlight_line_at_cursor && is_active_view && (is_selecting && !(*is_selecting)))
   {
     i64 line_number = get_line_number_from_pos(app, buffer, cursor_pos);
     draw_line_highlight(app, text_layout_id, line_number, fcolor_id(defcolor_highlight_cursor_line));
@@ -587,7 +587,7 @@ default_render_caller(Application_Links *app, Frame_Info frame_info, View_ID vie
   // draw_rectangle(app, {100.0f, 100.0f, 200.0f, 200.0f}, 0.f, 0xFF1E1E2E);
   
   b32 *is_selecting = view_get_is_selecting(app, view_id);
-  if(*is_selecting)
+  if(is_selecting && *is_selecting)
   {
     i64 start_line_number = view_get_selection_begin(app, view_id);
     i64 end_line_number = view_get_selection_end(app, view_id);

@@ -115,7 +115,7 @@ CUSTOM_DOC("Copy the text in the range from the cursor to the mark onto the clip
   
   b32 *is_selecting = view_get_is_selecting(app, view);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-  if(*is_selecting)
+  if(is_selecting && *is_selecting)
   {
     i64 min_line = view_get_selection_begin(app, view);
     i64 max_line = view_get_selection_end(app, view);
@@ -148,7 +148,7 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
   
   b32 *is_selecting = view_get_is_selecting(app, view);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-  if(*is_selecting)
+  if(is_selecting && *is_selecting)
   {
     i64 min_line = view_get_selection_begin(app, view);
     i64 max_line = view_get_selection_end(app, view);

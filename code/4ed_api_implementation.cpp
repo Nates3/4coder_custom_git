@@ -1183,14 +1183,27 @@ api(custom) function i64
 view_get_selection_begin(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  return(view->selection_begin);
+  i64 result = 0;
+  if(api_check_view(view))
+  {
+    result = view->selection_begin;
+  }
+  
+  return(result);
 }
 
 api(custom) function i64
 view_get_selection_end(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  return(view->selection_end);
+  
+  i64 result = 0;
+  if(api_check_view(view))
+  {
+    result = view->selection_end;
+  }
+  
+  return(result);
 }
 
 api(custom) function View_State_ID
@@ -1659,24 +1672,59 @@ view_set_cursor(Application_Links *app, View_ID view_id, Buffer_Seek seek)
   b32 result = false;
   
   Buffer_Cursor cursor = {};
-  if (api_check_view(view)){
+  if (api_check_view(view))
+  {
     Editing_File *file = view->file;
     Assert(file != 0);
-    if (api_check_buffer(file)){
+    if (api_check_buffer(file))
+    {
       cursor = file_compute_cursor(file, seek);
       view_set_cursor(app->tctx, models, view, cursor.pos);
       result = true;
     }
-  }
-  
-  if(view->is_selecting)
-  {
-    Buffer_ID buffer = view_get_buffer(app, view_id, Access_ReadVisible);
-    view_set_selection_end(app, view_id, cursor.line);
+    
+    Mark_History *history = view_get_mark_history(app, view_id);
+    history->rel_index = 1;
+    
+    if(view->is_selecting)
+    {
+      Buffer_ID buffer = view_get_buffer(app, view_id, Access_ReadVisible);
+      view_set_selection_end(app, view_id, cursor.line);
+    }
   }
   
   return(result);
 }
+
+api(custom) function b32
+view_set_cursor_no_set_mark_rel_index(Application_Links *app, View_ID view_id, Buffer_Seek seek)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  b32 result = false;
+  
+  Buffer_Cursor cursor = {};
+  if (api_check_view(view))
+  {
+    Editing_File *file = view->file;
+    Assert(file != 0);
+    if (api_check_buffer(file))
+    {
+      cursor = file_compute_cursor(file, seek);
+      view_set_cursor(app->tctx, models, view, cursor.pos);
+      result = true;
+    }
+    
+    if(view->is_selecting)
+    {
+      Buffer_ID buffer = view_get_buffer(app, view_id, Access_ReadVisible);
+      view_set_selection_end(app, view_id, cursor.line);
+    }
+  }
+  
+  return(result);
+}
+
 
 api(custom) function b32
 view_set_buffer_scroll(Application_Links *app, View_ID view_id, Buffer_Scroll scroll,
@@ -1685,7 +1733,8 @@ view_set_buffer_scroll(Application_Links *app, View_ID view_id, Buffer_Scroll sc
   Models *models = (Models*)app->cmd_context;
   b32 result = false;
   View *view = imp_get_view(models, view_id);
-  if (api_check_view(view)){
+  if (api_check_view(view))
+  {
     Thread_Context *tctx = app->tctx;
     scroll.position = view_normalize_buffer_point(tctx, models, view, scroll.position);
     scroll.target = view_normalize_buffer_point(tctx, models, view, scroll.target);
@@ -1716,7 +1765,13 @@ view_get_mark_history(Application_Links *app, View_ID view_id)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  Mark_History *result = &view->file->mark_history;
+  
+  Mark_History *result = 0;
+  if(api_check_view(view))
+  {
+    result = &view->file->mark_history;
+  }
+  
   return(result);
 }
 
@@ -1725,17 +1780,21 @@ view_record_mark(Application_Links *app, View_ID view_id)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  Mark_History *history = &view->file->mark_history;
-  
-  history->recent_index += 1;
-  if(history->recent_index > MARK_HISTORY_ARRAY_COUNT - 1)
+  if(api_check_view(view))
   {
-    history->recent_index = 0;
+    Mark_History *history = &view->file->mark_history;
+    
+    history->recent_index += 1;
+    if(history->recent_index > MARK_HISTORY_ARRAY_COUNT - 1)
+    {
+      history->recent_index = 0;
+    }
+    history->marks[history->recent_index] = view->mark;
+    
+    history->mark_count++;
+    history->mark_count = clamp_top(history->mark_count, MARK_HISTORY_ARRAY_COUNT);
+    history->rel_index = 0;
   }
-  
-  history->marks[history->recent_index] = view->mark;
-  history->mark_count++;
-  history->mark_count = clamp_top(history->mark_count, MARK_HISTORY_ARRAY_COUNT);
 }
 
 api(custom) function b32
@@ -1768,7 +1827,11 @@ view_get_is_selecting(Application_Links *app, View_ID view_id)
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   
-  b32 *result = &view->is_selecting;
+  b32 *result = 0;
+  if(api_check_view(view))
+  {
+    result = &view->is_selecting;
+  }
   return(result);
 }
 
@@ -1777,7 +1840,10 @@ view_set_selection_begin(Application_Links *app, View_ID view_id, i64 line_num)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  view->selection_begin = line_num;
+  if(api_check_view(view))
+  {
+    view->selection_begin = line_num;
+  }
 }
 
 api(custom) function void
@@ -1785,7 +1851,10 @@ view_set_selection_end(Application_Links *app, View_ID view_id, i64 line_num)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  view->selection_end = line_num;
+  if(api_check_view(view))
+  {
+    view->selection_end = line_num;
+  }
 }
 
 api(custom) function b32

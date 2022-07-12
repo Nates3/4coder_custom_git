@@ -5,6 +5,8 @@
 [ ] - Bug: When opening a lister panel you can't execute any other cammands as if the
 			leave_event_unhandled() function wasn't invoked. 
 
+[ ] - Bug: If you press enter in the messages panel the program just crashes??
+
 [ ] - Bug: Mark history is stored in the View and isn't associated with every individual buffer
       fix it so marks are stored with every buffer and you can change the buffer on your view panel
       without loosing your marks on the previous buffer you were working on

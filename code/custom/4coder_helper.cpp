@@ -228,8 +228,19 @@ view_relative_xy_of_pos(Application_Links *app, View_ID view, i64 base_line, i64
 }
 
 function void
-view_set_cursor_and_preferred_x(Application_Links *app, View_ID view, Buffer_Seek seek){
+view_set_cursor_and_preferred_x(Application_Links *app, View_ID view, Buffer_Seek seek)
+{
   view_set_cursor(app, view, seek);
+  Buffer_Cursor cursor = view_compute_cursor(app, view, seek);
+  Vec2_f32 p = view_relative_xy_of_pos(app, view, cursor.line, cursor.pos);
+  view_set_preferred_x(app, view, p.x);
+}
+
+
+function void
+view_set_cursor_and_preferred_x_no_set_mark_rel_index(Application_Links *app, View_ID view, Buffer_Seek seek)
+{
+  view_set_cursor_no_set_mark_rel_index(app, view, seek);
   Buffer_Cursor cursor = view_compute_cursor(app, view, seek);
   Vec2_f32 p = view_relative_xy_of_pos(app, view, cursor.line, cursor.pos);
   view_set_preferred_x(app, view, p.x);
@@ -255,7 +266,7 @@ function i64
 view_correct_cursor(Application_Links *app, View_ID view){
   i64 pos = view_get_cursor_pos(app, view);
   i64 new_pos = view_set_pos_by_character_delta(app, view, pos, 0);
-  view_set_cursor(app, view, seek_pos(new_pos));
+  view_set_cursor_no_set_mark_rel_index(app, view, seek_pos(new_pos));
   return(new_pos);
 }
 
@@ -2500,7 +2511,7 @@ exec_system_command(Application_Links *app, View_ID view, Buffer_Identifier buff
       if (set_buffer_system_command(app, child_process_id, buffer_attach_id, flags)){
         if (view != 0){
           view_set_buffer(app, view, buffer_attach_id, 0);
-          view_set_cursor(app, view, seek_pos(0));
+          view_set_cursor_no_set_mark_rel_index(app, view, seek_pos(0));
           //view_state_set_mapid(app, view);
         }
       }

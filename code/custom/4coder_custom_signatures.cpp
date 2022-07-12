@@ -103,19 +103,22 @@ CUSTOM_DOC("Selects entire lines")
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
   
   b32 *is_selecting = view_get_is_selecting(app, view);
-  if(!(*is_selecting))
+  if(is_selecting)
   {
-    *is_selecting = true;
-    i64 cursor_pos = view_get_cursor_pos(app, view);
-    i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
-    
-    view_set_selection_begin(app, view, cursor_line);
-    view_set_selection_end(app, view, cursor_line);
-  }
-  else
-  {
-    *is_selecting = false;
-    // NOTE(nates): Let copy && cut handle this
+    if(!(*is_selecting))
+    {
+      *is_selecting = true;
+      i64 cursor_pos = view_get_cursor_pos(app, view);
+      i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
+      
+      view_set_selection_begin(app, view, cursor_line);
+      view_set_selection_end(app, view, cursor_line);
+    }
+    else
+    {
+      *is_selecting = false;
+      // NOTE(nates): Let copy && cut handle this
+    }
   }
 }
 
@@ -261,9 +264,18 @@ CUSTOM_DOC("moves forward in mark history if user has searched backwards in hist
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mark_History *mark_history = view_get_mark_history(app, view);
   
-  if (mark_history->rel_index < 0)
+  if (mark_history->rel_index <= 1)
   {
-    mark_history->rel_index++;
+    if(mark_history->rel_index == 1)
+    {
+      mark_history->rel_index = 0;
+    }
+    
+    if(mark_history->rel_index < 0)
+    {
+      mark_history->rel_index++;
+    }
+    
     i32 index = mark_history->recent_index + mark_history->rel_index;
     if (index < 0)
     {
@@ -271,7 +283,7 @@ CUSTOM_DOC("moves forward in mark history if user has searched backwards in hist
     }
     
     i64 mark_pos = mark_history->marks[index];
-    view_set_cursor_and_preferred_x(app, view, seek_pos(mark_pos));
+    view_set_cursor_and_preferred_x_no_set_mark_rel_index(app, view, seek_pos(mark_pos));
   }
 }
 
@@ -281,9 +293,13 @@ CUSTOM_DOC("moves backward in mark history")
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mark_History *mark_history = view_get_mark_history(app, view);
   
-  if (mark_history->rel_index > -(mark_history->mark_count - 1))
+  if (mark_history->rel_index > -mark_history->mark_count)
   {
-    mark_history->rel_index--;
+    if(mark_history->rel_index > -mark_history->mark_count + 1)
+    {
+      mark_history->rel_index--;
+    }
+    
     i32 index = mark_history->recent_index + mark_history->rel_index;
     if (index < 0)
     {
@@ -291,6 +307,6 @@ CUSTOM_DOC("moves backward in mark history")
     }
     
     i64 mark_pos = mark_history->marks[index];
-    view_set_cursor_and_preferred_x(app, view, seek_pos(mark_pos));
+    view_set_cursor_and_preferred_x_no_set_mark_rel_index(app, view, seek_pos(mark_pos));
   }
 }

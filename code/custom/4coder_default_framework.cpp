@@ -355,9 +355,6 @@ change_active_panel_send_command(Application_Links *app, Custom_Command_Function
   if (custom_func != 0){
     view_enqueue_command_function(app, view, custom_func);
   }
-  
-  Mark_History *history = view_get_mark_history(app, view);
-  history->rel_index = history->recent_index;
 }
 
 CUSTOM_COMMAND_SIG(change_active_panel)

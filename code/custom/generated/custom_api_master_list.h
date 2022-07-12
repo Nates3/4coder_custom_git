@@ -88,6 +88,7 @@ api(custom) function Buffer_Cursor view_compute_cursor(Application_Links* app, V
 api(custom) function b32 view_set_camera_bounds(Application_Links* app, View_ID view_id, Vec2_f32 margin, Vec2_f32 push_in_multiplier);
 api(custom) function b32 view_get_camera_bounds(Application_Links* app, View_ID view_id, Vec2_f32* margin, Vec2_f32* push_in_multiplier);
 api(custom) function b32 view_set_cursor(Application_Links* app, View_ID view_id, Buffer_Seek seek);
+api(custom) function b32 view_set_cursor_no_set_mark_rel_index(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 api(custom) function b32 view_set_buffer_scroll(Application_Links* app, View_ID view_id, Buffer_Scroll scroll, Set_Buffer_Scroll_Rule rule);
 api(custom) function Mark_History* view_get_mark_history(Application_Links* app, View_ID view_id);
 api(custom) function void view_record_mark(Application_Links* app, View_ID view_id);

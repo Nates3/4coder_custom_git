@@ -29,7 +29,8 @@
 ////////////////////////////////
 
 int
-main(int argc, char **argv){
+main(int argc, char **argv)
+{
   Arena arena = make_arena_malloc();
   
   if (argc < 2){
@@ -55,10 +56,33 @@ main(int argc, char **argv){
     }
   }
   
-  for (API_Definition *node = list.first;
-       node != 0;
-       node = node->next){
-    api_definition_generate_api_includes(&arena, node, GeneratedGroup_Custom, APIGeneration_NoAPINameOnCallables);
+  // NOTE(nates): the api_parser should be located in the misc directory
+  String_Const_u8 exe_location = SCu8((u8 *)argv[0]);
+  String_Const_u8 repo_dir = string_remove_front_folder_of_path(string_remove_front_folder_of_path(exe_location));
+  
+  u8 buffer[260] = {};
+  for(u32 index = 0;
+      index < repo_dir.size;
+      ++index)
+  {
+    buffer[index] = repo_dir.str[index];
+  }
+  
+  String_u8 code_partial = Su8(buffer, repo_dir.size, sizeof(buffer));
+  if(string_append(&code_partial, SCu8("code\\")))
+  {
+    String_Const_u8 code_directory = code_partial.string;
+    for (API_Definition *node = list.first;
+         node != 0;
+         node = node->next){
+      api_definition_generate_api_includes(&arena, node, GeneratedGroup_Custom, 
+                                           APIGeneration_NoAPINameOnCallables,
+                                           code_directory);
+    }
+  }
+  else
+  {
+    fprintf(stderr, "couldn't append code location to repo_directory");
   }
 }
 
