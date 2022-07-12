@@ -47,6 +47,7 @@ enum{
   CodeIndexNote_Function,
   CodeIndexNote_Macro,
   CodeIndexNote_Enum,
+  CodeIndexNote_Forward_Declaration,
   CodeIndexNote_4coderCommand,
 };
 

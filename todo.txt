@@ -5,8 +5,6 @@
 [ ] - Bug: When opening a lister panel you can't execute any other cammands as if the
 			leave_event_unhandled() function wasn't invoked. 
 
-[ ] - Bug: If you press enter in the messages panel the program just crashes??
-
 [ ] - Bug: Mark history is stored in the View and isn't associated with every individual buffer
       fix it so marks are stored with every buffer and you can change the buffer on your view panel
       without loosing your marks on the previous buffer you were working on
@@ -16,7 +14,7 @@
 ---------- TODOS -------------
 
 [ ] - Have setting to sync states between views so that when you switch panels, you're view state gets
-      carried over
+      carried over so it's only if you ever had one mode across all panels
 
 [ ] - Assign more keybinds
 
@@ -24,7 +22,7 @@
 			i.e. all local variables to a function are highlighted in pink, but nowhere else?
 
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
-  [ ] - Add CodeIndexNote_Forward_Declare type
+  [x] - Add CodeIndexNote_Forward_Declarition type
 	[x] - Add CodeIndexNote_Enum Type
   [ ] - Add CodeIndexNote_TODO type
 	[ ] - Add CodeIndexNote_NOTE type
@@ -32,12 +30,11 @@
 	[ ] - Add CodeIndexNote_Global_Variable type
 	[ ] - Add CodeIndexNote_Operator_Type for syntax hilighting *+-=\%#!~&
 
-[ ] - Implement Shift + V selection in visual mode
-  [ ] - Set markStart, markEnd
-				could store as line_num_begin, line_num_end
-				then if you're in select_line_mode, commands like copy / cut
-				could change behavior
-  [ ] - draw_rectangle for every line between markStart and markEnd
+[ ] - Forward Declarations hilighted white, but overrided to red if definition is found
+
+[ ] - Add functionality for CodeIndexNote_Forward_Declaration to include structs / enums
+
+[ ] - Add functionality for jump_to_definition to note the function params for overloaded functions
 
 [ ] - Implement render text that's above / on line ScopeBegin 
 			at the matching ScopeClose
@@ -49,11 +46,20 @@
 
 [ ] - Add functionality to change syntax coloring using theme-name.4coder file
 
-[ ] - ? Find the code that is used by all things that change
-			the active view, and insert set_modal and record_mark functions there
-
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+
+[x] - Implement Shift + V selection in visual mode
+  [x] - Set markStart, markEnd
+				could store as line_num_begin, line_num_end
+				then if you're in select_line_mode, commands like copy / cut
+				could change behavior
+  [x] - draw_rectangle for every line between markStart and markEnd
+
+[x] - Bug: If you press enter in the messages panel the program just crashes??
+
+[x] - ? Find the code that is used by all things that change
+			the active view, and insert set_modal and record_mark functions there
 
 [x] - Jumping to definition changes the Keybinds somehow? Vim command -> jump -> 
       Insert, can't change back to Command again (Bug)

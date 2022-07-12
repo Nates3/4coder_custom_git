@@ -1,6 +1,9 @@
 
+(nates): Added forward_declare CodeIndexNote for functions, jump_to_definition_at_cursor won't
+         jump to forward_declarations anymore
 (nates): Fixed api_parser.exe baking in code directory when building it.
          Now it dynamically makes the code directory
+(nates): Fixed pressing return in *messages* panel to crash program
 (nates): Delete can now use line select mode.
 (nates): Reworked goto_next_mark && goto_prev_mark to have better controls.
 (nates): Added line selecting, copy && cut set select_mode to false, shift+v toggles it.

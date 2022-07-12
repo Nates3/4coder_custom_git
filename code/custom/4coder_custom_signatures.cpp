@@ -169,12 +169,15 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
   Code_Index_Note_Kind function_kind = CodeIndexNote_Function;
   Code_Index_Note_Kind macro_kind = CodeIndexNote_Macro;
   Code_Index_Note_Kind enum_kind = CodeIndexNote_Enum;
+  Code_Index_Note_Kind forward_declare_kind = CodeIndexNote_Forward_Declaration;
   
   
   lister_add_item(sort_lister, SCu8("types"), SCu8(""), &type_kind, 0);
   lister_add_item(sort_lister, SCu8("functions"), SCu8(""), &function_kind, 0);
   lister_add_item(sort_lister, SCu8("macros"), SCu8(""), &macro_kind, 0);
   lister_add_item(sort_lister, SCu8("enums"), SCu8(""), &enum_kind, 0);
+  lister_add_item(sort_lister, SCu8("forward_declaration"), SCu8(""), &forward_declare_kind, 0);
+  
   
   Lister_Result sort_result = run_lister(app, sort_lister);
   if (!sort_result.canceled && 

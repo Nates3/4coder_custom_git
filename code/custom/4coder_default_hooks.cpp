@@ -367,25 +367,27 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
           case CodeIndexNote_Type:
           {
             argb = 0xffedb211;
-          }
-          break;
+          }break;
           
           case CodeIndexNote_Function:
           {
             argb = 0xffde451f;
-          }
-          break;
+          }break;
           
           case CodeIndexNote_Macro:
           {
             argb = 0xff2895c7;
-          }
-          break;
+          }break;
           
           case CodeIndexNote_Enum:
           {
             argb = 0xff68AA32;
-          }
+          } break;
+          
+          case CodeIndexNote_Forward_Declaration:
+          {
+            argb = 0xffde451f;
+          } break;
         }
         
         paint_text_color(app, text_layout_id, Ii64_size(token->pos, token->size), argb);
