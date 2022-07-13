@@ -4,7 +4,6 @@
 
 global i32 menu_f1_index;
 
-String_ID shared_mapid;
 String_ID command_mapid;
 String_ID insert_mapid;
 

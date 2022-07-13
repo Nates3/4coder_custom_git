@@ -295,7 +295,7 @@ draw_background_and_margin(Application_Links *app, View_ID view, FColor margin, 
 function Rect_f32
 draw_background_and_margin(Application_Links *app, View_ID view, b32 is_active_view, f32 width)
 {
-  view_state_set_margin_color(app, view);
+  modal_state_set_margin_color(app, view);
   FColor margin_color = get_panel_margin_color(is_active_view?UIHighlight_Active:UIHighlight_None);
   return(draw_background_and_margin(app, view, margin_color, fcolor_id(defcolor_back), width));
 }
@@ -303,7 +303,7 @@ draw_background_and_margin(Application_Links *app, View_ID view, b32 is_active_v
 function Rect_f32
 draw_background_and_margin(Application_Links *app, View_ID view, b32 is_active_view)
 {
-  view_state_set_margin_color(app, view);
+  modal_state_set_margin_color(app, view);
   FColor margin_color = get_panel_margin_color(is_active_view?UIHighlight_Active:UIHighlight_None);
   return(draw_background_and_margin(app, view, margin_color, fcolor_id(defcolor_back), 3.f));
 }

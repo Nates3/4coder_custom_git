@@ -1,4 +1,21 @@
 
+
+
+
+////////////////////////
+date-> 7/12/22
+
+(nates): Got rid of shared_mapid keymap, global_mapid already suited that role and because we were
+         using it, listers wouldn't be able to see the shared bindings because it grabs 
+         and stores the mapid that is set in the "View_Context" (which I assume is the global_mapid)               during lister init ("begin_lister" function).
+
+(nates): Changed mapid sync code to support global_mode_state 
+         (you can set is_global_modal_state in custom layer)
+(nates): Added b32 is_global_modal_state and global_model_state to app->cmd_context
+
+///////////////////////
+date-> 7/11/22
+
 (nates): Added forward_declare CodeIndexNote for functions, jump_to_definition_at_cursor won't
          jump to forward_declarations anymore
 (nates): Fixed api_parser.exe baking in code directory when building it.
@@ -9,11 +26,11 @@
 (nates): Added line selecting, copy && cut set select_mode to false, shift+v toggles it.
 (nates): Fixed mark history to be stored per file, _not_ per view && added rel_index to mark_history.
 
-date-> 7/11/22
+///////////////////////
+date-> 7/10/22
 
 (nates): .gitignore now ignores all the app_parser.exe files.
 (nates): Fixed bug that caused crash when typing in wrong thing in jump_to_definition_sorted command.
 (nates): Handled cases that caused desync between the view->mapid_state && the mapid on the view's buffer.
 (nates): Added "command_mapid" and "insert_mapid" to models && app_set_maps function.
 
-date-> 7/10/22

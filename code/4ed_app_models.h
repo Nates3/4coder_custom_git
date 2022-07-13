@@ -51,9 +51,10 @@ struct Model_Wind_Down_Co{
 
 struct Models
 {
+  b32 is_global_modal_state;
+  Modal_State_ID global_modal_state;
   i64 command_mapid;
   i64 insert_mapid;
-  
   
   Arena arena_;
   Arena *arena;

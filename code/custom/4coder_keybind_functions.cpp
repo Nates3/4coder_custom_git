@@ -73,8 +73,7 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(combine_two_lines, KeyCode_J, KeyCode_Shift);
   Bind(undo, KeyCode_U);
   Bind(redo, KeyCode_R, KeyCode_Control);
-  Bind(change_to_text_mode, KeyCode_A);
-  Bind(change_to_text_mode_2, KeyCode_I);
+  Bind(change_to_insert_mode, KeyCode_A);
   BindTextInput(insert_return);
   Bind(auto_indent_range, KeyCode_F, KeyCode_Shift);
   Bind(search, KeyCode_F);
@@ -120,6 +119,9 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(center_view, KeyCode_Period, KeyCode_Control);
   Bind(save, KeyCode_S, KeyCode_Control);
   Bind(save_all_dirty_buffers, KeyCode_S, KeyCode_Control, KeyCode_Shift);
+  
+  Bind(page_up, KeyCode_PageUp);
+  Bind(page_down, KeyCode_PageDown);
   
   BindMouse(control_plus_click_jump_to_definition, MouseCode_Left, KeyCode_Control);
   BindMouse(click_set_cursor_and_mark, MouseCode_Left);
@@ -178,16 +180,17 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(query_replace, KeyCode_O);
   Bind(replace_in_range, KeyCode_O, KeyCode_Control);
   
+  Bind(move_line_up, KeyCode_PageUp, KeyCode_Alt);
+  Bind(move_line_down, KeyCode_PageDown, KeyCode_Alt);
+  
   Bind(delete_range, KeyCode_E);
   Bind(delete_line, KeyCode_E, KeyCode_Alt);
-  //Bind(select_entire_line, KeyCode_J, KeyCode_Shift);
+  Bind(select_lines, KeyCode_J, KeyCode_Shift);
   Bind(search, KeyCode_U);
   Bind(reverse_search, KeyCode_U, KeyCode_Shift);
-  //Bind(combine_two_lines, KeyCode_H, KeyCode_Shift);
   Bind(undo, KeyCode_Semicolon);
   Bind(redo, KeyCode_Semicolon, KeyCode_Shift);
-  Bind(change_to_text_mode, KeyCode_A);
-  //Bind(change_to_text_mode_2, KeyCode_I);
+  Bind(change_to_insert_mode, KeyCode_A);
   BindTextInput(insert_return);
   
   Bind(move_up, KeyCode_C);

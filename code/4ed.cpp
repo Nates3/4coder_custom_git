@@ -666,17 +666,29 @@ App_Step_Sig(app_step){
               }
               
               i64 mapid = 0;
-              switch(view->state)
+              Modal_State_ID modal_state;
+              if(*app_get_is_global_modal_state_ptr(app))
               {
-                case View_State_Insert:
+                modal_state = *app_get_global_modal_state_ptr(app);
+              }
+              else
+              {
+                modal_state = view->modal_state;
+              }
+              
+              switch(modal_state)
+              {
+                case Modal_State_Insert:
                 {
                   mapid = models->insert_mapid;
                 } break;
                 
-                case View_State_Command:
+                case Modal_State_Command:
                 {
                   mapid = models->command_mapid;
                 } break;
+                
+                InvalidDefaultCase;
               }
               
               *map_id_ptr = mapid;
@@ -836,7 +848,8 @@ App_Step_Sig(app_step){
   
   // TODO(allen): This is dumb. Let's rethink view cleanup strategy.
   // NOTE(allen): wind down coroutines
-  for (;;){
+  for (;;)
+  {
     Model_Wind_Down_Co *node = models->wind_down_stack;
     if (node == 0){
       break;
@@ -844,7 +857,8 @@ App_Step_Sig(app_step){
     sll_stack_pop(models->wind_down_stack);
     Coroutine *co = node->co;
     
-    for (i32 j = 0; co != 0; j += 1){
+    for (i32 j = 0; co != 0; j += 1)
+    {
       Co_In in = {};
       in.user_input.abort = true;
       Co_Out ignore = {};

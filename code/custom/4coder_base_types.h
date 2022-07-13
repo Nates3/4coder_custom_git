@@ -294,6 +294,7 @@ enum{
 
 #define AssertImplies(a,b) Assert(!(a) || (b))
 #define InvalidPath AssertMessage("invalid path")
+#define InvalidDefaultCase default: { InvalidPath; } break
 #define NotImplemented AssertMessage("not implemented")
 #define DontCompile NoSeriouslyDontCompile
 

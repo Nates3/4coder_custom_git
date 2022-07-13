@@ -516,17 +516,29 @@ view_set_file(Thread_Context *tctx, Models *models, View *view, Editing_File *fi
     }
     
     i64 mapid = 0;
-    switch(view->state)
+    Modal_State_ID modal_state;
+    if(*app_get_is_global_modal_state_ptr(&app))
     {
-      case View_State_Insert:
+      modal_state = *app_get_global_modal_state_ptr(&app);
+    }
+    else
+    {
+      modal_state = view->modal_state;
+    }
+    
+    switch(modal_state)
+    {
+      case Modal_State_Insert:
       {
         mapid = models->insert_mapid;
       } break;
       
-      case View_State_Command:
+      case Modal_State_Command:
       {
         mapid = models->command_mapid;
       } break;
+      
+      InvalidDefaultCase;
     }
     
     *map_id_ptr = mapid;
@@ -798,8 +810,10 @@ co_send_core_event(Thread_Context *tctx, Models *models, Core_Code code){
 
 function void
 view_quit_ui(Thread_Context *tctx, Models *models, View *view){
-  for (u32 j = 0;; j += 1){
-    if (j == 100){
+  for (u32 j = 0;; j += 1)
+  {
+    if (j == 100)
+    {
       Application_Links app = {};
       app.tctx = tctx;
       app.cmd_context = models;
@@ -808,6 +822,7 @@ view_quit_ui(Thread_Context *tctx, Models *models, View *view){
 #undef M
       break;
     }
+    
     View_Context_Node *ctx = view->ctx;
     if (ctx->next == 0){
       break;

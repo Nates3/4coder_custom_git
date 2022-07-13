@@ -614,7 +614,8 @@ activate_open_or_new__generic(Application_Links *app, View_ID view,
 CUSTOM_UI_COMMAND_SIG(interactive_open_or_new)
 CUSTOM_DOC("Interactively open a file out of the file system.")
 {
-  for (;;){
+  for (;;)
+  {
     Scratch_Block scratch(app);
     View_ID view = get_this_ctx_view(app, Access_Always);
     File_Name_Result result = get_file_name_from_user(app, scratch, "Open:", view);
@@ -630,7 +631,8 @@ CUSTOM_DOC("Interactively open a file out of the file system.")
     String_Const_u8 full_file_name = push_u8_stringf(scratch, "%.*s/%.*s",
                                                      string_expand(path), string_expand(file_name));
     
-    if (result.is_folder){
+    if (result.is_folder)
+    {
       set_hot_directory(app, full_file_name);
       continue;
     }

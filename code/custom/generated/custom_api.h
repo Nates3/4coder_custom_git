@@ -61,7 +61,7 @@
 #define custom_view_get_mark_pos_sig() i64 custom_view_get_mark_pos(Application_Links* app, View_ID view_id)
 #define custom_view_get_selection_begin_sig() i64 custom_view_get_selection_begin(Application_Links* app, View_ID view_id)
 #define custom_view_get_selection_end_sig() i64 custom_view_get_selection_end(Application_Links* app, View_ID view_id)
-#define custom_view_get_state_sig() View_State_ID custom_view_get_state(Application_Links* app, View_ID view_id)
+#define custom_view_get_modal_state_sig() Modal_State_ID custom_view_get_modal_state(Application_Links* app, View_ID view_id)
 #define custom_view_get_preferred_x_sig() f32 custom_view_get_preferred_x(Application_Links* app, View_ID view_id)
 #define custom_view_set_preferred_x_sig() b32 custom_view_set_preferred_x(Application_Links* app, View_ID view_id, f32 x)
 #define custom_view_get_screen_rect_sig() Rect_f32 custom_view_get_screen_rect(Application_Links* app, View_ID view_id)
@@ -96,7 +96,9 @@
 #define custom_view_get_is_selecting_sig() b32* custom_view_get_is_selecting(Application_Links* app, View_ID view_id)
 #define custom_view_set_selection_begin_sig() void custom_view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num)
 #define custom_view_set_selection_end_sig() void custom_view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num)
-#define custom_view_set_state_sig() b32 custom_view_set_state(Application_Links* app, View_ID view_id, View_State_ID state)
+#define custom_view_set_modal_state_sig() b32 custom_view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State_ID modal_state)
+#define custom_app_get_is_global_modal_state_ptr_sig() b32* custom_app_get_is_global_modal_state_ptr(Application_Links* app)
+#define custom_app_get_global_modal_state_ptr_sig() Modal_State_ID* custom_app_get_global_modal_state_ptr(Application_Links* app)
 #define custom_app_set_maps_sig() void custom_app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid)
 #define custom_view_quit_ui_sig() b32 custom_view_quit_ui(Application_Links* app, View_ID view_id)
 #define custom_view_set_buffer_sig() b32 custom_view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags)
@@ -251,7 +253,7 @@ typedef i64 custom_view_get_cursor_pos_type(Application_Links* app, View_ID view
 typedef i64 custom_view_get_mark_pos_type(Application_Links* app, View_ID view_id);
 typedef i64 custom_view_get_selection_begin_type(Application_Links* app, View_ID view_id);
 typedef i64 custom_view_get_selection_end_type(Application_Links* app, View_ID view_id);
-typedef View_State_ID custom_view_get_state_type(Application_Links* app, View_ID view_id);
+typedef Modal_State_ID custom_view_get_modal_state_type(Application_Links* app, View_ID view_id);
 typedef f32 custom_view_get_preferred_x_type(Application_Links* app, View_ID view_id);
 typedef b32 custom_view_set_preferred_x_type(Application_Links* app, View_ID view_id, f32 x);
 typedef Rect_f32 custom_view_get_screen_rect_type(Application_Links* app, View_ID view_id);
@@ -286,7 +288,9 @@ typedef b32 custom_view_set_mark_type(Application_Links* app, View_ID view_id, B
 typedef b32* custom_view_get_is_selecting_type(Application_Links* app, View_ID view_id);
 typedef void custom_view_set_selection_begin_type(Application_Links* app, View_ID view_id, i64 line_num);
 typedef void custom_view_set_selection_end_type(Application_Links* app, View_ID view_id, i64 line_num);
-typedef b32 custom_view_set_state_type(Application_Links* app, View_ID view_id, View_State_ID state);
+typedef b32 custom_view_set_modal_state_type(Application_Links* app, View_ID view_id, Modal_State_ID modal_state);
+typedef b32* custom_app_get_is_global_modal_state_ptr_type(Application_Links* app);
+typedef Modal_State_ID* custom_app_get_global_modal_state_ptr_type(Application_Links* app);
 typedef void custom_app_set_maps_type(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 typedef b32 custom_view_quit_ui_type(Application_Links* app, View_ID view_id);
 typedef b32 custom_view_set_buffer_type(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
@@ -442,7 +446,7 @@ custom_view_get_cursor_pos_type *view_get_cursor_pos;
 custom_view_get_mark_pos_type *view_get_mark_pos;
 custom_view_get_selection_begin_type *view_get_selection_begin;
 custom_view_get_selection_end_type *view_get_selection_end;
-custom_view_get_state_type *view_get_state;
+custom_view_get_modal_state_type *view_get_modal_state;
 custom_view_get_preferred_x_type *view_get_preferred_x;
 custom_view_set_preferred_x_type *view_set_preferred_x;
 custom_view_get_screen_rect_type *view_get_screen_rect;
@@ -477,7 +481,9 @@ custom_view_set_mark_type *view_set_mark;
 custom_view_get_is_selecting_type *view_get_is_selecting;
 custom_view_set_selection_begin_type *view_set_selection_begin;
 custom_view_set_selection_end_type *view_set_selection_end;
-custom_view_set_state_type *view_set_state;
+custom_view_set_modal_state_type *view_set_modal_state;
+custom_app_get_is_global_modal_state_ptr_type *app_get_is_global_modal_state_ptr;
+custom_app_get_global_modal_state_ptr_type *app_get_global_modal_state_ptr;
 custom_app_set_maps_type *app_set_maps;
 custom_view_quit_ui_type *view_quit_ui;
 custom_view_set_buffer_type *view_set_buffer;
@@ -634,7 +640,7 @@ internal i64 view_get_cursor_pos(Application_Links* app, View_ID view_id);
 internal i64 view_get_mark_pos(Application_Links* app, View_ID view_id);
 internal i64 view_get_selection_begin(Application_Links* app, View_ID view_id);
 internal i64 view_get_selection_end(Application_Links* app, View_ID view_id);
-internal View_State_ID view_get_state(Application_Links* app, View_ID view_id);
+internal Modal_State_ID view_get_modal_state(Application_Links* app, View_ID view_id);
 internal f32 view_get_preferred_x(Application_Links* app, View_ID view_id);
 internal b32 view_set_preferred_x(Application_Links* app, View_ID view_id, f32 x);
 internal Rect_f32 view_get_screen_rect(Application_Links* app, View_ID view_id);
@@ -669,7 +675,9 @@ internal b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek 
 internal b32* view_get_is_selecting(Application_Links* app, View_ID view_id);
 internal void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
 internal void view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num);
-internal b32 view_set_state(Application_Links* app, View_ID view_id, View_State_ID state);
+internal b32 view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State_ID modal_state);
+internal b32* app_get_is_global_modal_state_ptr(Application_Links* app);
+internal Modal_State_ID* app_get_global_modal_state_ptr(Application_Links* app);
 internal void app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 internal b32 view_quit_ui(Application_Links* app, View_ID view_id);
 internal b32 view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
@@ -826,7 +834,7 @@ global custom_view_get_cursor_pos_type *view_get_cursor_pos = 0;
 global custom_view_get_mark_pos_type *view_get_mark_pos = 0;
 global custom_view_get_selection_begin_type *view_get_selection_begin = 0;
 global custom_view_get_selection_end_type *view_get_selection_end = 0;
-global custom_view_get_state_type *view_get_state = 0;
+global custom_view_get_modal_state_type *view_get_modal_state = 0;
 global custom_view_get_preferred_x_type *view_get_preferred_x = 0;
 global custom_view_set_preferred_x_type *view_set_preferred_x = 0;
 global custom_view_get_screen_rect_type *view_get_screen_rect = 0;
@@ -861,7 +869,9 @@ global custom_view_set_mark_type *view_set_mark = 0;
 global custom_view_get_is_selecting_type *view_get_is_selecting = 0;
 global custom_view_set_selection_begin_type *view_set_selection_begin = 0;
 global custom_view_set_selection_end_type *view_set_selection_end = 0;
-global custom_view_set_state_type *view_set_state = 0;
+global custom_view_set_modal_state_type *view_set_modal_state = 0;
+global custom_app_get_is_global_modal_state_ptr_type *app_get_is_global_modal_state_ptr = 0;
+global custom_app_get_global_modal_state_ptr_type *app_get_global_modal_state_ptr = 0;
 global custom_app_set_maps_type *app_set_maps = 0;
 global custom_view_quit_ui_type *view_quit_ui = 0;
 global custom_view_set_buffer_type *view_set_buffer = 0;

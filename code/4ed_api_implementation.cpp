@@ -1206,13 +1206,14 @@ view_get_selection_end(Application_Links *app, View_ID view_id){
   return(result);
 }
 
-api(custom) function View_State_ID
-view_get_state(Application_Links *app, View_ID view_id){
+api(custom) function Modal_State_ID
+view_get_modal_state(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  View_State_ID result = View_State_Command;
-  if (api_check_view(view)){
-    result = view->state;
+  Modal_State_ID result = Modal_State_Command;
+  if (api_check_view(view))
+  {
+    result = view->modal_state;
   }
   return(result);
 }
@@ -1495,17 +1496,29 @@ view_set_active(Application_Links *app, View_ID view_id)
       }
       
       i64 mapid = 0;
-      switch(view->state)
+      Modal_State_ID modal_state;
+      if(*app_get_is_global_modal_state_ptr(app))
       {
-        case View_State_Insert:
+        modal_state = *app_get_global_modal_state_ptr(app);
+      }
+      else
+      {
+        modal_state = view->modal_state;
+      }
+      
+      switch(modal_state)
+      {
+        case Modal_State_Insert:
         {
           mapid = models->insert_mapid;
         } break;
         
-        case View_State_Command:
+        case Modal_State_Command:
         {
           mapid = models->command_mapid;
         } break;
+        
+        InvalidDefaultCase;
       }
       
       *map_id_ptr = mapid;
@@ -1858,7 +1871,7 @@ view_set_selection_end(Application_Links *app, View_ID view_id, i64 line_num)
 }
 
 api(custom) function b32
-view_set_state(Application_Links *app, View_ID view_id, View_State_ID state)
+view_set_modal_state(Application_Links *app, View_ID view_id, Modal_State_ID modal_state)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
@@ -1868,7 +1881,7 @@ view_set_state(Application_Links *app, View_ID view_id, View_State_ID state)
     Editing_File *file = view->file;
     Assert(file != 0);
     if (api_check_buffer(file)){
-      view->state = state;
+      view->modal_state = modal_state;
       result = true;
     }
   }
@@ -1876,12 +1889,39 @@ view_set_state(Application_Links *app, View_ID view_id, View_State_ID state)
   return(result);
 }
 
+api(custom) function b32 *
+app_get_is_global_modal_state_ptr(Application_Links *app)
+{
+  b32 *result = 0;
+  if(app)
+  {
+    Models *models = (Models *)app->cmd_context;
+    result = &models->is_global_modal_state;
+  }
+  return(result);
+}
+
+api(custom) function Modal_State_ID *
+app_get_global_modal_state_ptr(Application_Links *app)
+{
+  Modal_State_ID *result = 0;
+  if(app)
+  {
+    Models *models = (Models *)app->cmd_context;
+    result = &models->global_modal_state;
+  }
+  return(result);
+}
+
 api(custom) function void
 app_set_maps(Application_Links *app, i64 command_mapid, i64 insert_mapid)
 {
-  Models *models = (Models *)app->cmd_context;
-  models->command_mapid = command_mapid;
-  models->insert_mapid = insert_mapid;
+  if(app)
+  {
+    Models *models = (Models *)app->cmd_context;
+    models->command_mapid = command_mapid;
+    models->insert_mapid = insert_mapid;
+  }
 }
 
 api(custom) function b32
@@ -1889,7 +1929,8 @@ view_quit_ui(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   b32 result = false;
-  if (view != 0){
+  if (view != 0)
+  {
     view_quit_ui(app->tctx, models, view);
     result = true;
   }
@@ -1907,7 +1948,8 @@ view_set_buffer(Application_Links *app, View_ID view_id, Buffer_ID buffer_id, Se
     if (api_check_buffer(file)){
       if (file != view->file){
         view_set_file(app->tctx, models, view, file);
-        if (!(flags & SetBuffer_KeepOriginalGUI)){
+        if (!(flags & SetBuffer_KeepOriginalGUI))
+        {
           view_quit_ui(app->tctx, models, view);
         }
       }

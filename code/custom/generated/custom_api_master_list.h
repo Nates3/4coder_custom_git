@@ -61,7 +61,7 @@ api(custom) function i64 view_get_cursor_pos(Application_Links* app, View_ID vie
 api(custom) function i64 view_get_mark_pos(Application_Links* app, View_ID view_id);
 api(custom) function i64 view_get_selection_begin(Application_Links* app, View_ID view_id);
 api(custom) function i64 view_get_selection_end(Application_Links* app, View_ID view_id);
-api(custom) function View_State_ID view_get_state(Application_Links* app, View_ID view_id);
+api(custom) function Modal_State_ID view_get_modal_state(Application_Links* app, View_ID view_id);
 api(custom) function f32 view_get_preferred_x(Application_Links* app, View_ID view_id);
 api(custom) function b32 view_set_preferred_x(Application_Links* app, View_ID view_id, f32 x);
 api(custom) function Rect_f32 view_get_screen_rect(Application_Links* app, View_ID view_id);
@@ -96,7 +96,9 @@ api(custom) function b32 view_set_mark(Application_Links* app, View_ID view_id, 
 api(custom) function b32* view_get_is_selecting(Application_Links* app, View_ID view_id);
 api(custom) function void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
 api(custom) function void view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num);
-api(custom) function b32 view_set_state(Application_Links* app, View_ID view_id, View_State_ID state);
+api(custom) function b32 view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State_ID modal_state);
+api(custom) function b32* app_get_is_global_modal_state_ptr(Application_Links* app);
+api(custom) function Modal_State_ID* app_get_global_modal_state_ptr(Application_Links* app);
 api(custom) function void app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 api(custom) function b32 view_quit_ui(Application_Links* app, View_ID view_id);
 api(custom) function b32 view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);

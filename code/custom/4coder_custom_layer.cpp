@@ -37,17 +37,27 @@ set_margin_color(u32 color_u32)
 }
 
 internal void
-view_state_set_margin_color(Application_Links *app, View_ID view)
+modal_state_set_margin_color(Application_Links *app, View_ID view)
 {
-  View_State_ID state = view_get_state(app, view);
-  switch(state)
+  Modal_State_ID modal_state;
+  
+  if(*app_get_is_global_modal_state_ptr(app))
   {
-    case View_State_Insert:
+    modal_state = *app_get_global_modal_state_ptr(app);
+  }
+  else
+  {
+    modal_state = view_get_modal_state(app, view);
+  }
+  
+  switch(modal_state)
+  {
+    case Modal_State_Insert:
     {
       set_margin_color(0xff00ff00);
     } break;
     
-    case View_State_Command:
+    case Modal_State_Command:
     {
       set_margin_color(0xffff0000);
     } break;
@@ -76,40 +86,39 @@ void custom_layer_init(Application_Links *app)
   set_all_default_hooks(app);
   mapping_init(tctx, &framework_mapping);
   
-  String_ID global_map_id = vars_save_string_lit("keys_global");
-  String_ID file_map_id = vars_save_string_lit("keys_file");
-  String_ID code_map_id = vars_save_string_lit("keys_code");
+  String_ID global_mapid = vars_save_string_lit("keys_global");
+  String_ID file_mapid = vars_save_string_lit("keys_file");
+  String_ID code_mapid = vars_save_string_lit("keys_code");
   
-  shared_mapid = vars_save_string_lit("shared_mapid_string");
   command_mapid = vars_save_string_lit("command_mapid_string");
   insert_mapid = vars_save_string_lit("insert_mapid_string");
   
   MappingScope();
   SelectMapping(&framework_mapping);
   
-  SelectMap(global_map_id);
-  
-  SelectMap(shared_mapid);
+  SelectMap(global_mapid);
   BindCore(default_startup, CoreCode_Startup);
   BindCore(default_try_exit, CoreCode_TryExit);
   cakez_bind_shared_keys(m, map);
   
   SelectMap(command_mapid);
-  ParentMap(shared_mapid);
+  ParentMap(global_mapid);
   cakez_bind_command_keys(m, map);
   
   SelectMap(insert_mapid);
-  ParentMap(shared_mapid);
+  ParentMap(global_mapid);
   cakez_bind_text_input(m, map);
   
   // NOTE(nates): You have to bind the "global_map, file_map, and code_map for some reason"
-  SelectMap(file_map_id);
-  ParentMap(insert_mapid);
+  SelectMap(file_mapid);
+  ParentMap(command_mapid);
   
-  SelectMap(code_map_id);
-  ParentMap(insert_mapid);
+  SelectMap(code_mapid);
+  ParentMap(command_mapid);
   
   app_set_maps(app, command_mapid, insert_mapid);
+  b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
+  *is_global_modal = false;
 }
 
 #endif

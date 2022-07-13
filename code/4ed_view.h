@@ -58,7 +58,7 @@ struct View_Context_Node{
 };
 
 struct View{
-  View_State_ID state;
+  Modal_State_ID modal_state;
   
   View *next;
   View *prev;

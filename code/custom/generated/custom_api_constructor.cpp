@@ -391,7 +391,7 @@ api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_state"), string_u8_litexpr("View_State_ID"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_modal_state"), string_u8_litexpr("Modal_State_ID"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
@@ -589,10 +589,18 @@ api_param(arena, call, "View_ID", "view_id");
 api_param(arena, call, "i64", "line_num");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_state"), string_u8_litexpr("b32"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_modal_state"), string_u8_litexpr("b32"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
-api_param(arena, call, "View_State_ID", "state");
+api_param(arena, call, "Modal_State_ID", "modal_state");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_is_global_modal_state_ptr"), string_u8_litexpr("b32*"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_global_modal_state_ptr"), string_u8_litexpr("Modal_State_ID*"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_set_maps"), string_u8_litexpr("void"), string_u8_litexpr(""));

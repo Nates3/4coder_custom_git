@@ -14,10 +14,29 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
   View_ID view = get_active_view(app, 0);
   Buffer_ID buffer = view_get_buffer(app, view, 0);
   
-  // TODO(cakez77): Switch on the view type? Only change in certain views?
-  if (view_get_state(app, view) != View_State_Command)
+  Modal_State_ID modal_state;
+  b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
+  Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
+  if(*is_global_modal)
   {
-    view_set_state(app, view, View_State_Command);
+    modal_state = *app_modal_state;
+  }
+  else
+  {
+    modal_state = view_get_modal_state(app, view);
+  }
+  
+  
+  if (modal_state != Modal_State_Command)
+  {
+    if(*is_global_modal)
+    {
+      *app_modal_state = Modal_State_Command;
+    }
+    else
+    {
+      view_set_modal_state(app, view, Modal_State_Command);
+    }
     
     // Set Keybinds for Command Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
@@ -25,34 +44,39 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
   }
 }
 
-CUSTOM_COMMAND_SIG(change_to_text_mode)
+CUSTOM_COMMAND_SIG(change_to_insert_mode)
 CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
   View_ID view = get_active_view(app, 0);
   Buffer_ID buffer = view_get_buffer(app, view, 0);
   
-  if (view_get_state(app, view) != View_State_Insert)
+  // TODO(cakez77): Switch on the view type? Only change in certain views?
+  Modal_State_ID modal_state;
+  
+  b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
+  Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
+  if(*is_global_modal)
   {
-    view_set_state(app, view, View_State_Insert);
-    
-    // Set Keybinds for Intert Mode only
-    b32 result = view_set_buffer(app, view, buffer, 0);
-    set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
+    modal_state = *app_modal_state;
   }
-}
-
-// TODO(cakez77): Better naming and different behaviour (place cursor in front and back)
-CUSTOM_COMMAND_SIG(change_to_text_mode_2)
-CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
-{
-  View_ID view = get_active_view(app, 0);
-  Buffer_ID buffer = view_get_buffer(app, view, 0);
-  
-  if (view_get_state(app, view) != View_State_Insert)
+  else
   {
-    view_set_state(app, view, View_State_Insert);
+    modal_state = view_get_modal_state(app, view);
+  }
+  
+  
+  if (modal_state != Modal_State_Insert)
+  {
+    if(*is_global_modal)
+    {
+      *app_modal_state = Modal_State_Insert;
+    }
+    else
+    {
+      view_set_modal_state(app, view, Modal_State_Insert);
+    }
     
-    // Set Keybinds for Intert Mode only
+    // Set Keybinds for Command Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
     set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
   }

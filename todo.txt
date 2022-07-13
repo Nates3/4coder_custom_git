@@ -2,19 +2,10 @@
 /////////////////////////////
 ------------BUGS-------------
 
-[ ] - Bug: When opening a lister panel you can't execute any other cammands as if the
-			leave_event_unhandled() function wasn't invoked. 
-
-[ ] - Bug: Mark history is stored in the View and isn't associated with every individual buffer
-      fix it so marks are stored with every buffer and you can change the buffer on your view panel
-      without loosing your marks on the previous buffer you were working on
-
+Empty :)
 
 //////////////////////////////
 ---------- TODOS -------------
-
-[ ] - Have setting to sync states between views so that when you switch panels, you're view state gets
-      carried over so it's only if you ever had one mode across all panels
 
 [ ] - Assign more keybinds
 
@@ -48,6 +39,17 @@
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+
+
+[x] - Bug: When opening a lister panel you can't execute any other cammands as if the
+			leave_event_unhandled() function wasn't invoked. 
+
+[x] - Bug: Mark history is stored in the View and isn't associated with every individual buffer
+      fix it so marks are stored with every buffer and you can change the buffer on your view panel
+      without loosing your marks on the previous buffer you were working on
+
+[x] - Have setting to sync states between views so that when you switch panels, you're view state gets
+      carried over so it's only if you ever had one mode across all panels
 
 [x] - Implement Shift + V selection in visual mode
   [x] - Set markStart, markEnd
