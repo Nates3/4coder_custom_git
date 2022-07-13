@@ -5,6 +5,7 @@
 ////////////////////////
 date-> 7/12/22
 
+(nates): fixed a bug that stoped the indentation of enum types
 (nates): Got rid of shared_mapid keymap, global_mapid already suited that role and because we were
          using it, listers wouldn't be able to see the shared bindings because it grabs 
          and stores the mapid that is set in the "View_Context" (which I assume is the global_mapid)               during lister init ("begin_lister" function).

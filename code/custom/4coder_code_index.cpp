@@ -389,6 +389,9 @@ cpp_parse_type_enum(Code_Index_File *index, Generic_Parse_State *state, Code_Ind
     }
   }
   
+  Generic_Parse_State saver = *state;
+  state = &saver;
+  
   Token *peek2 = token_it_read(&state->it);
   if(peek2->kind == TokenBaseKind_ScopeOpen)
   {

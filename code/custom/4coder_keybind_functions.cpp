@@ -114,6 +114,8 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(delete_char, KeyCode_Delete);
   Bind(delete_alpha_numeric_boundary, KeyCode_Delete, KeyCode_Control);
   Bind(quick_swap_buffer, KeyCode_BackwardSlash, KeyCode_Alt);
+  Bind(view_buffer_other_panel, KeyCode_1, KeyCode_Control);
+  Bind(swap_panels, KeyCode_A, KeyCode_Alt);
   Bind(word_complete, KeyCode_P, KeyCode_Control);
   Bind(word_complete_drop_down, KeyCode_P, KeyCode_Alt);
   Bind(center_view, KeyCode_Period, KeyCode_Control);
@@ -122,6 +124,8 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   
   Bind(page_up, KeyCode_PageUp);
   Bind(page_down, KeyCode_PageDown);
+  
+  Bind(cursor_mark_swap, KeyCode_Quote, KeyCode_Alt);
   
   BindMouse(control_plus_click_jump_to_definition, MouseCode_Left, KeyCode_Control);
   BindMouse(click_set_cursor_and_mark, MouseCode_Left);
@@ -192,6 +196,10 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(redo, KeyCode_Semicolon, KeyCode_Shift);
   Bind(change_to_insert_mode, KeyCode_A);
   BindTextInput(insert_return);
+  
+  Bind(keyboard_macro_start_recording, KeyCode_Minus, KeyCode_Control);
+  Bind(keyboard_macro_finish_recording, KeyCode_Minus, KeyCode_Control, KeyCode_Shift);
+  Bind(keyboard_macro_replay, KeyCode_Minus, KeyCode_Alt);
   
   Bind(move_up, KeyCode_C);
   Bind(move_down, KeyCode_T);
