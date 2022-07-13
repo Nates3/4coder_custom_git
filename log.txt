@@ -1,5 +1,9 @@
 
+///////////////////////////
+date-> 7/13/22
 
+(nates): fixed jump_to_definition_at_cursor not prioritizing CodeIndexNote_Function over 
+         CodeIndexNote_Forward_Declaration
 
 
 ////////////////////////

@@ -24,15 +24,18 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
        buffer != 0;
        buffer = get_buffer_next(app, buffer, Access_Always)){
     Code_Index_File *file = code_index_get_file(buffer);
-    if (file != 0){
-      for (i32 i = 0; i < file->note_array.count; i += 1){
+    if (file != 0)
+    {
+      for (i32 i = 0; i < file->note_array.count; i += 1)
+      {
         Code_Index_Note *note = file->note_array.ptrs[i];
         Tiny_Jump *jump = push_array(scratch, Tiny_Jump, 1);
         jump->buffer = buffer;
         jump->pos = note->pos.first;
         
         String_Const_u8 sort = {};
-        switch (note->note_kind){
+        switch (note->note_kind)
+        {
           case CodeIndexNote_Type:
           {
             sort = string_u8_litexpr("type");
@@ -45,6 +48,16 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
           {
             sort = string_u8_litexpr("macro");
           }break;
+          
+          case CodeIndexNote_Enum:
+          {
+            sort = string_u8_litexpr("enum");
+          } break;
+          
+          case CodeIndexNote_Forward_Declaration:
+          {
+            sort = string_u8_litexpr("forward declaration");
+          } break;
         }
         lister_add_item(lister, note->text, sort, jump, 0);
       }
@@ -81,15 +94,40 @@ CUSTOM_DOC("Jump to the first definition in the code index matching an identifie
          buffer != 0;
          buffer = get_buffer_next(app, buffer, Access_Always)){
       Code_Index_File *file = code_index_get_file(buffer);
-      if (file != 0){
-        for (i32 i = 0; i < file->note_array.count; i += 1){
+      if (file != 0)
+      {
+        Temp_Memory restore_point = begin_temp(scratch);
+        i32 matching_note_count = 0;
+        
+        Code_Index_Note *start = push_array(scratch, Code_Index_Note, 1);
+        pop_array(scratch, Code_Index_Note, 1);
+        
+        for (i32 i = 0; i < file->note_array.count; i += 1)
+        {
           Code_Index_Note *note = file->note_array.ptrs[i];
-          if (string_match(note->text, query)){
+          if (string_match(note->text, query))
+          {
+            Code_Index_Note *record = push_array(scratch, Code_Index_Note, 1);
+            *record = *note;
+            matching_note_count++;
+          }
+        }
+        
+        for(i32 index = 0;
+            index < matching_note_count;
+            ++index)
+        {
+          Code_Index_Note *this_note = start + index;
+          
+          if(this_note->note_kind != CodeIndexNote_Forward_Declaration)
+          {
             point_stack_push_view_cursor(app, view);
-            jump_to_location(app, view, buffer, note->pos.first);
+            jump_to_location(app, view, buffer, this_note->pos.first);
             goto done;
           }
         }
+        
+        end_temp(restore_point);
       }
     }
     done:;
@@ -111,15 +149,40 @@ CUSTOM_DOC("Jump to the first definition in the code index matching an identifie
          buffer != 0;
          buffer = get_buffer_next(app, buffer, Access_Always)){
       Code_Index_File *file = code_index_get_file(buffer);
-      if (file != 0){
-        for (i32 i = 0; i < file->note_array.count; i += 1){
+      if (file != 0)
+      {
+        Temp_Memory restore_point = begin_temp(scratch);
+        i32 matching_note_count = 0;
+        
+        Code_Index_Note *start = push_array(scratch, Code_Index_Note, 1);
+        pop_array(scratch, Code_Index_Note, 1);
+        
+        for (i32 i = 0; i < file->note_array.count; i += 1)
+        {
           Code_Index_Note *note = file->note_array.ptrs[i];
-          if (string_match(note->text, query)){
+          if (string_match(note->text, query))
+          {
+            Code_Index_Note *record = push_array(scratch, Code_Index_Note, 1);
+            *record = *note;
+            matching_note_count++;
+          }
+        }
+        
+        for(i32 index = 0;
+            index < matching_note_count;
+            ++index)
+        {
+          Code_Index_Note *this_note = start + index;
+          
+          if(this_note->note_kind != CodeIndexNote_Forward_Declaration)
+          {
             point_stack_push_view_cursor(app, view);
-            jump_to_location(app, view, buffer, note->pos.first);
+            jump_to_location(app, view, buffer, this_note->pos.first);
             goto done;
           }
         }
+        
+        end_temp(restore_point);
       }
     }
     done:;

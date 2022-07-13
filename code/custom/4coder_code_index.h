@@ -42,7 +42,8 @@ struct Code_Index_Nest{
 };
 
 typedef i64 Code_Index_Note_Kind;
-enum{
+enum
+{
   CodeIndexNote_Type,
   CodeIndexNote_Function,
   CodeIndexNote_Macro,
