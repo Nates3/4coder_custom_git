@@ -157,9 +157,13 @@ CUSTOM_DOC("add new line and switch to insert mode")
 {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   seek_end_of_textual_line(app);
 
   // TODO: Do line Break and change to insert mode
+=======
+
+>>>>>>> Stashed changes
 =======
 
 >>>>>>> Stashed changes
