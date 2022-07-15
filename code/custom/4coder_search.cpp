@@ -552,7 +552,8 @@ word_complete_menu_render(Application_Links *app, Frame_Info frame_info, View_ID
 }
 
 function Edit
-get_word_complete_from_user_drop_down(Application_Links *app){
+get_word_complete_from_user_drop_down(Application_Links *app)
+{
   View_ID view = get_this_ctx_view(app, Access_Always);
   View_Context ctx = view_current_context(app, view);
   Render_Caller_Function *prev_render_caller = ctx.render_caller;
@@ -577,10 +578,12 @@ get_word_complete_from_user_drop_down(Application_Links *app){
     *menu_ptr = &menu;
     
     b32 keep_looping_menu = true;
-    for (;keep_looping_menu;){
+    for (;keep_looping_menu;)
+    {
       User_Input in = get_next_input(app, EventPropertyGroup_Any,
                                      EventProperty_Escape);
-      if (in.abort){
+      if (in.abort)
+      {
         break;
       }
       
@@ -592,15 +595,17 @@ get_word_complete_from_user_drop_down(Application_Links *app){
           write_text_input(app);
           pos = view_get_cursor_pos(app, view);
           range = get_word_complete_needle_range(app, buffer, pos);
-          if (range_size(range) == 0){
+          if (range_size(range) == 0)
+          {
             keep_looping_menu = false;
           }
           else{
             word_complete_iter_init(buffer, range, it);
             menu = make_word_complete_menu(prev_render_caller, it);
             word_complete_menu_next(&menu);
-            if (menu.count == 0){
-              keep_looping_menu = false;
+            if (menu.count == 0)
+            {
+              //keep_looping_menu = false;
             }
           }
         }break;
@@ -682,15 +687,18 @@ get_word_complete_from_user_drop_down(Application_Links *app){
               backspace_char(app);
               pos = view_get_cursor_pos(app, view);
               range = get_word_complete_needle_range(app, buffer, pos);
-              if (range_size(range) == 0){
+              if (range_size(range) == 0)
+              {
                 keep_looping_menu = false;
               }
-              else{
+              else
+              {
                 word_complete_iter_init(buffer, range, it);
                 menu = make_word_complete_menu(prev_render_caller, it);
                 word_complete_menu_next(&menu);
-                if (menu.count == 0){
-                  keep_looping_menu = false;
+                if (menu.count == 0)
+                {
+                  //keep_looping_menu = false;
                 }
               }
             }break;
@@ -734,9 +742,11 @@ CUSTOM_DOC("Word complete with drop down menu.")
   
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-  if (buffer != 0){
+  if (buffer != 0)
+  {
     Edit edit = get_word_complete_from_user_drop_down(app);
-    if (edit.text.size > 0){
+    if (edit.text.size > 0)
+    {
       buffer_replace_range(app, buffer, edit.range, edit.text);
       view_set_cursor_and_preferred_x(app, view, seek_pos(edit.range.min + edit.text.size));
     }

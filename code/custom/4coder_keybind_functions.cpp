@@ -25,22 +25,22 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(quick_swap_buffer, KeyCode_BackwardSlash, KeyCode_Alt);
   Bind(save, KeyCode_S, KeyCode_Control);
   Bind(save_all_dirty_buffers, KeyCode_S, KeyCode_Control, KeyCode_Shift);
-
+  
   BindMouse(control_plus_click_jump_to_definition, MouseCode_Left, KeyCode_Control);
   BindMouse(click_set_cursor_and_mark, MouseCode_Left);
   BindMouseMove(click_set_cursor_if_lbutton);
   BindMouseWheel(mouse_wheel_scroll);
   BindMouseWheel(mouse_wheel_change_face_size, KeyCode_Control);
-
+  
   Bind(jump_to_definition_at_cursor, KeyCode_W, KeyCode_Control);
   Bind(jump_to_definition_at_cursor_other_panel, KeyCode_W, KeyCode_Alt);
   Bind(jump_to_definition, KeyCode_Q, KeyCode_Control);
-
+  
   Bind(move_left, KeyCode_Left);
   Bind(move_right, KeyCode_Right);
   Bind(move_up, KeyCode_Up);
   Bind(move_down, KeyCode_Down);
-
+  
   Bind(project_fkey_command, KeyCode_F1);
   Bind(project_fkey_command, KeyCode_F2);
   Bind(project_fkey_command, KeyCode_F3);
@@ -81,15 +81,15 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(search, KeyCode_F);
   Bind(reverse_search, KeyCode_F, KeyCode_Shift);
   Bind(jump_from_brace_to_brace, KeyCode_5, KeyCode_Shift);
-
+  
   Bind(move_up, KeyCode_K);
   Bind(move_down, KeyCode_J);
   Bind(move_left, KeyCode_H);
   Bind(move_right, KeyCode_L);
-
+  
   Bind(move_up_10, KeyCode_J, KeyCode_Alt);
   Bind(move_down_10, KeyCode_K, KeyCode_Alt);
-
+  
   Bind(move_right_alpha_numeric_boundary, KeyCode_E);
   Bind(move_left_alpha_numeric_boundary, KeyCode_B);
   Bind(seek_end_of_line, KeyCode_4, KeyCode_Shift);
@@ -102,7 +102,7 @@ internal void
 cakez_bind_text_input(Mapping *m, Command_Map *map)
 {
   Bind(backspace_alpha_numeric_boundary, KeyCode_Backspace, KeyCode_Control);
-
+  
   BindTextInput(write_text_and_auto_indent);
 }
 
@@ -124,20 +124,21 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(word_complete, KeyCode_P, KeyCode_Control);
   Bind(word_complete_drop_down, KeyCode_P, KeyCode_Alt);
   Bind(center_view, KeyCode_Period, KeyCode_Control);
+  Bind(left_adjust_view, KeyCode_Period, KeyCode_Alt);
   Bind(save, KeyCode_S, KeyCode_Control);
   Bind(save_all_dirty_buffers, KeyCode_S, KeyCode_Control, KeyCode_Shift);
-
+  
   Bind(page_up, KeyCode_PageUp);
   Bind(page_down, KeyCode_PageDown);
-
+  
   Bind(cursor_mark_swap, KeyCode_Quote, KeyCode_Alt);
-
+  
   BindMouse(control_plus_click_jump_to_definition, MouseCode_Left, KeyCode_Control);
   BindMouse(click_set_cursor_and_mark, MouseCode_Left);
   BindMouseMove(click_set_cursor_if_lbutton);
   BindMouseWheel(mouse_wheel_scroll);
   BindMouseWheel(mouse_wheel_change_face_size, KeyCode_Control);
-
+  
   Bind(interactive_open_or_new, KeyCode_R, KeyCode_Control);
   Bind(interactive_switch_buffer, KeyCode_G, KeyCode_Control);
   Bind(change_active_panel, KeyCode_J, KeyCode_Alt);
@@ -145,18 +146,30 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(toggle_fullscreen, KeyCode_F11);
   Bind(exit_4coder, KeyCode_F4, KeyCode_Alt);
   Bind(load_project, KeyCode_L, KeyCode_Control, KeyCode_Shift);
-
+  
   Bind(jump_to_definition_at_cursor, KeyCode_Comma, KeyCode_Control);
   Bind(jump_to_definition_at_cursor_other_panel, KeyCode_Comma, KeyCode_Alt);
   Bind(jump_to_definition_sorted, KeyCode_Quote, KeyCode_Control);
   Bind(goto_next_jump, KeyCode_B, KeyCode_Alt);
   Bind(goto_prev_jump, KeyCode_B, KeyCode_Alt, KeyCode_Shift);
-
+  
   Bind(move_left, KeyCode_Left);
   Bind(move_right, KeyCode_Right);
   Bind(move_up, KeyCode_Up);
   Bind(move_down, KeyCode_Down);
-
+  
+  Bind(move_up_10, KeyCode_Up, KeyCode_Alt);
+  Bind(move_down_10, KeyCode_Down, KeyCode_Alt);
+  
+  Bind(move_right_alpha_numeric_boundary, KeyCode_Right, KeyCode_Control);
+  Bind(move_left_alpha_numeric_boundary, KeyCode_Left, KeyCode_Control);
+  Bind(move_right_alpha_numeric_or_camel_boundary, KeyCode_Right, KeyCode_Alt);
+  Bind(move_left_alpha_numeric_or_camel_boundary, KeyCode_Left, KeyCode_Alt);
+  
+  Bind(seek_end_of_textual_line, KeyCode_Right, KeyCode_Shift);
+  Bind(seek_beginning_of_textual_line, KeyCode_Left, KeyCode_Shift);
+  
+  
   Bind(project_fkey_command, KeyCode_F1);
   Bind(project_fkey_command, KeyCode_F2);
   Bind(project_fkey_command, KeyCode_F3);
@@ -186,12 +199,13 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(goto_prev_mark, KeyCode_Minus);
   Bind(list_all_substring_locations_case_insensitive, KeyCode_Comma);
   Bind(goto_jump_at_cursor, KeyCode_Quote);
+  Bind(jump_to_last_point, KeyCode_I);
   Bind(query_replace, KeyCode_O);
   Bind(replace_in_range, KeyCode_O, KeyCode_Control);
-
+  
   Bind(move_line_up, KeyCode_PageUp, KeyCode_Alt);
   Bind(move_line_down, KeyCode_PageDown, KeyCode_Alt);
-
+  
   Bind(delete_range, KeyCode_E);
   Bind(delete_line, KeyCode_E, KeyCode_Alt);
   Bind(select_lines, KeyCode_J, KeyCode_Shift);
@@ -201,24 +215,27 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(redo, KeyCode_Semicolon, KeyCode_Shift);
   Bind(change_to_insert_mode_front, KeyCode_A);
   BindTextInput(insert_return);
-
+  
   Bind(keyboard_macro_start_recording, KeyCode_Minus, KeyCode_Control);
   Bind(keyboard_macro_finish_recording, KeyCode_Minus, KeyCode_Control, KeyCode_Shift);
   Bind(keyboard_macro_replay, KeyCode_Minus, KeyCode_Alt);
-
+  
   Bind(move_up, KeyCode_C);
   Bind(move_down, KeyCode_T);
   Bind(move_left, KeyCode_H);
   Bind(move_right, KeyCode_N);
-
+  
   Bind(move_up_10, KeyCode_C, KeyCode_Alt);
   Bind(move_down_10, KeyCode_T, KeyCode_Alt);
-
+  
   Bind(move_right_alpha_numeric_boundary, KeyCode_N, KeyCode_Control);
   Bind(move_left_alpha_numeric_boundary, KeyCode_H, KeyCode_Control);
-  Bind(seek_end_of_line, KeyCode_N, KeyCode_Shift);
-  Bind(seek_beginning_of_line, KeyCode_H, KeyCode_Shift);
-
+  Bind(move_right_alpha_numeric_or_camel_boundary, KeyCode_N, KeyCode_Alt);
+  Bind(move_left_alpha_numeric_or_camel_boundary, KeyCode_H, KeyCode_Alt);
+  
+  Bind(seek_end_of_textual_line, KeyCode_N, KeyCode_Shift);
+  Bind(seek_beginning_of_textual_line, KeyCode_H, KeyCode_Shift);
+  
   Bind(jump_from_brace_to_brace, KeyCode_Y);
 }
 

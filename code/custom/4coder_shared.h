@@ -3,7 +3,7 @@
 #ifndef FCODER_SHARED_H
 #define FCODER_SHARED_H
 
-#define MARK_HISTORY_ARRAY_COUNT 3
+#define MARK_HISTORY_ARRAY_COUNT 128
 struct Mark_History
 {
   i64 marks[MARK_HISTORY_ARRAY_COUNT];

@@ -1931,7 +1931,8 @@ get_buffer_next_looped(Application_Links *app, Buffer_ID buffer, Access_Flag acc
 ////////////////////////////////
 
 function View_ID
-get_next_view_looped_all_panels(Application_Links *app, View_ID view_id, Access_Flag access){
+get_next_view_looped_all_panels(Application_Links *app, View_ID view_id, Access_Flag access)
+{
   view_id = get_view_next(app, view_id, access);
   if (view_id == 0){
     view_id = get_view_next(app, 0, access);

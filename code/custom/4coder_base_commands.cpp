@@ -988,18 +988,25 @@ isearch(Application_Links *app, Scan_Direction start_scan, i64 first_pos,
       bar.string = bar_string.string;
       string_change = true;
     }
-    else if (match_key_code(&in, KeyCode_Backspace)){
-      if (is_unmodified_key(&in.event)){
+    else if (in.event.key.code == KeyCode_Backspace)
+    {
+      string_change = true;
+      if (is_unmodified_key(&in.event))
+      {
         u64 old_bar_string_size = bar.string.size;
         bar.string = backspace_utf8(bar.string);
-        string_change = (bar.string.size < old_bar_string_size);
       }
       else if (has_modifier(&in.event.key.modifiers, KeyCode_Control)){
-        if (bar.string.size > 0){
-          string_change = true;
+        if (bar.string.size > 0)
+        {
           bar.string.size = 0;
         }
       }
+    }
+    else if (in.event.key.code == KeyCode_Delete)
+    {
+      // NOTE(nates): Handle delete keycode so you can't delete stuff while searching
+      string_change = true;
     }
     
     b32 do_scan_action = false;

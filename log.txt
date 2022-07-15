@@ -1,5 +1,16 @@
 
 ///////////////////////////
+date-> 7/15/22
+
+(nates): Cleaned up custom word highlight to always happen _after_ the default one so it just overrides it
+(nates): Fixed jump_to_definition_sorted not displaying forward declaration text
+(nates): Changed execution panels to happen in the opposite panel and not the current one
+(nates): Changed word_complete_drop_down to not stop looping _unless_ user presses escape or return to 
+         select a piece of text to word_complete
+(nates): Fixed Search so it doesn't backspace or delete code when querying the user for text
+(cakez): Added a bunch of custom command sigs && is_cutting to models
+
+///////////////////////////
 date-> 7/13/22
 
 (nates): fixed jump_to_definition_at_cursor not prioritizing CodeIndexNote_Function over 
