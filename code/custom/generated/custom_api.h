@@ -94,6 +94,7 @@
 #define custom_view_record_mark_sig() void custom_view_record_mark(Application_Links* app, View_ID view_id)
 #define custom_view_set_mark_sig() b32 custom_view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek)
 #define custom_view_get_is_selecting_sig() b32* custom_view_get_is_selecting(Application_Links* app, View_ID view_id)
+#define custom_view_get_is_cutting_sig() b32* custom_view_get_is_cutting(Application_Links* app, View_ID view_id)
 #define custom_view_set_selection_begin_sig() void custom_view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num)
 #define custom_view_set_selection_end_sig() void custom_view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num)
 #define custom_view_set_modal_state_sig() b32 custom_view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State_ID modal_state)
@@ -286,6 +287,7 @@ typedef Mark_History* custom_view_get_mark_history_type(Application_Links* app, 
 typedef void custom_view_record_mark_type(Application_Links* app, View_ID view_id);
 typedef b32 custom_view_set_mark_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 typedef b32* custom_view_get_is_selecting_type(Application_Links* app, View_ID view_id);
+typedef b32* custom_view_get_is_cutting_type(Application_Links* app, View_ID view_id);
 typedef void custom_view_set_selection_begin_type(Application_Links* app, View_ID view_id, i64 line_num);
 typedef void custom_view_set_selection_end_type(Application_Links* app, View_ID view_id, i64 line_num);
 typedef b32 custom_view_set_modal_state_type(Application_Links* app, View_ID view_id, Modal_State_ID modal_state);
@@ -479,6 +481,7 @@ custom_view_get_mark_history_type *view_get_mark_history;
 custom_view_record_mark_type *view_record_mark;
 custom_view_set_mark_type *view_set_mark;
 custom_view_get_is_selecting_type *view_get_is_selecting;
+custom_view_get_is_cutting_type *view_get_is_cutting;
 custom_view_set_selection_begin_type *view_set_selection_begin;
 custom_view_set_selection_end_type *view_set_selection_end;
 custom_view_set_modal_state_type *view_set_modal_state;
@@ -673,6 +676,7 @@ internal Mark_History* view_get_mark_history(Application_Links* app, View_ID vie
 internal void view_record_mark(Application_Links* app, View_ID view_id);
 internal b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 internal b32* view_get_is_selecting(Application_Links* app, View_ID view_id);
+internal b32* view_get_is_cutting(Application_Links* app, View_ID view_id);
 internal void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
 internal void view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num);
 internal b32 view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State_ID modal_state);
@@ -867,6 +871,7 @@ global custom_view_get_mark_history_type *view_get_mark_history = 0;
 global custom_view_record_mark_type *view_record_mark = 0;
 global custom_view_set_mark_type *view_set_mark = 0;
 global custom_view_get_is_selecting_type *view_get_is_selecting = 0;
+global custom_view_get_is_cutting_type *view_get_is_cutting = 0;
 global custom_view_set_selection_begin_type *view_set_selection_begin = 0;
 global custom_view_set_selection_end_type *view_set_selection_end = 0;
 global custom_view_set_modal_state_type *view_set_modal_state = 0;

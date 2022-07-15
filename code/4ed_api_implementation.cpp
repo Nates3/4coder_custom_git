@@ -1848,6 +1848,20 @@ view_get_is_selecting(Application_Links *app, View_ID view_id)
   return(result);
 }
 
+api(custom) function b32 *
+view_get_is_cutting(Application_Links *app, View_ID view_id)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  
+  b32 *result = 0;
+  if(api_check_view(view))
+  {
+    result = &view->is_cutting;
+  }
+  return(result);
+}
+
 api(custom) function void
 view_set_selection_begin(Application_Links *app, View_ID view_id, i64 line_num)
 {
