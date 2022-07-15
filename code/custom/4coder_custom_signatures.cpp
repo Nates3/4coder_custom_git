@@ -155,9 +155,17 @@ CUSTOM_DOC("combine two lines")
 CUSTOM_COMMAND_SIG(new_line_and_switch_to_insert)
 CUSTOM_DOC("add new line and switch to insert mode")
 {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
   seek_end_of_textual_line(app);
 
   // TODO: Do line Break and change to insert mode
+=======
+
+>>>>>>> Stashed changes
+=======
+
+>>>>>>> Stashed changes
 }
 
 CUSTOM_COMMAND_SIG(cancel_command)
