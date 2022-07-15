@@ -63,7 +63,9 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
 internal void
 cakez_bind_command_keys(Mapping *m, Command_Map *map)
 {
+  Bind(cancel_command, KeyCode_Escape);
   Bind(cut, KeyCode_C);
+  Bind(cut, KeyCode_D);
   Bind(copy, KeyCode_Y);
   Bind(set_mark, KeyCode_Space);
   Bind(goto_next_mark, KeyCode_Equal);

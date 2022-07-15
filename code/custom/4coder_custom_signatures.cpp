@@ -152,6 +152,25 @@ CUSTOM_DOC("combine two lines")
   seek_end_of_line(app);
   delete_char(app);
 }
+CUSTOM_COMMAND_SIG(new_line_and_switch_to_insert)
+CUSTOM_DOC("add new line and switch to insert mode")
+{
+  seek_end_of_textual_line(app);
+
+  // TODO: Do line Break and change to insert mode
+}
+
+CUSTOM_COMMAND_SIG(cancel_command)
+CUSTOM_DOC("cancel command")
+{
+  View_ID view = get_active_view(app, Access_ReadWriteVisible);
+  b32 *is_selecting = view_get_is_selecting(app, view);
+  
+  if(*is_selecting)
+  {
+    *is_selecting = false;
+  }
+}
 
 CUSTOM_COMMAND_SIG(insert_return)
 CUSTOM_DOC("copy of text input but just for return, so you can hit return in command mode")
