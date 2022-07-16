@@ -2,7 +2,11 @@
 ///////////////////////////
 date-> 7/16/22
 
+(nates): Fixed comments getting added twice due to carriage return
+(nates): Fixed comment highlight not parsing inside scopes and parenthesis
 (nates): TODOs and NOTEs are highlighted
+(nates): forward declarations now apply to structures, unions, and enums
+(nates): forward declarations now have their own highlight when definition is missing
 
 ///////////////////////////
 date-> 7/15/22

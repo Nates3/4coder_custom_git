@@ -321,6 +321,7 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
   {
     draw_cpp_token_colors(app, text_layout_id, &token_array);
     
+#if 0
     // NOTE(allen): Scan for TODOs and NOTEs
     b32 use_comment_keyword = def_get_config_b32(vars_save_string_lit("use_comment_keyword"));
     if (use_comment_keyword)
@@ -332,11 +333,11 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
       };
       draw_comment_highlights(app, buffer, text_layout_id, &token_array, pairs, ArrayCount(pairs));
     }
+#endif
     
 #if 1
     // TODO(allen): Put in 4coder_draw.cpp
     // NOTE(allen): Color functions
-    // NOTE(nates): Welp syntax higlighting was already here?
     
     Scratch_Block scratch(app);
     ARGB_Color argb = 0xff000000;
@@ -357,58 +358,40 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
         break;
       }
       Token *token = token_it_read(&it);
+      String_Const_u8 contents = push_token_lexeme(app, scratch, buffer, token);
       
-      
-      String_Const_u8 lexeme = push_token_lexeme(app, scratch, buffer, token);
       
       
       Temp_Memory temp_note_memory = begin_temp(scratch);
-      
       Code_Index_Note *start = push_array(scratch, Code_Index_Note, 1);
       pop_array(scratch, Code_Index_Note, 1);
       
       u32 note_count = 0;
-      
-      // NOTE(nates): This kinda sucks
-      if(token->sub_kind == TokenCppKind_BlockComment)
+      if(token->sub_kind == TokenCppKind_BlockComment ||
+         token->sub_kind == TokenCppKind_LineComment)
       {
-        for(u64 index = 0;
-            index < lexeme.size;
+        for(i64 cursor = 0;
+            cursor < (i64)contents.size;
             )
         {
-          i64 left_pos = contents_find_u8_left_pos(lexeme, index, '\n');
-          i64 right_pos = contents_find_u8_right_pos(lexeme, index, '\n');
-          if(right_pos == 0)
+          String_Const_u8 line = contents_get_line(contents, cursor);
+          if(line.str[0] == '\n')
           {
-            right_pos = lexeme.size;
-          }
-          
-          i64 sub_lexeme_pos = (left_pos + 1);
-          i64 sub_lexeme_size = ((right_pos - left_pos) - 1);
-          String_Const_u8 sub_lexeme = {lexeme.str + sub_lexeme_pos, 
-            (u64)sub_lexeme_size};
-          
-          if(sub_lexeme.str[0] == '\n')
-          {
-            index += 1;
+            cursor += 1;
             continue;
           }
-          index = right_pos+1;
+          cursor = (PtrAsInt(line.str) - PtrAsInt(contents.str)) + (line.size + 1);
           
-          if(sub_lexeme.str[sub_lexeme.size] == 13)
-          {
-            --sub_lexeme.size;
-          }
-          
-          Code_Index_Note_List *list = code_index__list_from_string(sub_lexeme);
+          Code_Index_Note_List *list = code_index__list_from_string(line);
           for (Code_Index_Note *hash_note = list->first;
                hash_note != 0;
                hash_note = hash_note->next_in_hash)
           {
-            if (string_match(sub_lexeme, hash_note->text))
+            if (string_match(line, hash_note->text))
             {
-              Range_i64 range = {token->pos + sub_lexeme_pos, 
-                token->pos + sub_lexeme_pos + sub_lexeme_size};
+              Range_i64 range = contents_line_range(contents, line);
+              range.start += token->pos;
+              range.end += token->pos;
               
               switch(hash_note->note_kind)
               {
@@ -432,12 +415,12 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
       }
       else
       {
-        Code_Index_Note_List *list = code_index__list_from_string(lexeme);
+        Code_Index_Note_List *list = code_index__list_from_string(contents);
         for (Code_Index_Note *hash_note = list->first;
              hash_note != 0;
              hash_note = hash_note->next_in_hash)
         {
-          if (string_match(lexeme, hash_note->text))
+          if (string_match(contents, hash_note->text))
           {
             Code_Index_Note *New = push_array(scratch, Code_Index_Note, 1);
             *New = *hash_note;
@@ -497,16 +480,6 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
           case CodeIndexNote_4coderCommand:
           {
             argb = 0xff0000ff;
-          } break;
-          
-          case CodeIndexNote_CommentNOTE:
-          {
-            argb = 0xff2ab34f;
-          } break;
-          
-          case CodeIndexNote_CommentTODO:
-          {
-            argb = 0xffdddddd;
           } break;
           
           InvalidDefaultCase;

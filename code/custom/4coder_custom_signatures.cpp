@@ -346,6 +346,7 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
     }
     code_index_unlock();
     
+    
     Lister_Result l_result = run_lister(app, lister);
     Tiny_Jump result = {};
     if (!l_result.canceled && l_result.user_data != 0)

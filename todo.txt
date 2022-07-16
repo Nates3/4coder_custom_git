@@ -7,23 +7,16 @@ Empty :)
 //////////////////////////////
 ---------- TODOS -------------
 
-[ ] - Assign more keybinds
-
-[ ] - Add predicate CodeIndexNotes for function params?
-			i.e. all local variables to a function are highlighted in pink, but nowhere else?
-
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
   [x] - Add CodeIndexNote_Forward_Declarition type
 	[x] - Add CodeIndexNote_Enum Type
-  [x] - Add CodeIndexNote_TODO type
-	[x] - Add CodeIndexNote_NOTE type
+  [x] - Add CodeIndexNote_CommentTODO type
+	[x] - Add CodeIndexNote_CommentNOTE type
 	[ ] - Add CodeIndexNote_Union type
 	[ ] - Add CodeIndexNote_Global_Variable type
 	[ ] - Add CodeIndexNote_Operator_Type for syntax hilighting *+-=\%#!~&
 
-[ ] - Forward Declarations hilighted white, but overrided to red if definition is found
-
-[ ] - Add functionality for CodeIndexNote_Forward_Declaration to include structs / enums
+[ ] - CodeIndexNote_Comment only highlights the TODO / NOTE
 
 [ ] - Add functionality for jump_to_definition to note the function params for overloaded functions
 
@@ -40,6 +33,9 @@ Empty :)
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
 
+[x] - Forward Declarations hilighted white, but overrided to red if definition is found
+
+[x] - Add functionality for CodeIndexNote_Forward_Declaration to include structs / enums
 
 [x] - Bug: When opening a lister panel you can't execute any other cammands as if the
 			leave_event_unhandled() function wasn't invoked. 

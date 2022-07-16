@@ -99,15 +99,15 @@ void custom_layer_init(Application_Links *app)
   SelectMap(global_mapid);
   BindCore(default_startup, CoreCode_Startup);
   BindCore(default_try_exit, CoreCode_TryExit);
-  nates_bind_shared_keys(m, map);
+  cakez_bind_shared_keys(m, map);
   
   SelectMap(command_mapid);
   ParentMap(global_mapid);
-  nates_bind_command_keys(m, map);
+  cakez_bind_command_keys(m, map);
   
   SelectMap(insert_mapid);
   ParentMap(global_mapid);
-  nates_bind_text_input(m, map);
+  cakez_bind_text_input(m, map);
   
   // NOTE(cakez): You have to bind the "global_map, file_map, and code_map for some reason"
   SelectMap(file_mapid);
@@ -118,7 +118,7 @@ void custom_layer_init(Application_Links *app)
   
   app_set_maps(app, command_mapid, insert_mapid);
   b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
-  *is_global_modal = true;
+  *is_global_modal = false;
   if(*is_global_modal)
   {
     Modal_State_ID *global_state = app_get_global_modal_state_ptr(app);

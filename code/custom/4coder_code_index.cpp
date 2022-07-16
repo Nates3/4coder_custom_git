@@ -440,60 +440,85 @@ contents_find_u8_left_pos(String_Const_u8 contents, i64 pos,
   return(result);
 }
 
+function String_Const_u8
+contents_get_line(String_Const_u8 contents, i64 cursor)
+{
+  i64 left_pos = contents_find_u8_left_pos(contents, cursor, '\n');
+  left_pos = (left_pos) ? (left_pos + 1) : 0;
+  
+  i64 right_pos = 0;
+  i64 carriage_return = contents_find_u8_right_pos(contents, cursor, 13);
+  if(carriage_return != 0)
+  {
+    right_pos = carriage_return;
+  }
+  else
+  {
+    right_pos = contents_find_u8_right_pos(contents, cursor, '\n');
+    if(right_pos == 0)
+    {
+      right_pos = contents.size;
+    }
+  }
+  
+  u64 string_size = (u64)(right_pos - left_pos);
+  String_Const_u8 result = {contents.str + left_pos, string_size};
+  return(result);
+}
+
+function Range_i64
+contents_line_range(String_Const_u8 contents, String_Const_u8 line)
+{
+  Range_i64 result = {};
+  
+  u64 line_str = PtrAsInt(line.str);
+  u64 contents_str = PtrAsInt(contents.str);
+  Assert(line_str >= contents_str);
+  
+  result.start = (i64)(line_str - contents_str);
+  result.end = result.start + line.size;
+  return(result);
+}
 
 function void
-cpp_parse_comment(Code_Index_File *index_file, Generic_Parse_State *state)
+cpp_parse_comment(Code_Index_File *index_file, Generic_Parse_State *state,
+                  Code_Index_Nest *parent)
 {
   Token *token = token_it_read(&state->it);
   String_Const_u8 comment_strings[] = {
     SCu8("NOTE"), SCu8("TODO"),
   };
   
-  Token peek = *token;
-  Range_i64 peek_range = {peek.pos, peek.pos + peek.size};
-  String_Const_u8 peek_string = string_substring(state->contents, peek_range);
+  Range_i64 contents_range = {token->pos, token->pos + token->size};
+  String_Const_u8 contents = string_substring(state->contents, contents_range);
   
-  for(i64 index = 0;
-      index < (i64)peek_string.size;
+  for(i64 cursor = 0;
+      cursor < (i64)contents.size;
       )
   {
-    i64 left_pos = contents_find_u8_left_pos(peek_string, index, '\n');
-    i64 right_pos = contents_find_u8_right_pos(peek_string, index, '\n');
-    if(right_pos == 0)
+    if(string_has_substr(contents, SCu8("// NOTE(allen): coroutines")))
     {
-      right_pos = peek_string.size;
-      index = right_pos;
-    }
-    else
-    {
-      index = right_pos;
-      right_pos -= 1;
+      int break_here = 5;
     }
     
-    
-    i64 sub_lexeme_pos = (left_pos) ? (left_pos + 1) : 0;
-    i64 sub_lexeme_size = (right_pos - left_pos);
-    String_Const_u8 sub_lexeme = {peek_string.str + sub_lexeme_pos, (u64)sub_lexeme_size};
-    if(sub_lexeme.str[0] == '\n')
+    String_Const_u8 line = contents_get_line(contents, cursor);
+    if(line.str[0] == '\n')
     {
-      index += 1;
+      cursor += 1;
       continue;
     }
-    
-    if(sub_lexeme.str[sub_lexeme.size] == 13)
-    {
-      --sub_lexeme.size;
-    }
-    
+    cursor = (PtrAsInt(line.str) - PtrAsInt(contents.str)) + (line.size + 1);
     
     for(u32 test_index = 0;
         test_index < ArrayCount(comment_strings);
         ++test_index)
     {
       String_Const_u8 test = comment_strings[test_index];
-      if(string_has_substr(sub_lexeme, test))
+      if(string_has_substr(line, test))
       {
-        Range_i64 range = {peek.pos + sub_lexeme_pos, peek.pos + sub_lexeme_pos + sub_lexeme_size};
+        Range_i64 range = contents_line_range(contents, line);
+        range.start += token->pos;
+        range.end += token->pos;
         
         Code_Index_Note_Kind kind = CodeIndexNote_Null;
         switch(test_index)
@@ -509,7 +534,7 @@ cpp_parse_comment(Code_Index_File *index_file, Generic_Parse_State *state)
           } break;
         }
         
-        index_new_note(index_file, state, range, kind, 0);
+        index_new_note(index_file, state, range, kind, parent);
       }
     }
   }
@@ -825,10 +850,17 @@ generic_parse_scope(Code_Index_File *index, Generic_Parse_State *state){
   
   generic_parse_inc(state);
   for (;;){
-    generic_parse_skip_soft_tokens(index, state);
+    generic_parse_skip_whitespace_only(index, state);
     token = token_it_read(&state->it);
     if (token == 0 || state->finished){
       break;
+    }
+    
+    if(token->sub_kind == TokenCppKind_LineComment ||
+       token->sub_kind == TokenCppKind_BlockComment)
+    {
+      cpp_parse_comment(index, state, 0);
+      continue;
     }
     
     if (state->in_preprocessor){
@@ -919,11 +951,19 @@ generic_parse_paren(Code_Index_File *index, Generic_Parse_State *state){
   
   generic_parse_inc(state);
   for (;;){
-    generic_parse_skip_soft_tokens(index, state);
+    generic_parse_skip_whitespace_only(index, state);
     token = token_it_read(&state->it);
     if (token == 0 || state->finished){
       break;
     }
+    
+    if(token->sub_kind == TokenCppKind_LineComment ||
+       token->sub_kind == TokenCppKind_BlockComment)
+    {
+      cpp_parse_comment(index, state, 0);
+      continue;
+    }
+    
     
     if (state->in_preprocessor){
       if (!HasFlag(token->flags, TokenBaseFlag_PreprocessorBody) ||
@@ -1024,12 +1064,7 @@ generic_parse_full_input_breaks(Code_Index_File *index, Generic_Parse_State *sta
       else if(token->sub_kind == TokenCppKind_LineComment ||
               token->sub_kind == TokenCppKind_BlockComment)
       {
-        if(token->sub_kind == TokenCppKind_BlockComment)
-        {
-          int BreakHere = 5;
-        }
-        
-        cpp_parse_comment(index, state);
+        cpp_parse_comment(index, state, 0);
       }
       else
       {
