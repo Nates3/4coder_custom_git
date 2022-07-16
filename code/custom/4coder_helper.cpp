@@ -1117,6 +1117,39 @@ token_it_check_and_get_lexeme(Application_Links *app, Arena *arena, Token_Iterat
   return(result);
 }
 
+
+function Range_i64
+token_it_peek_line_range(Token_Iterator_Array it)
+{
+  Range_i64 result = {};
+  Token_Iterator_Array copy = it;
+  
+  for(;;)
+  {
+    Token *token = token_it_read(&it);
+    if(token->sub_kind == TokenCppKind_Return || 
+       token->sub_kind == TokenCppKind_EOF)
+    {
+      result.end = token->pos;
+    }
+    token_it_inc(&it);
+  }
+  
+  for(;;)
+  {
+    Token *token = token_it_read(&copy);
+    if(token->sub_kind == TokenCppKind_Return || 
+       token->pos == 0)
+    {
+      result.start = token->pos;
+    }
+    token_it_dec(&copy);
+  }
+  
+  return(result);
+}
+
+
 ////////////////////////////////
 
 function b32

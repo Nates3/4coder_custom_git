@@ -1,5 +1,10 @@
 
 ///////////////////////////
+date-> 7/16/22
+
+(nates): TODOs and NOTEs are highlighted
+
+///////////////////////////
 date-> 7/15/22
 
 (nates): Cleaned up custom word highlight to always happen _after_ the default one so it just overrides it

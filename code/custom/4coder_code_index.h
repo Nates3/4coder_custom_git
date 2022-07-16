@@ -44,11 +44,14 @@ struct Code_Index_Nest{
 typedef i64 Code_Index_Note_Kind;
 enum
 {
+  CodeIndexNote_Null,
   CodeIndexNote_Type,
   CodeIndexNote_Function,
   CodeIndexNote_Macro,
   CodeIndexNote_Enum,
-  CodeIndexNote_Forward_Declaration,
+  CodeIndexNote_ForwardDeclaration,
+  CodeIndexNote_CommentNOTE,
+  CodeIndexNote_CommentTODO,
   CodeIndexNote_4coderCommand,
 };
 

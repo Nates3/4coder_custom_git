@@ -260,13 +260,17 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
   Code_Index_Note_Kind function_kind = CodeIndexNote_Function;
   Code_Index_Note_Kind macro_kind = CodeIndexNote_Macro;
   Code_Index_Note_Kind enum_kind = CodeIndexNote_Enum;
-  Code_Index_Note_Kind forward_declare_kind = CodeIndexNote_Forward_Declaration;
+  Code_Index_Note_Kind forward_declare_kind = CodeIndexNote_ForwardDeclaration;
+  Code_Index_Note_Kind comment_note_kind = CodeIndexNote_CommentNOTE;
+  Code_Index_Note_Kind comment_todo_kind = CodeIndexNote_CommentTODO;
   
-  lister_add_item(sort_lister, SCu8("types"), SCu8(""), &type_kind, 0);
-  lister_add_item(sort_lister, SCu8("functions"), SCu8(""), &function_kind, 0);
-  lister_add_item(sort_lister, SCu8("macros"), SCu8(""), &macro_kind, 0);
-  lister_add_item(sort_lister, SCu8("enums"), SCu8(""), &enum_kind, 0);
-  lister_add_item(sort_lister, SCu8("forward_declaration"), SCu8(""), &forward_declare_kind, 0);
+  lister_add_item(sort_lister, SCu8("Types"), SCu8(""), &type_kind, 0);
+  lister_add_item(sort_lister, SCu8("Functions"), SCu8(""), &function_kind, 0);
+  lister_add_item(sort_lister, SCu8("Macros"), SCu8(""), &macro_kind, 0);
+  lister_add_item(sort_lister, SCu8("Enums"), SCu8(""), &enum_kind, 0);
+  lister_add_item(sort_lister, SCu8("Declarations"), SCu8(""), &forward_declare_kind, 0);
+  lister_add_item(sort_lister, SCu8("Todos"), SCu8(""), &comment_todo_kind, 0);
+  lister_add_item(sort_lister, SCu8("Notes"), SCu8(""), &comment_note_kind, 0);
   
   Lister_Result sort_result = run_lister(app, sort_lister);
   if (!sort_result.canceled &&
@@ -301,29 +305,40 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
             {
               case CodeIndexNote_Type:
               {
-                sort = string_u8_litexpr("type");
+                sort = string_u8_litexpr("Type");
               }
               break;
               case CodeIndexNote_Function:
               {
-                sort = string_u8_litexpr("function");
+                sort = string_u8_litexpr("Function");
               }
               break;
               case CodeIndexNote_Macro:
               {
-                sort = string_u8_litexpr("macro");
+                sort = string_u8_litexpr("Macro");
               }
               break;
               case CodeIndexNote_Enum:
               {
-                sort = string_u8_litexpr("enum");
+                sort = string_u8_litexpr("Enum");
               } break;
               
-              case CodeIndexNote_Forward_Declaration:
+              case CodeIndexNote_ForwardDeclaration:
               {
-                sort = string_u8_litexpr("enum");
+                sort = string_u8_litexpr("Declaration");
+              } break;
+              
+              case CodeIndexNote_CommentNOTE:
+              {
+                sort = string_u8_litexpr("Note");
+              } break;
+              
+              case CodeIndexNote_CommentTODO:
+              {
+                sort = string_u8_litexpr("Todo");
               } break;
             }
+            
             lister_add_item(lister, note->text, sort, jump, 0);
           }
         }

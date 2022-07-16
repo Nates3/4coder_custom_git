@@ -4674,7 +4674,8 @@ string_skip_chop_whitespace(String_Const_u32 str){
 function b32
 string_match(String_Const_char a, String_Const_char b){
   b32 result = false;
-  if (a.size == b.size){
+  if (a.size == b.size)
+  {
     result = true;
     for (u64 i = 0; i < a.size; i += 1){
       if (a.str[i] != b.str[i]){

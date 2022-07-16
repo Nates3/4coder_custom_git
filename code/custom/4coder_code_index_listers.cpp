@@ -38,25 +38,35 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
         {
           case CodeIndexNote_Type:
           {
-            sort = string_u8_litexpr("type");
+            sort = string_u8_litexpr("Type");
           }break;
           case CodeIndexNote_Function:
           {
-            sort = string_u8_litexpr("function");
+            sort = string_u8_litexpr("Function");
           }break;
           case CodeIndexNote_Macro:
           {
-            sort = string_u8_litexpr("macro");
+            sort = string_u8_litexpr("Macro");
           }break;
           
           case CodeIndexNote_Enum:
           {
-            sort = string_u8_litexpr("enum");
+            sort = string_u8_litexpr("Enum");
           } break;
           
-          case CodeIndexNote_Forward_Declaration:
+          case CodeIndexNote_ForwardDeclaration:
           {
-            sort = string_u8_litexpr("forward declaration");
+            sort = string_u8_litexpr("Declaration");
+          } break;
+          
+          case CodeIndexNote_CommentNOTE:
+          {
+            sort = string_u8_litexpr("Note");
+          } break;
+          
+          case CodeIndexNote_CommentTODO:
+          {
+            sort = string_u8_litexpr("Todo");
           } break;
         }
         lister_add_item(lister, note->text, sort, jump, 0);
@@ -119,7 +129,7 @@ CUSTOM_DOC("Jump to the first definition in the code index matching an identifie
         {
           Code_Index_Note *this_note = start + index;
           
-          if(this_note->note_kind != CodeIndexNote_Forward_Declaration)
+          if(this_note->note_kind != CodeIndexNote_ForwardDeclaration)
           {
             point_stack_push_view_cursor(app, view);
             jump_to_location(app, view, buffer, this_note->pos.first);
@@ -174,7 +184,7 @@ CUSTOM_DOC("Jump to the first definition in the code index matching an identifie
         {
           Code_Index_Note *this_note = start + index;
           
-          if(this_note->note_kind != CodeIndexNote_Forward_Declaration)
+          if(this_note->note_kind != CodeIndexNote_ForwardDeclaration)
           {
             point_stack_push_view_cursor(app, view);
             jump_to_location(app, view, buffer, this_note->pos.first);

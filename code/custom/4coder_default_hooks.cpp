@@ -357,11 +357,113 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
         break;
       }
       Token *token = token_it_read(&it);
+      
+      
       String_Const_u8 lexeme = push_token_lexeme(app, scratch, buffer, token);
-      Code_Index_Note *note = code_index_note_from_string(lexeme);
-      if (note != 0)
+      
+      
+      Temp_Memory temp_note_memory = begin_temp(scratch);
+      
+      Code_Index_Note *start = push_array(scratch, Code_Index_Note, 1);
+      pop_array(scratch, Code_Index_Note, 1);
+      
+      u32 note_count = 0;
+      
+      // NOTE(nates): This kinda sucks
+      if(token->sub_kind == TokenCppKind_BlockComment)
       {
-        switch (note->note_kind)
+        for(u64 index = 0;
+            index < lexeme.size;
+            )
+        {
+          i64 left_pos = contents_find_u8_left_pos(lexeme, index, '\n');
+          i64 right_pos = contents_find_u8_right_pos(lexeme, index, '\n');
+          if(right_pos == 0)
+          {
+            right_pos = lexeme.size;
+          }
+          
+          i64 sub_lexeme_pos = (left_pos + 1);
+          i64 sub_lexeme_size = ((right_pos - left_pos) - 1);
+          String_Const_u8 sub_lexeme = {lexeme.str + sub_lexeme_pos, 
+            (u64)sub_lexeme_size};
+          
+          if(sub_lexeme.str[0] == '\n')
+          {
+            index += 1;
+            continue;
+          }
+          index = right_pos+1;
+          
+          if(sub_lexeme.str[sub_lexeme.size] == 13)
+          {
+            --sub_lexeme.size;
+          }
+          
+          Code_Index_Note_List *list = code_index__list_from_string(sub_lexeme);
+          for (Code_Index_Note *hash_note = list->first;
+               hash_note != 0;
+               hash_note = hash_note->next_in_hash)
+          {
+            if (string_match(sub_lexeme, hash_note->text))
+            {
+              Range_i64 range = {token->pos + sub_lexeme_pos, 
+                token->pos + sub_lexeme_pos + sub_lexeme_size};
+              
+              switch(hash_note->note_kind)
+              {
+                case CodeIndexNote_CommentNOTE:
+                {
+                  argb = 0xff2ab34f;
+                } break;
+                
+                case CodeIndexNote_CommentTODO:
+                {
+                  argb = 0xffdddddd;
+                } break;
+                
+                InvalidDefaultCase;
+              }
+              
+              paint_text_color(app, text_layout_id, range, argb);
+            }
+          }
+        }
+      }
+      else
+      {
+        Code_Index_Note_List *list = code_index__list_from_string(lexeme);
+        for (Code_Index_Note *hash_note = list->first;
+             hash_note != 0;
+             hash_note = hash_note->next_in_hash)
+        {
+          if (string_match(lexeme, hash_note->text))
+          {
+            Code_Index_Note *New = push_array(scratch, Code_Index_Note, 1);
+            *New = *hash_note;
+            note_count++;
+          }
+        }
+      }
+      
+      Code_Index_Note_Kind kind = CodeIndexNote_Null;
+      for(u32 index = 0;
+          index < note_count;
+          ++index)
+      {
+        Code_Index_Note *current = start + index;
+        if(current->note_kind != CodeIndexNote_ForwardDeclaration)
+        {
+          kind = current->note_kind;
+          break;
+        }
+        kind = current->note_kind;
+      }
+      end_temp(temp_note_memory);
+      
+      if(note_count)
+      {
+        switch (kind)
         {
           case CodeIndexNote_Type:
           {
@@ -387,11 +489,27 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
           }
           break;
           
-          case CodeIndexNote_Forward_Declaration:
+          case CodeIndexNote_ForwardDeclaration:
           {
-            argb = 0xffde451f;
-          }
-          break;
+            argb = 0xffeeeeee;
+          } break;
+          
+          case CodeIndexNote_4coderCommand:
+          {
+            argb = 0xff0000ff;
+          } break;
+          
+          case CodeIndexNote_CommentNOTE:
+          {
+            argb = 0xff2ab34f;
+          } break;
+          
+          case CodeIndexNote_CommentTODO:
+          {
+            argb = 0xffdddddd;
+          } break;
+          
+          InvalidDefaultCase;
         }
         
         paint_text_color(app, text_layout_id, Ii64_size(token->pos, token->size), argb);

@@ -598,12 +598,6 @@ run_lister(Application_Links *app, Lister *lister)
       break;
     }
     
-    if(in.event.key.code == KeyCode_J &&
-       has_modifier(&in.event.key.modifiers, KeyCode_Alt))
-    {
-      int break_here = 5;
-    }
-    
     Lister_Activation_Code result = ListerActivation_Continue;
     b32 handled = true;
     switch (in.event.kind)

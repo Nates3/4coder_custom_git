@@ -15,8 +15,8 @@ Empty :)
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
   [x] - Add CodeIndexNote_Forward_Declarition type
 	[x] - Add CodeIndexNote_Enum Type
-  [ ] - Add CodeIndexNote_TODO type
-	[ ] - Add CodeIndexNote_NOTE type
+  [x] - Add CodeIndexNote_TODO type
+	[x] - Add CodeIndexNote_NOTE type
 	[ ] - Add CodeIndexNote_Union type
 	[ ] - Add CodeIndexNote_Global_Variable type
 	[ ] - Add CodeIndexNote_Operator_Type for syntax hilighting *+-=\%#!~&

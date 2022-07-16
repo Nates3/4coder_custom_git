@@ -8,7 +8,7 @@
 #define FCODER_TOKEN_H
 
 typedef i16 Token_Base_Kind;
-enum debug_tbk
+enum
 {
   TokenBaseKind_EOF = 0,
   TokenBaseKind_Whitespace = 1,
