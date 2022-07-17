@@ -33,6 +33,7 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   BindMouseWheel(mouse_wheel_change_face_size, KeyCode_Control);
   
   Bind(jump_to_definition_at_cursor, KeyCode_W, KeyCode_Control);
+  Bind(jump_to_last_point, KeyCode_Minus, KeyCode_Control);
   Bind(jump_to_definition_at_cursor_other_panel, KeyCode_W, KeyCode_Alt);
   Bind(jump_to_definition, KeyCode_Q, KeyCode_Control);
   
