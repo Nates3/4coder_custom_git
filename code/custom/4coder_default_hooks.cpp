@@ -438,12 +438,15 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
           if (string_match(contents, hash_note->text))
           {
             b32 allowed = true;
-            if(hash_note->parent)
+            if(hash_note->note_kind != CodeIndexNote_Macro)
             {
-              allowed = code_index_nest_is_ancestor(nest, hash_note->parent);
-              if(allowed)
+              if(hash_note->parent)
               {
-                allowed = (token->pos >= hash_note->pos.min);
+                allowed = code_index_nest_is_ancestor(nest, hash_note->parent);
+                if(allowed)
+                {
+                  allowed = (token->pos >= hash_note->pos.min);
+                }
               }
             }
             

@@ -1,6 +1,7 @@
 ///////////////////////////
 date-> 7/17/22
 
+(nates): Fixed it so Macros are highlighted
 (nates): Made it so syntax highlighting acccounts for the scope position of tokens relative
          to the definition of where the struct type is
 (nates): Added syntax highlighting for local structs, enums, && unions

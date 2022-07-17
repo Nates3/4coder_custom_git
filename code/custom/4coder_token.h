@@ -1,6 +1,6 @@
 /*
- * 4coder token types
- */
+* 4coder token types
+*/
 
 // TOP
 
