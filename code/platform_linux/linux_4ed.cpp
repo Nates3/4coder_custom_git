@@ -1,12 +1,12 @@
 /*
- * chr  - Andrew Chronister &
- * inso - Alex Baines
- *
- * 12.19.2019
- *
- * Updated linux layer for 4coder
- *
- */
+* chr  - Andrew Chronister &
+* inso - Alex Baines
+*
+* 12.19.2019
+*
+* Updated linux layer for 4coder
+*
+*/
 
 // TOP
 
@@ -1841,27 +1841,27 @@ main(int argc, char **argv){
     base_ptr = app.read_command_line(&linuxvars.tctx, curdir, &plat_settings, &files, &file_count, argc, argv);
     /* TODO(inso): what is this doing?
     {
-        i32 end = *file_count;
-        i32 i = 0, j = 0;
-        for (; i < end; ++i){
-            if (system_file_can_be_made(scratch, (u8*)files[i])){
-                files[j] = files[i];
-                ++j;
-            }
-        }
-        *file_count = j;
+    i32 end = *file_count;
+    i32 i = 0, j = 0;
+    for (; i < end; ++i){
+    if (system_file_can_be_made(scratch, (u8*)files[i])){
+    files[j] = files[i];
+    ++j;
+    }
+    }
+    *file_count = j;
     }*/
-  }
-  
-  // NOTE(allen): setup user directory override
-  if (plat_settings.user_directory != 0){
+    }
+    
+    // NOTE(allen): setup user directory override
+    if (plat_settings.user_directory != 0){
     lnx_override_user_directory = plat_settings.user_directory;
-  }
-  
-  // NOTE(allen): load custom layer
-  System_Library custom_library = {};
-  Custom_API custom = {};
-  {
+    }
+    
+    // NOTE(allen): load custom layer
+    System_Library custom_library = {};
+    Custom_API custom = {};
+    {
     char custom_not_found_msg[] = "Did not find a library for the custom layer.";
     char custom_fail_load_msg[] = "Failed to load custom code due to missing version information.  Try rebuilding with buildsuper.";
     char custom_fail_version_msg[] = "Failed to load custom code due to a version mismatch.  Try rebuilding with buildsuper.";
@@ -1875,70 +1875,70 @@ main(int argc, char **argv){
     String_Const_u8 custom_file_names[2] = {};
     i32 custom_file_count = 1;
     if (plat_settings.custom_dll != 0){
-      custom_file_names[0] = SCu8(plat_settings.custom_dll);
-      if (!plat_settings.custom_dll_is_strict){
-        custom_file_names[1] = default_file_name;
-        custom_file_count += 1;
-      }
+    custom_file_names[0] = SCu8(plat_settings.custom_dll);
+    if (!plat_settings.custom_dll_is_strict){
+    custom_file_names[1] = default_file_name;
+    custom_file_count += 1;
+    }
     }
     else{
-      custom_file_names[0] = default_file_name;
+    custom_file_names[0] = default_file_name;
     }
     String_Const_u8 custom_file_name = {};
     for (i32 i = 0; i < custom_file_count; i += 1){
-      custom_file_name = def_search_get_full_path(scratch, &search_list, custom_file_names[i]);
-      if (custom_file_name.size > 0){
-        break;
-      }
+    custom_file_name = def_search_get_full_path(scratch, &search_list, custom_file_names[i]);
+    if (custom_file_name.size > 0){
+    break;
+    }
     }
     b32 has_library = false;
     if (custom_file_name.size > 0){
-      if (system_load_library(scratch, custom_file_name, &custom_library)){
-        has_library = true;
-      }
+    if (system_load_library(scratch, custom_file_name, &custom_library)){
+    has_library = true;
+    }
     }
     
     if (!has_library){
-      system_error_box(custom_not_found_msg);
+    system_error_box(custom_not_found_msg);
     }
     custom.get_version = (_Get_Version_Type*)system_get_proc(custom_library, "get_version");
     if (custom.get_version == 0){
-      system_error_box(custom_fail_load_msg);
+    system_error_box(custom_fail_load_msg);
     }
     else if (custom.get_version(MAJOR, MINOR, PATCH) == 0){
-      system_error_box(custom_fail_version_msg);
+    system_error_box(custom_fail_version_msg);
     }
     custom.init_apis = (_Init_APIs_Type*)system_get_proc(custom_library, "init_apis");
     if (custom.init_apis == 0){
-      system_error_box(custom_fail_init_apis);
+    system_error_box(custom_fail_init_apis);
     }
-  }
-  
-  linux_x11_init(argc, argv, &plat_settings);
-  linux_keycode_init(linuxvars.dpy);
-  linux_epoll_init();
-  
-  linuxvars.audio_thread = system_thread_launch(&linux_audio_main, NULL);
-  
-  
-  // app init
-  {
+    }
+    
+    linux_x11_init(argc, argv, &plat_settings);
+    linux_keycode_init(linuxvars.dpy);
+    linux_epoll_init();
+    
+    linuxvars.audio_thread = system_thread_launch(&linux_audio_main, NULL);
+    
+    
+    // app init
+    {
     Scratch_Block scratch(&linuxvars.tctx);
     String_Const_u8 curdir = system_get_path(scratch, SystemPath_CurrentDirectory);
     app.init(&linuxvars.tctx, &render_target, base_ptr, curdir, custom);
-  }
-  
-  linuxvars.global_frame_mutex = system_mutex_make();
-  system_mutex_acquire(linuxvars.global_frame_mutex);
-  
-  linux_schedule_step();
-  b32 first_step = true;
-  u64 timer_start = system_now_time();
-  
-  for (;;) {
+    }
+    
+    linuxvars.global_frame_mutex = system_mutex_make();
+    system_mutex_acquire(linuxvars.global_frame_mutex);
+    
+    linux_schedule_step();
+    b32 first_step = true;
+    u64 timer_start = system_now_time();
+    
+    for (;;) {
     
     if (XEventsQueued(linuxvars.dpy, QueuedAlready)){
-      linux_handle_x11_events();
+    linux_handle_x11_events();
     }
     
     system_mutex_release(linuxvars.global_frame_mutex);
@@ -1949,15 +1949,15 @@ main(int argc, char **argv){
     system_mutex_acquire(linuxvars.global_frame_mutex);
     
     if (num_events == -1){
-      if (errno != EINTR){
-        perror("epoll_wait");
-        //LOG("epoll_wait\n");
-      }
-      continue;
+    if (errno != EINTR){
+    perror("epoll_wait");
+    //LOG("epoll_wait\n");
+    }
+    continue;
     }
     
     if(!linux_epoll_process(events, num_events)) {
-      continue;
+    continue;
     }
     
     linuxvars.last_step_time = system_now_time();
@@ -1965,13 +1965,13 @@ main(int argc, char **argv){
     // NOTE(allen): Frame Clipboard Input
     // Request clipboard contents from X11 on first step, or every step if they don't have XFixes notification ability.
     if (first_step || (!linuxvars.has_xfixes && linuxvars.clipboard_catch_all)){
-      XConvertSelection(linuxvars.dpy, linuxvars.atom_CLIPBOARD, linuxvars.atom_UTF8_STRING, linuxvars.atom_CLIPBOARD, linuxvars.win, CurrentTime);
+    XConvertSelection(linuxvars.dpy, linuxvars.atom_CLIPBOARD, linuxvars.atom_UTF8_STRING, linuxvars.atom_CLIPBOARD, linuxvars.win, CurrentTime);
     }
     
     Application_Step_Input input = {};
     
     if (linuxvars.received_new_clipboard && linuxvars.clipboard_catch_all){
-      input.clipboard = linuxvars.clipboard_contents;
+    input.clipboard = linuxvars.clipboard_contents;
     }
     linuxvars.received_new_clipboard = false;
     
@@ -1993,26 +1993,26 @@ main(int argc, char **argv){
     // NOTE(allen): Application Core Update
     Application_Step_Result result = {};
     if (app.step != 0){
-      result = app.step(&linuxvars.tctx, &render_target, base_ptr, &input);
+    result = app.step(&linuxvars.tctx, &render_target, base_ptr, &input);
     }
     
     // NOTE(allen): Finish the Loop
     if (result.perform_kill){
-      break;
+    break;
     }
     
     // NOTE(NAME): Switch to New Title
     if (result.has_new_title){
-      XStoreName(linuxvars.dpy, linuxvars.win, result.title_string);
+    XStoreName(linuxvars.dpy, linuxvars.win, result.title_string);
     }
     
     // NOTE(allen): Switch to New Cursor
     if (result.mouse_cursor_type != linuxvars.cursor && !linuxvars.input.pers.mouse_l){
-      XCursor c = linuxvars.xcursors[result.mouse_cursor_type];
-      if (linuxvars.cursor_show){
-        XDefineCursor(linuxvars.dpy, linuxvars.win, c);
-      }
-      linuxvars.cursor = result.mouse_cursor_type;
+    XCursor c = linuxvars.xcursors[result.mouse_cursor_type];
+    if (linuxvars.cursor_show){
+    XDefineCursor(linuxvars.dpy, linuxvars.win, c);
+    }
+    linuxvars.cursor = result.mouse_cursor_type;
     }
     
     gl_render(&render_target);
@@ -2022,17 +2022,17 @@ main(int argc, char **argv){
     
     // NOTE(allen): Schedule a step if necessary
     if (result.animating){
-      linux_schedule_step();
+    linux_schedule_step();
     }
     
     first_step = false;
     
     linalloc_clear(&linuxvars.frame_arena);
     block_zero_struct(&linuxvars.input.trans);
-  }
-  
-  return 0;
-}
-
-// NOTE(inso): to prevent me continuously messing up indentation
-// vim: et:ts=4:sts=4:sw=4
+    }
+    
+    return 0;
+    }
+    
+    // NOTE(inso): to prevent me continuously messing up indentation
+    // vim: et:ts=4:sts=4:sw=4

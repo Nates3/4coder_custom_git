@@ -346,6 +346,8 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
     Token_Iterator_Array it = token_iterator_pos(0, &token_array, range_first);
     Token_Iterator_Array end = token_iterator_pos(0, &token_array, visible_range.one_past_last);
     
+    Code_Index_File *index_file = code_index_get_file(buffer);
+    
     // NOTE(nates): TODO Fix this, this count includes whitespace tokens, but in the for
     // loop we skip those, so the count should be diff_count - whitespace_count
     i64 diff_count = ((i64)end.ptr - (i64)it.ptr) / sizeof(Token);
@@ -358,9 +360,9 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
         break;
       }
       Token *token = token_it_read(&it);
+      
       String_Const_u8 contents = push_token_lexeme(app, scratch, buffer, token);
-      
-      
+      Code_Index_Nest *nest = code_index_get_nest(index_file, token->pos);
       
       Temp_Memory temp_note_memory = begin_temp(scratch);
       Code_Index_Note *start = push_array(scratch, Code_Index_Note, 1);
@@ -389,26 +391,39 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
           {
             if (string_match(line, hash_note->text))
             {
-              Range_i64 range = contents_line_range(contents, line);
-              range.start += token->pos;
-              range.end += token->pos;
-              
-              switch(hash_note->note_kind)
+              b32 allowed = true;
+              if(hash_note->parent)
               {
-                case CodeIndexNote_CommentNOTE:
+                allowed = code_index_nest_is_ancestor(nest, hash_note->parent);
+                if(allowed)
                 {
-                  argb = 0xff2ab34f;
-                } break;
-                
-                case CodeIndexNote_CommentTODO:
-                {
-                  argb = 0xffdddddd;
-                } break;
-                
-                InvalidDefaultCase;
+                  allowed = (token->pos >= hash_note->pos.min);
+                }
               }
               
-              paint_text_color(app, text_layout_id, range, argb);
+              if(allowed)
+              {
+                Range_i64 range = contents_line_range(contents, line);
+                range.start += token->pos;
+                range.end += token->pos;
+                
+                switch(hash_note->note_kind)
+                {
+                  case CodeIndexNote_CommentNOTE:
+                  {
+                    argb = 0xff2ab34f;
+                  } break;
+                  
+                  case CodeIndexNote_CommentTODO:
+                  {
+                    argb = 0xffdddddd;
+                  } break;
+                  
+                  InvalidDefaultCase;
+                }
+                
+                paint_text_color(app, text_layout_id, range, argb);
+              }
             }
           }
         }
@@ -422,9 +437,22 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
         {
           if (string_match(contents, hash_note->text))
           {
-            Code_Index_Note *New = push_array(scratch, Code_Index_Note, 1);
-            *New = *hash_note;
-            note_count++;
+            b32 allowed = true;
+            if(hash_note->parent)
+            {
+              allowed = code_index_nest_is_ancestor(nest, hash_note->parent);
+              if(allowed)
+              {
+                allowed = (token->pos >= hash_note->pos.min);
+              }
+            }
+            
+            if(allowed)
+            {
+              Code_Index_Note *New = push_array(scratch, Code_Index_Note, 1);
+              *New = *hash_note;
+              note_count++;
+            }
           }
         }
       }

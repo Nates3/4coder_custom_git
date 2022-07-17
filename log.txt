@@ -1,3 +1,11 @@
+///////////////////////////
+date-> 7/17/22
+
+(nates): Made it so syntax highlighting acccounts for the scope position of tokens relative
+         to the definition of where the struct type is
+(nates): Added syntax highlighting for local structs, enums, && unions
+(nates): Duct taped block comments not geting auto indented when using write_text_auto_indent
+
 
 ///////////////////////////
 date-> 7/16/22

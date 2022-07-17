@@ -22,7 +22,7 @@ set opts=%opts% %mode%
 
 set FirstError=0
 pushd %build_root%
-call cl %opts% kernel32.lib %bin_root%\4ed_build.cpp /DEBUG:FULL /Febuild
+call cl %opts% kernel32.lib %bin_root%\4ed_build.cpp /Febuild
 if %ERRORLEVEL% neq 0 (set FirstError=1)
 if %ERRORLEVEL% neq 0 (goto END)
 popd

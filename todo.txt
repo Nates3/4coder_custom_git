@@ -1,10 +1,12 @@
 
 /////////////////////////////
-------------BUGS-------------
+------------BAD BUGS-------------
 
-Empty :)
+[ ] - slowdown of listers because for some reason, the more items are in a list
+      the more the (threads sleep)? when asking for next user input from multi threads.
+      look at run_lister() -> get_next_input() -> get_next_input_raw() -> coroutine_yield() for more info
 
-//////////////////////////////
+/////////////////////////////
 ---------- TODOS -------------
 
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting

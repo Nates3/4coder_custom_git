@@ -5,11 +5,16 @@ HTTPS: `git clone --recursive https://github.com/Nates3/4coder_custom_git.git`
 SSH: `git clone --recursive git@github.com:Nates3/4coder_custom_git.git`
 
 ## Step2 
-Navigate to `{rootDir}/code` (IMPORTANT!)  
-Insert call to `vcvarsall.bat` in `{rootDir}\code\full_build.bat` file
+Navigate to `{RootDir}/code` (IMPORTANT!)  
+Insert call to `vcvarsall.bat` in `{RootDir}/code/full_build.bat` file
 
 ## Step3 
 call `full_build.bat`
+
+## Bulid Settings
+To change between debug or release -> {RootDir}/code/custom/bin/buildsuper_os.bat 
+and change "mode" variable to "debug" or "release"
+
 
 ## Info
 To learn how to make custom commands you can look at code\custom\4coder_examples.cpp

@@ -13,6 +13,10 @@ build/win32_4ed.obj
 build/one_time.ilk
 build/one_time.pdb
 build/one_time.exe
+build/4ed.exe
+build/4ed_app.dll
+build/custom_4coder.dll
+
 code/custom/generated/command_metadata.h
 code/custom/generated/managed_id_metadata.cpp
 code/custom/generated/custom_api_master_list.h
