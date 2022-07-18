@@ -118,7 +118,7 @@ void custom_layer_init(Application_Links *app)
   
   app_set_maps(app, command_mapid, insert_mapid);
   b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
-  *is_global_modal = false;
+  *is_global_modal = true;
   if(*is_global_modal)
   {
     Modal_State_ID *global_state = app_get_global_modal_state_ptr(app);

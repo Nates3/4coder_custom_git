@@ -34,8 +34,15 @@ code_index_get_nest_(Code_Index_Nest_Ptr_Array *array, i64 pos){
 }
 
 function Code_Index_Nest*
-code_index_get_nest(Code_Index_File *file, i64 pos){
-  return(code_index_get_nest_(&file->nest_array, pos));
+code_index_get_nest(Code_Index_File *file, i64 pos)
+{
+  Code_Index_Nest *result = 0;
+  if(file)
+  {
+    result = code_index_get_nest_(&file->nest_array, pos);
+  }
+  
+  return(result);
 }
 
 // NOTE(nates): lol
