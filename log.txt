@@ -1,3 +1,15 @@
+
+///////////////////////////
+date-> 7/18/22
+
+(nates): Cleaned up code index note rendering code a little bit
+(nates): Fixed code index note function highlighting having greater priority than macros
+(nates): Fixed crash when setting the cursor on a view_id of zero
+(nates): Fixed lister slowdown when lister->options.count increses
+(nates): Fixed crash because of code indexing into files that don't exist? Idk, it was a null pointer
+         dereference in default_render_buffer code index note code
+
+
 ///////////////////////////
 date-> 7/17/22
 

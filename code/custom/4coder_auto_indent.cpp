@@ -199,76 +199,12 @@ get_indentation_array(Application_Links *app, Arena *arena, Buffer_ID buffer, Ra
 		
 		Indent_Line_Cache line_cache = {};
 		
-		struct Block_Comment_Line_Token_List
-		{
-			u32 count;
-			Token *tokens;
-		};
-		Block_Comment_Line_Token_List block_list = {};
-		
 		Token *token = 0;
 		for (;;)
 		{
-			if(block_list.count == 0)
-			{
-				token = token_it_read(&token_it);
-			}
-			else
-			{
-				token = block_list.tokens + --block_list.count;
-			}
-			
-			// TODO(nates): When you finish a block comment, you need to type again so that it's indented correctly
-			if(token->sub_kind == TokenCppKind_BlockComment)
-			{
-				String_Const_u8 block_lexeme = push_token_lexeme(app, scratch, buffer, token);
-				if(block_lexeme.str[block_lexeme.size - 1] == '/' &&
-					 block_lexeme.str[block_lexeme.size - 2] == '*')
-				{
-					Token block_comment = *token;
-					if(!token_it_inc_non_whitespace(&token_it))
-					{
-						break;
-					}
-					
-					i64 last_cursor = 0;
-					for(i64 cursor = 0;
-							cursor <= block_comment.size;
-							++cursor)
-					{
-						u8 value = 0;
-						if(cursor == block_comment.size)
-						{
-							// NOTE(nates): this might break stuff at the end of a block comment.
-              // But it seems to just work
-							value = '\n';
-						}
-						else
-						{
-							value = block_lexeme.str[cursor];
-						}
-						
-						if(value == '\n')
-						{
-							Token *add = push_array(scratch, Token, 1);
-							add->pos = block_comment.pos + last_cursor;
-							add->size = cursor - add->pos;
-							add->flags = block_comment.flags;
-							add->kind = TokenBaseKind_Comment;
-							add->sub_kind = TokenCppKind_LineComment;
-							
-							last_cursor = cursor + 1;
-							
-							if(block_list.tokens == 0)
-							{
-								block_list.tokens = add;
-							}
-							block_list.count++;
-						}
-					}
-					continue;
-				}
-			}
+      // TODO(nates): Make it so block comments are indented properly
+      
+      token = token_it_read(&token_it);
 			
 			if (line_cache.where_token_starts == 0 ||
 					token->pos >= line_cache.one_past_last_pos){
@@ -413,9 +349,10 @@ actual_indent = N; )
 			last_indent = following_indent;
 			line_last_indented = line_it;
 			
-			if (!token_it_inc_non_whitespace(&token_it)){
-				break;
-			}
+      
+      if (!token_it_inc_non_whitespace(&token_it)){
+        break;
+      }
 		}
 	}
 	

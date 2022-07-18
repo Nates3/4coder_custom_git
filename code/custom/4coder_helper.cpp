@@ -2206,8 +2206,11 @@ no_mark_snap_to_cursor(Application_Links *app, Managed_Scope view_scope){
 
 function void
 no_mark_snap_to_cursor(Application_Links *app, View_ID view_id){
-  Managed_Scope scope = view_get_managed_scope(app, view_id);
-  no_mark_snap_to_cursor(app, scope);
+  if(view_id)
+  {
+    Managed_Scope scope = view_get_managed_scope(app, view_id);
+    no_mark_snap_to_cursor(app, scope);
+  }
 }
 
 function void

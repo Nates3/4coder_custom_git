@@ -46,13 +46,15 @@ enum
 {
   CodeIndexNote_Null,
   CodeIndexNote_Type,
-  CodeIndexNote_Function,
   CodeIndexNote_Macro,
+  CodeIndexNote_Function,
   CodeIndexNote_Enum,
   CodeIndexNote_ForwardDeclaration,
   CodeIndexNote_CommentNOTE,
   CodeIndexNote_CommentTODO,
   CodeIndexNote_4coderCommand,
+  
+  CodeIndexNote_Count,
 };
 
 struct Code_Index_Note{

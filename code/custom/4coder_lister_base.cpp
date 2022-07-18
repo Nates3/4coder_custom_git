@@ -333,10 +333,13 @@ lister_render(Application_Links *app, Frame_Info frame_info, View_ID view)
   scroll_y = lister->scroll.position.y;
   f32 y_pos = list_rect.y0 - scroll_y;
   
-  i32 first_index = (i32)(scroll_y / block_height);
+  // NOTE(nates): Slow? No, not anymore!
+  i32 scroll_index = (i32)(scroll_y / block_height);
+  i32 first_index = clamp_bot(0, scroll_index);
+  i32 last_index = clamp_top(scroll_index + lister->visible_count + 5, count);
   y_pos += first_index * block_height;
   
-  for (i32 i = first_index; i < count; i += 1)
+  for (i32 i = first_index; i < last_index; i += 1)
   {
     Lister_Node *node = lister->filtered.node_ptrs[i];
     
@@ -617,6 +620,7 @@ run_lister(Application_Links *app, Lister *lister)
          * Adds Control + Tab movement (down) inside lists, 
          * needs to be at the top because default should be 
          * overwritten when they have KeyCode_Control modifiers
+         *
          */
 #if ENABLE_LISTER_TAB
         if (in.event.key.code == KeyCode_Tab &&

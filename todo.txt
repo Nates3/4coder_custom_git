@@ -2,12 +2,24 @@
 /////////////////////////////
 ------------BAD BUGS-------------
 
-[ ] - slowdown of listers because for some reason, the more items are in a list
-      the more the (threads sleep)? when asking for next user input from multi threads.
-      look at run_lister() -> get_next_input() -> get_next_input_raw() -> coroutine_yield() for more info
+Not Empty :(
+
+[ ] - Bug: Comment blocks aren't auto indented correctly, when you enable virtual whitespace they look          fine but if you open the file in an external program like visual studio or remedy, all the stuff
+      in between each end of the comment block will have no indentation and will start at the left
+      most pixel
+
+[ ] - Bug: on code_index_note macros, sometimes you won't be able jump to the macro, in lister
+      view you can, but using "jump_to_definition_at_cursor" it won't work
+
+[ ] - Bug?: When you load a project, and then load another project, everything from the previous project
+      isn't unloaded. Should we fix this so that's the case?
 
 /////////////////////////////
 ---------- TODOS -------------
+
+[ ] - Project manager, stores strings to all project.4coder files that you want, 
+      and maybe stores a lister name, then you write some CUSTOM_COMMAND_SIG called, projects
+      and that lists every single project you can load
 
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
   [x] - Add CodeIndexNote_Forward_Declarition type
@@ -34,6 +46,12 @@
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+
+[x] - Bug: slowdown of listers because for some reason, the more items are in a list
+      the more the (threads sleep)? when asking for next user input from multi threads.
+      look at run_lister() -> get_next_input() -> get_next_input_raw() -> coroutine_yield() for more info
+      (fixed) -> lister_render was sending as many draw calls as the _entire_ lister count which in 
+      the 4coder project it was 8000, I made it so it only sends draw calls for the ones you can see
 
 [x] - Forward Declarations hilighted white, but overrided to red if definition is found
 
