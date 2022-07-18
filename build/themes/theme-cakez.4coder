@@ -16,8 +16,8 @@ defcolor_highlight             = 0xFF303040;
 defcolor_at_highlight          = 0xFFFF44DD;
 defcolor_mark                  = 0xFF494949;
 defcolor_text_default          = 0xffb99468;
-defcolor_comment               = 0xffffffff;
-defcolor_comment_pop           = { 0xff2ab34f, 0xFFdb2828 };
+defcolor_comment               = 0xff666666;
+defcolor_comment_pop           = { 0xff27A649, 0xFFD8D8D8 };
 defcolor_keyword               = 0xfff0c674;
 defcolor_str_constant          = 0xffffa900;
 defcolor_char_constant         = 0xffffa900;
@@ -36,3 +36,13 @@ defcolor_back_cycle            = { 0xFF020202, 0xFF020202, 0xFF020202, 0xFF02020
 defcolor_text_cycle            = { 0xFFA00000, 0xFF00A000, 0xFF0030B0, 0xFFA0A000 };
 defcolor_line_numbers_back     = 0xFF101010;
 defcolor_line_numbers_text     = 0xFF404040;
+
+
+custom_color_code_index_type = 0xFFedb211;
+custom_color_code_index_function = 0xFFde451f;
+custom_color_code_index_macro = 0xFF2895c7;
+custom_color_code_index_enum = 0xff6eb535;
+custom_color_code_index_forward_declaration = 0xFF939FD2;
+
+custom_color_margin_insert_mode_color = 0xFF666666;
+custom_color_margin_command_mode_color = 0xFFE89D04;

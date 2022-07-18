@@ -45,7 +45,6 @@ code_index_get_nest(Code_Index_File *file, i64 pos)
   return(result);
 }
 
-// NOTE(nates): lol
 function b32
 code_index_nest_is_ancestor(Code_Index_Nest *child, Code_Index_Nest *parent)
 {
@@ -681,10 +680,19 @@ cpp_parse_type_def(Code_Index_File *index, Generic_Parse_State *state, Code_Inde
   }
 }
 
-function Code_Index_Note_Kind
-code_index_list_get_kind_complicated(String_Const_u8 contents, Code_Index_Note_List *list)
+struct Code_Index_Info_Result
 {
-  Code_Index_Note_Kind result = CodeIndexNote_Null;
+  b32 found;
+  Code_Index_Note_Kind kind;
+  Code_Index_Nest *nest;
+  Range_i64 range;
+};
+
+function Code_Index_Info_Result
+code_index_list_get_code_index_info(String_Const_u8 contents, Code_Index_Note_List *list)
+{
+  Code_Index_Info_Result result = {};
+  Code_Index_Note *assigned_note = 0;
   for(Code_Index_Note *note = list->first;
       note != 0;
       note = note->next_in_hash)
@@ -693,22 +701,32 @@ code_index_list_get_kind_complicated(String_Const_u8 contents, Code_Index_Note_L
     {
       if(note->note_kind == CodeIndexNote_Macro)
       {
-        result = note->note_kind;
+        assigned_note = note;
+        result.kind = note->note_kind;
         break;
       }
       
       if(note->note_kind == CodeIndexNote_ForwardDeclaration &&
-         result == CodeIndexNote_Null)
+         result.kind == CodeIndexNote_Null)
       {
-        result = note->note_kind;
+        assigned_note = note;
+        result.kind = note->note_kind;
       }
       
       if(note->note_kind != CodeIndexNote_ForwardDeclaration &&
          note->note_kind != CodeIndexNote_Macro)
       {
-        result = note->note_kind;
+        assigned_note = note;
+        result.kind = note->note_kind;
       }
     }
+  }
+  
+  if(assigned_note)
+  {
+    result.nest = assigned_note->parent;
+    result.range = assigned_note->pos;
+    result.found = true;
   }
   
   return(result);

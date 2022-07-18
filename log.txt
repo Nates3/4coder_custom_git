@@ -2,6 +2,9 @@
 ///////////////////////////
 date-> 7/18/22
 
+(nates): Added the custom colors to the theme-cakez.4coder and hand generated the ids
+(nates): Added file -> build\themes\theme-cakez.4coder
+(nates): Removed entire line highilght of special comments and just highlighted the words
 (nates): Cleaned up code index note rendering code a little bit
 (nates): Fixed code index note function highlighting having greater priority than macros
 (nates): Fixed crash when setting the cursor on a view_id of zero

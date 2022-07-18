@@ -11,8 +11,8 @@
 
 internal void
 init_command_line_settings(App_Settings *settings, 
-Plat_Settings *plat_settings, 
-i32 argc, char **argv){
+                           Plat_Settings *plat_settings, 
+                           i32 argc, char **argv){
   char *arg = 0;
   Command_Line_Mode mode = CLMode_App;
   Command_Line_Action action = CLAct_Nothing;

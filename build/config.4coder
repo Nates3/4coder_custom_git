@@ -20,7 +20,7 @@ use_error_highlight = false;
 use_jump_highlight = true;
 use_scope_highlight = false;
 use_paren_helper = false;
-use_comment_keywords = true;
+use_comment_keyword = true;
 lister_whole_word_backspace_when_modified = true;
 show_line_number_margins = false;
 enable_output_wrapping = false;
@@ -63,7 +63,7 @@ indent_width = 2;
 default_tab_width = 2;
 
 // Theme
-default_theme_name = "theme-fleury";
+default_theme_name = "theme-cakez";
 
 // Font
 default_font_name = "liberation-mono.ttf";

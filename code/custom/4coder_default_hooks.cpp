@@ -321,7 +321,7 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
   {
     draw_cpp_token_colors(app, text_layout_id, &token_array);
     
-#if 0
+#if 1
     // NOTE(allen): Scan for TODOs and NOTEs
     b32 use_comment_keyword = def_get_config_b32(vars_save_string_lit("use_comment_keyword"));
     if (use_comment_keyword)
@@ -335,12 +335,10 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
     }
 #endif
     
-#if 1
     // TODO(allen): Put in 4coder_draw.cpp
     // NOTE(allen): Color functions
     
     Scratch_Block scratch(app);
-    ARGB_Color argb = 0xff000000;
     
     i64 range_first = clamp_bot(visible_range.first - 1, 0);
     Token_Iterator_Array it = token_iterator_pos(0, &token_array, range_first);
@@ -365,107 +363,58 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
         case TokenCppKind_LineComment:
         case TokenCppKind_BlockComment:
         {
-          for(i64 cursor = 0;
-              cursor < (i64)contents.size;
-              )
-          {
-            String_Const_u8 line = contents_get_line(contents, cursor);
-            if(line.str[0] == '\n')
-            {
-              cursor += 1;
-              continue;
-            }
-            cursor = (PtrAsInt(line.str) - PtrAsInt(contents.str)) + (line.size + 1);
-            
-            Code_Index_Note_List *list = code_index__list_from_string(line);
-            for (Code_Index_Note *hash_note = list->first;
-                 hash_note != 0;
-                 hash_note = hash_note->next_in_hash)
-            {
-              if (string_match(line, hash_note->text) &&
-                  ((hash_note->note_kind == CodeIndexNote_CommentNOTE) || 
-                   (hash_note->note_kind == CodeIndexNote_CommentTODO)))
-              {
-                b32 allowed = true;
-                if(hash_note->parent)
-                {
-                  allowed = code_index_nest_is_ancestor(nest, hash_note->parent);
-                  if(allowed)
-                  {
-                    allowed = (token->pos >= hash_note->pos.min);
-                  }
-                }
-                
-                if(allowed)
-                {
-                  Range_i64 range = contents_line_range(contents, line);
-                  range.start += token->pos;
-                  range.end += token->pos;
-                  
-                  switch(hash_note->note_kind)
-                  {
-                    case CodeIndexNote_CommentNOTE:
-                    {
-                      argb = 0xff2ab34f;
-                    } break;
-                    
-                    case CodeIndexNote_CommentTODO:
-                    {
-                      argb = 0xffdddddd;
-                    } break;
-                    
-                    InvalidDefaultCase;
-                  }
-                  
-                  paint_text_color(app, text_layout_id, range, argb);
-                }
-              }
-            }
-          }
+          // NOTE(nates): Don't paint anything
         } break;
         
         default:
         {
           Code_Index_Note_List *list = code_index__list_from_string(contents);
+          Code_Index_Info_Result index_info = code_index_list_get_code_index_info(contents, list);
+          b32 allowed = false;
           
-          if(string_match(contents, SCu8("i")))
+          if(index_info.nest && 
+             index_info.kind != CodeIndexNote_Macro)
           {
-            int break_here = 5;
+            b32 under_same_scopes = code_index_nest_is_ancestor(nest, index_info.nest);
+            allowed = under_same_scopes && (token->pos >= index_info.range.min);
+          }
+          else
+          {
+            allowed = index_info.found;
           }
           
-          Code_Index_Note_Kind kind = code_index_list_get_kind_complicated(contents, list);
-          
-          if(kind != CodeIndexNote_Null)
+          ARGB_Color argb = 0xff000000;
+          if(allowed)
           {
-            switch (kind)
+            switch (index_info.kind)
             {
               case CodeIndexNote_Type:
               {
-                argb = 0xffedb211;
+                argb = active_color_table.arrays[custom_color_code_index_type].vals[0];
               }
               break;
               
               case CodeIndexNote_Function:
               {
-                argb = 0xffde451f;
+                argb = active_color_table.arrays[custom_color_code_index_function].vals[0];
               }
               break;
               
               case CodeIndexNote_Macro:
               {
-                argb = 0xff2895c7;
+                argb = active_color_table.arrays[custom_color_code_index_macro].vals[0];
               }
               break;
               
               case CodeIndexNote_Enum:
               {
-                argb = 0xff68AA32;
+                argb = active_color_table.arrays[custom_color_code_index_enum].vals[0];
               }
               break;
               
               case CodeIndexNote_ForwardDeclaration:
               {
-                argb = 0xffeeeeee;
+                argb = active_color_table.arrays[custom_color_code_index_forward_declaration].vals[0];
               } break;
               
               case CodeIndexNote_4coderCommand:
@@ -486,7 +435,6 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
         break;
       }
     }
-#endif
   }
   else
   {

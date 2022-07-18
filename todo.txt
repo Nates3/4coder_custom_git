@@ -42,10 +42,10 @@ Not Empty :(
 				// function body
 			} Render this -> (this_is_some_function_name(u32 index, u32 index2))
 
-[ ] - Add functionality to change syntax coloring using theme-name.4coder file
-
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+
+[x] - Add functionality to change syntax coloring using theme-name.4coder file
 
 [x] - Bug: slowdown of listers because for some reason, the more items are in a list
       the more the (threads sleep)? when asking for next user input from multi threads.

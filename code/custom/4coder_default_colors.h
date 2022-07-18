@@ -46,16 +46,25 @@ CUSTOM_ID(colors, defcolor_text_cycle);
 CUSTOM_ID(colors, defcolor_line_numbers_back);
 CUSTOM_ID(colors, defcolor_line_numbers_text);
 
+CUSTOM_ID(colors, custom_color_code_index_type);
+CUSTOM_ID(colors, custom_color_code_index_function);
+CUSTOM_ID(colors, custom_color_code_index_macro);
+CUSTOM_ID(colors, custom_color_code_index_enum);
+CUSTOM_ID(colors, custom_color_code_index_forward_declaration);
+CUSTOM_ID(colors, custom_color_margin_insert_mode_color);
+CUSTOM_ID(colors, custom_color_margin_command_mode_color);
+
+
 struct Color_Table_Node{
-    Color_Table_Node *next;
-    String_Const_u8 name;
-    Color_Table table;
+  Color_Table_Node *next;
+  String_Const_u8 name;
+  Color_Table table;
 };
 
 struct Color_Table_List{
-    Color_Table_Node *first;
-    Color_Table_Node *last;
-    i32 count;
+  Color_Table_Node *first;
+  Color_Table_Node *last;
+  i32 count;
 };
 
 global Color_Table active_color_table = {};

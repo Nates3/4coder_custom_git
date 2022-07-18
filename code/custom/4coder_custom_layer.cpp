@@ -54,12 +54,12 @@ modal_state_set_margin_color(Application_Links *app, View_ID view)
   {
     case Modal_State_Insert:
     {
-      set_margin_color(0xff00ff00);
+      set_margin_color(active_color_table.arrays[custom_color_margin_insert_mode_color].vals[0]);
     } break;
     
     case Modal_State_Command:
     {
-      set_margin_color(0xffff0000);
+      set_margin_color(active_color_table.arrays[custom_color_margin_command_mode_color].vals[0]);
     } break;
   }
 }

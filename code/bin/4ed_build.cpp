@@ -566,6 +566,7 @@ build_main(Arena *arena, char *cdir, b32 update_local_theme, u32 flags, u32 arch
     build(arena, OPTS | LIBS | ICON | flags, arch, cdir, platform_layers[This_OS], dir, "4ed", get_defines_from_flags(arena, flags), 0, inc);
   }
   
+#if 0
   if (update_local_theme){
     char *themes_folder = fm_str(arena, "../build/themes");
     char *source_themes_folder = fm_str(arena, "ship_files/themes");
@@ -573,6 +574,7 @@ build_main(Arena *arena, char *cdir, b32 update_local_theme, u32 flags, u32 arch
     fm_make_folder_if_missing(arena, themes_folder);
     fm_copy_all(source_themes_folder, themes_folder);
   }
+#endif
   
   fflush(stdout);
 }
