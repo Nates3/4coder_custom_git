@@ -13,7 +13,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
 {
   View_ID view = get_active_view(app, 0);
   Buffer_ID buffer = view_get_buffer(app, view, 0);
-
+  
   Modal_State_ID modal_state;
   b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
   Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
@@ -25,7 +25,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
   {
     modal_state = view_get_modal_state(app, view);
   }
-
+  
   if (modal_state != Modal_State_Command)
   {
     if (*is_global_modal)
@@ -36,19 +36,54 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
     {
       view_set_modal_state(app, view, Modal_State_Command);
     }
-
+    
     i64 cursor_pos = view_get_cursor_pos(app, view);
     if (cursor_pos > 0)
     {
       i64 cursor_line_before = get_line_number_from_pos(app, buffer, cursor_pos);
       i64 cursor_line_after = get_line_number_from_pos(app, buffer, cursor_pos - 1);
-
+      
       if (cursor_line_after == cursor_line_before)
       {
         view_set_cursor(app, view, seek_pos(cursor_pos - 1));
       }
     }
+    
+    // Set Keybinds for Command Mode only
+    b32 result = view_set_buffer(app, view, buffer, 0);
+    set_command_map_id(app, buffer, (Command_Map_ID)command_mapid);
+  }
+}
 
+CUSTOM_COMMAND_SIG(change_to_command_mode_dont_move)
+CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap, but doesn't move the cursor")
+{
+  View_ID view = get_active_view(app, 0);
+  Buffer_ID buffer = view_get_buffer(app, view, 0);
+  
+  Modal_State_ID modal_state;
+  b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
+  Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
+  if (*is_global_modal)
+  {
+    modal_state = *app_modal_state;
+  }
+  else
+  {
+    modal_state = view_get_modal_state(app, view);
+  }
+  
+  if (modal_state != Modal_State_Command)
+  {
+    if (*is_global_modal)
+    {
+      *app_modal_state = Modal_State_Command;
+    }
+    else
+    {
+      view_set_modal_state(app, view, Modal_State_Command);
+    }
+    
     // Set Keybinds for Command Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
     set_command_map_id(app, buffer, (Command_Map_ID)command_mapid);
@@ -60,10 +95,10 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
   View_ID view = get_active_view(app, 0);
   Buffer_ID buffer = view_get_buffer(app, view, 0);
-
+  
   // TODO(cakez77): Switch on the view type? Only change in certain views?
   Modal_State_ID modal_state;
-
+  
   b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
   Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
   if (*is_global_modal)
@@ -74,7 +109,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
   {
     modal_state = view_get_modal_state(app, view);
   }
-
+  
   if (modal_state != Modal_State_Insert)
   {
     if (*is_global_modal)
@@ -85,7 +120,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
     {
       view_set_modal_state(app, view, Modal_State_Insert);
     }
-
+    
     // Set Keybinds for Command Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
     set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
@@ -97,10 +132,10 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
   View_ID view = get_active_view(app, 0);
   Buffer_ID buffer = view_get_buffer(app, view, 0);
-
+  
   // TODO(cakez77): Switch on the view type? Only change in certain views?
   Modal_State_ID modal_state;
-
+  
   b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
   Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
   if (*is_global_modal)
@@ -111,7 +146,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
   {
     modal_state = view_get_modal_state(app, view);
   }
-
+  
   if (modal_state != Modal_State_Insert)
   {
     if (*is_global_modal)
@@ -122,12 +157,12 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
     {
       view_set_modal_state(app, view, Modal_State_Insert);
     }
-
+    
     // Set Keybinds for Command Mode only
     b32 result = view_set_buffer(app, view, buffer, 0);
     set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
   }
-
+  
   i64 cursor_pos = view_get_cursor_pos(app, view);
   view_set_cursor(app, view, seek_pos(cursor_pos + 1));
 }
@@ -141,7 +176,7 @@ CUSTOM_DOC("Jump from Brace to brace")
   u8 char_under_cursor = buffer_get_char(app, buffer, cursor_pos);
   u8 prev_char_under_cursor = buffer_get_char(app, buffer, cursor_pos - 1);
   i64 bracePos;
-
+  
   if (char_under_cursor == '{' || prev_char_under_cursor == '{')
   {
     if (find_nest_side(app, buffer, prev_char_under_cursor == '{' ? cursor_pos : cursor_pos + 1,
@@ -171,11 +206,11 @@ CUSTOM_DOC("Jump from Brace to brace")
 }
 
 CUSTOM_COMMAND_SIG(vim_yank_line)
-CUSTOM_DOC("Copies entire lines")
+CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-
+  
   b32 *is_selecting = view_get_is_selecting(app, view);
   if (is_selecting && *is_selecting)
   {
@@ -197,50 +232,47 @@ CUSTOM_DOC("Copies entire lines")
 }
 
 CUSTOM_COMMAND_SIG(vim_paste)
-CUSTOM_DOC("Copies entire lines")
+CUSTOM_DOC("If you yank a line, this will add a new line under the line you're on and paste the yank result there")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-
+  
   History_Group group = history_group_begin(app, buffer);
-
+  
   b32 *yanked_entire_line = view_get_yanked_entire_line(app, view);
   if (yanked_entire_line && *yanked_entire_line)
   {
     seek_end_of_textual_line(app);
     write_text(app, SCu8("\n"));
   }
-
+  
   paste(app);
-
+  
   history_group_end(group);
 }
 
 CUSTOM_COMMAND_SIG(select_lines)
-CUSTOM_DOC("Selects entire lines")
+CUSTOM_DOC("Selects a line region that can be used inside other commantds like copy, paste, cut, or delete")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-
+  
   b32 *is_selecting = view_get_is_selecting(app, view);
   b32 *is_cutting = view_get_is_cutting(app, view);
-  if (is_cutting && !*is_cutting)
+  if (is_selecting && is_cutting && !(*is_cutting))
   {
-    if (is_selecting)
+    if (!(*is_selecting))
     {
-      if (!(*is_selecting))
-      {
-        *is_selecting = true;
-        i64 cursor_pos = view_get_cursor_pos(app, view);
-        i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
-
-        view_set_selection_begin(app, view, cursor_line);
-        view_set_selection_end(app, view, cursor_line);
-      }
-      else
-      {
-        *is_selecting = false;
-      }
+      *is_selecting = true;
+      i64 cursor_pos = view_get_cursor_pos(app, view);
+      i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
+      
+      view_set_selection_begin(app, view, cursor_line);
+      view_set_selection_end(app, view, cursor_line);
+    }
+    else
+    {
+      *is_selecting = false;
     }
   }
 }
@@ -269,17 +301,17 @@ CUSTOM_DOC("add new line and switch to insert mode")
 
 
 CUSTOM_COMMAND_SIG(cancel_command)
-CUSTOM_DOC("cancel command")
+CUSTOM_DOC("cancel context modes")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
   b32 *is_selecting = view_get_is_selecting(app, view);
   b32 *is_cutting = view_get_is_cutting(app, view);
-
+  
   if (is_selecting && *is_selecting)
   {
     *is_selecting = false;
   }
-
+  
   if (is_cutting && *is_cutting)
   {
     *is_cutting = false;
@@ -309,19 +341,19 @@ CUSTOM_DOC("control + click to jump to the definition")
   i64 pos = view_pos_from_xy(app, view, V2f32(mouse.p));
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
   no_mark_snap_to_cursor(app, view);
-  jump_to_definition_at_cursor_other_panel(app);
+  jump_to_definition_at_cursor(app);
 }
 
 CUSTOM_UI_COMMAND_SIG(jump_to_definition_sorted)
 CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 {
   Scratch_Block scratch(app);
-
+  
   Lister_Block sort_lister(app, scratch);
   char *sort_query = "Type:";
   lister_set_query(sort_lister, sort_query);
   lister_set_default_handlers(sort_lister);
-
+  
   Code_Index_Note_Kind type_kind = CodeIndexNote_Type;
   Code_Index_Note_Kind function_kind = CodeIndexNote_Function;
   Code_Index_Note_Kind macro_kind = CodeIndexNote_Macro;
@@ -329,7 +361,8 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
   Code_Index_Note_Kind forward_declare_kind = CodeIndexNote_ForwardDeclaration;
   Code_Index_Note_Kind comment_note_kind = CodeIndexNote_CommentNOTE;
   Code_Index_Note_Kind comment_todo_kind = CodeIndexNote_CommentTODO;
-
+  Code_Index_Note_Kind namespace_kind = CodeIndexNote_Namespace;
+  
   lister_add_item(sort_lister, SCu8("Types"), SCu8(""), &type_kind, 0);
   lister_add_item(sort_lister, SCu8("Functions"), SCu8(""), &function_kind, 0);
   lister_add_item(sort_lister, SCu8("Macros"), SCu8(""), &macro_kind, 0);
@@ -337,18 +370,19 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
   lister_add_item(sort_lister, SCu8("Declarations"), SCu8(""), &forward_declare_kind, 0);
   lister_add_item(sort_lister, SCu8("Todos"), SCu8(""), &comment_todo_kind, 0);
   lister_add_item(sort_lister, SCu8("Notes"), SCu8(""), &comment_note_kind, 0);
-
+  lister_add_item(sort_lister, SCu8("Namespaces"), SCu8(""), &namespace_kind, 0);
+  
   Lister_Result sort_result = run_lister(app, sort_lister);
   if (!sort_result.canceled &&
       sort_result.user_data)
   {
     Code_Index_Note_Kind users_type = *(Code_Index_Note_Kind *)sort_result.user_data;
-
+    
     char *query = "Definition:";
     Lister_Block lister(app, scratch);
     lister_set_query(lister, query);
     lister_set_default_handlers(lister);
-
+    
     code_index_lock();
     for (Buffer_ID buffer = get_buffer_next(app, 0, Access_Always);
          buffer != 0;
@@ -363,66 +397,78 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
           Tiny_Jump *jump = push_array(scratch, Tiny_Jump, 1);
           jump->buffer = buffer;
           jump->pos = note->pos.first;
-
+          
           String_Const_u8 sort = {};
           if (users_type == note->note_kind)
           {
             switch (note->note_kind)
             {
-            case CodeIndexNote_Type:
-            {
-              sort = string_u8_litexpr("Type");
+              case CodeIndexNote_Type:
+              {
+                sort = string_u8_litexpr("Type");
+              }
+              break;
+              case CodeIndexNote_Function:
+              {
+                sort = string_u8_litexpr("Function");
+              }
+              break;
+              case CodeIndexNote_Macro:
+              {
+                sort = string_u8_litexpr("Macro");
+              }
+              break;
+              case CodeIndexNote_Enum:
+              {
+                sort = string_u8_litexpr("Enum");
+              }
+              break;
+              
+              case CodeIndexNote_ForwardDeclaration:
+              {
+                sort = string_u8_litexpr("Declaration");
+              }
+              break;
+              
+              case CodeIndexNote_CommentNOTE:
+              {
+                sort = string_u8_litexpr("Note");
+              }
+              break;
+              
+              case CodeIndexNote_CommentTODO:
+              {
+                sort = string_u8_litexpr("Todo");
+              }
+              break;
+              
+              case CodeIndexNote_Namespace:
+              {
+                sort = string_u8_litexpr("Namespace");
+              } break;
+              
+              case CodeIndexNote_4coderCommand:
+              {
+                continue;
+              }
+              
+              InvalidDefaultCase;
             }
-            break;
-            case CodeIndexNote_Function:
-            {
-              sort = string_u8_litexpr("Function");
-            }
-            break;
-            case CodeIndexNote_Macro:
-            {
-              sort = string_u8_litexpr("Macro");
-            }
-            break;
-            case CodeIndexNote_Enum:
-            {
-              sort = string_u8_litexpr("Enum");
-            }
-            break;
-
-            case CodeIndexNote_ForwardDeclaration:
-            {
-              sort = string_u8_litexpr("Declaration");
-            }
-            break;
-
-            case CodeIndexNote_CommentNOTE:
-            {
-              sort = string_u8_litexpr("Note");
-            }
-            break;
-
-            case CodeIndexNote_CommentTODO:
-            {
-              sort = string_u8_litexpr("Todo");
-            }
-            break;
-            }
-
+            
             lister_add_item(lister, note->text, sort, jump, 0);
           }
         }
       }
     }
     code_index_unlock();
-
+    
     Lister_Result l_result = run_lister(app, lister);
     Tiny_Jump result = {};
     if (!l_result.canceled && l_result.user_data != 0)
     {
       block_copy_struct(&result, (Tiny_Jump *)l_result.user_data);
     }
-
+    
     if (result.buffer != 0)
     {
       View_ID view = get_this_ctx_view(app, Access_Always);
@@ -437,25 +483,25 @@ CUSTOM_DOC("moves forward in mark history if user has searched backwards in hist
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mark_History *mark_history = view_get_mark_history(app, view);
-
+  
   if (mark_history->rel_index <= 1)
   {
     if (mark_history->rel_index == 1)
     {
       mark_history->rel_index = 0;
     }
-
+    
     if (mark_history->rel_index < 0)
     {
       mark_history->rel_index++;
     }
-
+    
     i32 index = mark_history->recent_index + mark_history->rel_index;
     if (index < 0)
     {
       index += MARK_HISTORY_ARRAY_COUNT;
     }
-
+    
     i64 mark_pos = mark_history->marks[index];
     view_set_cursor_and_preferred_x_no_set_mark_rel_index(app, view, seek_pos(mark_pos));
   }
@@ -466,20 +512,20 @@ CUSTOM_DOC("moves backward in mark history")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Mark_History *mark_history = view_get_mark_history(app, view);
-
+  
   if (mark_history->rel_index > -mark_history->mark_count)
   {
     if (mark_history->rel_index > -mark_history->mark_count + 1)
     {
       mark_history->rel_index--;
     }
-
+    
     i32 index = mark_history->recent_index + mark_history->rel_index;
     if (index < 0)
     {
       index += MARK_HISTORY_ARRAY_COUNT;
     }
-
+    
     i64 mark_pos = mark_history->marks[index];
     view_set_cursor_and_preferred_x_no_set_mark_rel_index(app, view, seek_pos(mark_pos));
   }

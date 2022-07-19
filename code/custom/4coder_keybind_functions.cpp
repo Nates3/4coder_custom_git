@@ -116,7 +116,7 @@ cakez_bind_text_input(Mapping *m, Command_Map *map)
 internal void
 nates_bind_shared_keys(Mapping *m, Command_Map *map)
 {
-  Bind(change_to_command_mode, KeyCode_Tab);
+  Bind(change_to_command_mode_dont_move, KeyCode_Tab);
   Bind(command_lister, KeyCode_Q, KeyCode_Alt);
   Bind(backspace_char, KeyCode_Backspace);
   Bind(backspace_alpha_numeric_boundary, KeyCode_Backspace, KeyCode_Control);

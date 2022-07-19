@@ -109,7 +109,7 @@ void custom_layer_init(Application_Links *app)
   ParentMap(global_mapid);
   cakez_bind_text_input(m, map);
   
-  // NOTE(cakez): You have to bind the "global_map, file_map, and code_map for some reason"
+  // NOTE(nates): You have to bind the "global_map, file_map, and code_map for some reason"
   SelectMap(file_mapid);
   ParentMap(command_mapid);
   

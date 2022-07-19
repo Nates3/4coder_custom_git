@@ -68,6 +68,18 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
           {
             sort = string_u8_litexpr("Todo");
           } break;
+          
+          case CodeIndexNote_Namespace:
+          {
+            sort = string_u8_litexpr("Namespace");
+          } break;
+          
+          case CodeIndexNote_4coderCommand:
+          {
+            continue;
+          } break;
+          
+          InvalidDefaultCase;
         }
         lister_add_item(lister, note->text, sort, jump, 0);
       }

@@ -368,25 +368,88 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
         
         default:
         {
+          i64 token_index = token_it_index(&it);
           Code_Index_Note_List *list = code_index__list_from_string(contents);
-          Code_Index_Info_Result index_info = code_index_list_get_code_index_info(contents, list);
-          b32 allowed = false;
+          Code_Index_Note *found_note = 0;
+          for(Code_Index_Note *note = list->first;
+              note != 0;
+              note = note->next_in_hash)
+          {
+            if(string_match(note->text, contents))
+            {
+              if(note->note_kind == CodeIndexNote_Macro)
+              {
+                found_note = note;
+                break;
+              }
+              
+              if(note->is_name_space)
+              {
+                if(code_index_nest_is_similar(note->parent, nest))
+                {
+                  found_note = note;
+                  break;
+                }
+                else
+                {
+                  if(token_index > 1)
+                  {
+                    Token *previous = it.tokens + (token_index - 1);
+                    if(previous->kind == TokenBaseKind_Operator &&
+                       previous->sub_kind == TokenCppKind_ColonColon)
+                    {
+                      Token *namespace_token = it.tokens + (token_index - 2);
+                      String_Const_u8 namespace_token_str = push_token_lexeme(app, scratch, buffer, namespace_token);
+                      Code_Index_Note *namespace_note = code_index_note_from_string(namespace_token_str);
+                      if(namespace_note && string_match(note->name_space, namespace_note->text))
+                      {
+                        found_note = note;
+                        break;
+                      }
+                    }
+                    else
+                    {
+                      continue;
+                    }
+                  }
+                  else
+                  {
+                    continue;
+                  }
+                }
+              }
+              
+              if(note->note_kind == CodeIndexNote_ForwardDeclaration &&
+                 found_note == 0)
+              {
+                found_note = note;
+              }
+              
+              if(note->note_kind != CodeIndexNote_ForwardDeclaration &&
+                 note->note_kind != CodeIndexNote_Macro)
+              {
+                if(token_index > 1)
+                {
+                  Token *previous = it.tokens + (token_index - 1);
+                  if(previous->kind == TokenBaseKind_Operator &&
+                     previous->sub_kind == TokenCppKind_ColonColon)
+                  {
+                    continue;
+                  }
+                }
+                
+                found_note = note;
+              }
+            }
+          }
           
-          if(index_info.nest && 
-             index_info.kind != CodeIndexNote_Macro)
-          {
-            b32 under_same_scopes = code_index_nest_is_ancestor(nest, index_info.nest);
-            allowed = under_same_scopes && (token->pos >= index_info.range.min);
-          }
-          else
-          {
-            allowed = index_info.found;
-          }
+          b32 allowed = code_index_note_is_allowed(found_note, nest);
+          
           
           ARGB_Color argb = 0xff000000;
           if(allowed)
           {
-            switch (index_info.kind)
+            switch (found_note->note_kind)
             {
               case CodeIndexNote_Type:
               {
@@ -415,6 +478,11 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
               case CodeIndexNote_ForwardDeclaration:
               {
                 argb = active_color_table.arrays[custom_color_code_index_forward_declaration].vals[0];
+              } break;
+              
+              case CodeIndexNote_Namespace:
+              {
+                argb = active_color_table.arrays[custom_color_code_index_namespace].vals[0];
               } break;
               
               case CodeIndexNote_4coderCommand:

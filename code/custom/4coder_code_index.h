@@ -52,6 +52,8 @@ enum
   CodeIndexNote_ForwardDeclaration,
   CodeIndexNote_CommentNOTE,
   CodeIndexNote_CommentTODO,
+  CodeIndexNote_Namespace,
+  
   CodeIndexNote_4coderCommand,
   
   CodeIndexNote_Count,
@@ -64,6 +66,9 @@ struct Code_Index_Note{
   String_Const_u8 text;
   struct Code_Index_File *file;
   Code_Index_Nest *parent;
+  
+  b32 is_name_space;
+  String_Const_u8 name_space;
   
   Code_Index_Note *prev_in_hash;
   Code_Index_Note *next_in_hash;
@@ -128,6 +133,7 @@ struct Generic_Parse_State
   b32 in_statement;
   
   b32 do_cpp_parse;
+  String_Const_u8 current_name_space;
 };
 
 #endif

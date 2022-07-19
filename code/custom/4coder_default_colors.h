@@ -51,6 +51,8 @@ CUSTOM_ID(colors, custom_color_code_index_function);
 CUSTOM_ID(colors, custom_color_code_index_macro);
 CUSTOM_ID(colors, custom_color_code_index_enum);
 CUSTOM_ID(colors, custom_color_code_index_forward_declaration);
+CUSTOM_ID(colors, custom_color_code_index_namespace);
+
 CUSTOM_ID(colors, custom_color_margin_insert_mode_color);
 CUSTOM_ID(colors, custom_color_margin_command_mode_color);
 
