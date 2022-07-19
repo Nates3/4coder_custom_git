@@ -94,6 +94,7 @@ api(custom) function Mark_History* view_get_mark_history(Application_Links* app,
 api(custom) function void view_record_mark(Application_Links* app, View_ID view_id);
 api(custom) function b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 api(custom) function b32* view_get_is_selecting(Application_Links* app, View_ID view_id);
+api(custom) function b32* view_get_yanked_entire_line(Application_Links* app, View_ID view_id);
 api(custom) function b32* view_get_is_cutting(Application_Links* app, View_ID view_id);
 api(custom) function void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
 api(custom) function void view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num);

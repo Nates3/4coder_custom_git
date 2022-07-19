@@ -16,6 +16,9 @@ Not Empty :(
 
 /////////////////////////////
 ---------- TODOS -------------
+[ ] - Sometimes while in "Command Mode" they keybinds change to "Insert Mode",
+      switching Views back and fourth fixed this issue. But it shouldn't happen in the 
+      first place.
 
 [ ] - Project manager, stores strings to all project.4coder files that you want, 
       and maybe stores a lister name, then you write some CUSTOM_COMMAND_SIG called, projects
@@ -44,6 +47,8 @@ Not Empty :(
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+[x] - Yanking a full line (Shift + Y) and then pasting that line should create a new line(always)
+      and then paste the contents, even if the cursor is in the middle of the line
 
 [x] - Add functionality to change syntax coloring using theme-name.4coder file
 

@@ -72,6 +72,7 @@ struct View{
   i64 mark;
   
   b32 is_selecting;
+  b32 yanked_entire_line;
   b32 is_cutting;
   i64 selection_begin;
   i64 selection_end;

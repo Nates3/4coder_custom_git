@@ -9,6 +9,8 @@
 internal void
 cakez_bind_shared_keys(Mapping *m, Command_Map *map)
 {
+  Bind(move_line_up, KeyCode_K, KeyCode_Alt);
+  Bind(move_line_down, KeyCode_J, KeyCode_Alt);
   Bind(change_to_command_mode, KeyCode_Escape);
   Bind(command_lister, KeyCode_X, KeyCode_Alt);
   Bind(backspace_char, KeyCode_Backspace);
@@ -25,6 +27,7 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(quick_swap_buffer, KeyCode_BackwardSlash, KeyCode_Alt);
   Bind(save, KeyCode_S, KeyCode_Control);
   Bind(save_all_dirty_buffers, KeyCode_S, KeyCode_Control, KeyCode_Shift);
+  Bind(paste, KeyCode_V, KeyCode_Control);
   
   BindMouse(control_plus_click_jump_to_definition, MouseCode_Left, KeyCode_Control);
   BindMouse(click_set_cursor_and_mark, MouseCode_Left);
@@ -66,6 +69,8 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(cancel_command, KeyCode_Escape);
   Bind(vim_cut, KeyCode_C);
   Bind(vim_cut, KeyCode_D);
+  Bind(vim_paste, KeyCode_P);
+  Bind(vim_yank_line, KeyCode_Y, KeyCode_Shift);
   Bind(copy, KeyCode_Y);
   Bind(set_mark, KeyCode_Space);
   Bind(goto_next_mark, KeyCode_Equal);
@@ -76,6 +81,7 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(redo, KeyCode_R, KeyCode_Control);
   Bind(change_to_insert_mode_after, KeyCode_A);
   Bind(change_to_insert_mode_front, KeyCode_I);
+  Bind(move_cursor_to_beginning_and_switch_to_insert, KeyCode_I, KeyCode_Shift);
   Bind(new_line_and_switch_to_insert, KeyCode_O);
   BindTextInput(insert_return);
   Bind(auto_indent_range, KeyCode_F, KeyCode_Shift);
@@ -87,9 +93,6 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(move_down, KeyCode_J);
   Bind(move_left, KeyCode_H);
   Bind(move_right, KeyCode_L);
-  
-  Bind(move_up_10, KeyCode_J, KeyCode_Alt);
-  Bind(move_down_10, KeyCode_K, KeyCode_Alt);
   
   Bind(move_right_alpha_numeric_boundary, KeyCode_E);
   Bind(move_left_alpha_numeric_boundary, KeyCode_B);

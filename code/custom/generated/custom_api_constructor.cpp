@@ -577,6 +577,11 @@ api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
 {
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_yanked_entire_line"), string_u8_litexpr("b32*"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_is_cutting"), string_u8_litexpr("b32*"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
