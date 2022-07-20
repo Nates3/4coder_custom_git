@@ -9,6 +9,8 @@
 internal void
 cakez_bind_shared_keys(Mapping *m, Command_Map *map)
 {
+  Bind(goto_next_jump, KeyCode_N, KeyCode_Alt);
+  Bind(goto_prev_jump, KeyCode_P, KeyCode_Alt);
   Bind(move_line_up, KeyCode_K, KeyCode_Alt);
   Bind(move_line_down, KeyCode_J, KeyCode_Alt);
   Bind(change_to_command_mode, KeyCode_Escape);
