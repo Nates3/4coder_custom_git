@@ -389,28 +389,35 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
                 Token_Iterator_Array find_it = token_iterator_pos(0, &token_array, range.r.min);
                 token_it_dec(&find_it);
                 Token *test = token_it_read(&find_it);
-                String_Const_u8 test_string = push_token_lexeme(app, scratch, buffer, test);
-                
-                if(string_match(test_string, note->name_space))
+                if(test)
                 {
-                  found_note = note;
-                  break;
-                }
-                else
-                {
-                  if(token_index > 1)
+                  String_Const_u8 test_string = push_token_lexeme(app, scratch, buffer, test);
+                  
+                  if(string_match(test_string, note->name_space))
                   {
-                    Token *previous = it.tokens + (token_index - 1);
-                    if(previous->kind == TokenBaseKind_Operator &&
-                       previous->sub_kind == TokenCppKind_ColonColon)
+                    found_note = note;
+                    break;
+                  }
+                  else
+                  {
+                    if(token_index > 1)
                     {
-                      Token *namespace_token = it.tokens + (token_index - 2);
-                      String_Const_u8 namespace_token_str = push_token_lexeme(app, scratch, buffer, namespace_token);
-                      Code_Index_Note *namespace_note = code_index_note_from_string(namespace_token_str);
-                      if(namespace_note && string_match(note->name_space, namespace_note->text))
+                      Token *previous = it.tokens + (token_index - 1);
+                      if(previous->kind == TokenBaseKind_Operator &&
+                         previous->sub_kind == TokenCppKind_ColonColon)
                       {
-                        found_note = note;
-                        break;
+                        Token *namespace_token = it.tokens + (token_index - 2);
+                        String_Const_u8 namespace_token_str = push_token_lexeme(app, scratch, buffer, namespace_token);
+                        Code_Index_Note *namespace_note = code_index_note_from_string(namespace_token_str);
+                        if(namespace_note && string_match(note->name_space, namespace_note->text))
+                        {
+                          found_note = note;
+                          break;
+                        }
+                      }
+                      else
+                      {
+                        continue;
                       }
                     }
                     else
@@ -418,12 +425,7 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
                       continue;
                     }
                   }
-                  else
-                  {
-                    continue;
-                  }
                 }
-                
               }
               
               if(note->note_kind == CodeIndexNote_ForwardDeclaration &&
