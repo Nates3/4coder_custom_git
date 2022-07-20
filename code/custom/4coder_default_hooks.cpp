@@ -385,7 +385,7 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
               
               if(note->is_name_space)
               {
-                if(code_index_nest_is_similar(note->parent, nest))
+                if(code_index_nest_is_similar(nest, note->parent))
                 {
                   found_note = note;
                   break;

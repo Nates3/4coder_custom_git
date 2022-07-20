@@ -7,6 +7,8 @@ global i32 menu_f1_index;
 String_ID command_mapid;
 String_ID insert_mapid;
 
+global View_ID global_compilation_view = 0;
+
 #define INSERT_MODE_MARGIN_COLOR 0xff00ff00
 #define COMMAND_MODE_MARGIN_COLOR 0xffff0000
 
