@@ -71,7 +71,7 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
           
           case CodeIndexNote_Namespace:
           {
-            sort = string_u8_litexpr("Namespace");
+            continue;
           } break;
           
           case CodeIndexNote_4coderCommand:

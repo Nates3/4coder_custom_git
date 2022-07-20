@@ -1263,20 +1263,21 @@ generic_parse_full_input_breaks(Code_Index_File *index, Generic_Parse_State *sta
     {
       generic_parse_inc(state);
       generic_parse_skip_whitespace_only(index, state);
-      Token *name_space_name = token_it_read(&state->it);
-      if(name_space_name->kind == TokenBaseKind_Identifier)
+      Token *namespace_token = token_it_read(&state->it);
+      if(namespace_token->kind == TokenBaseKind_Identifier)
       {
         Temp_Memory restore_point = begin_temp(state->arena);
-        u8 *memory = push_array(state->arena, u8, name_space_name->size);
-        block_copy_dynamic_array(memory, state->contents.str + name_space_name->pos, name_space_name->size);
-        state->current_name_space = SCu8(memory, name_space_name->size);
+        u8 *memory = push_array(state->arena, u8, namespace_token->size);
+        block_copy_dynamic_array(memory, state->contents.str + namespace_token->pos, namespace_token->size);
+        state->current_name_space = SCu8(memory, namespace_token->size);
         
         generic_parse_inc(state);
         generic_parse_skip_whitespace_only(index, state);
         Token *peek = token_it_read(&state->it);
         if(peek->kind == TokenBaseKind_ScopeOpen)
         {
-          index_new_note(index, state, Ii64(name_space_name), CodeIndexNote_Namespace, 0,
+          Code_Index_Note *note = code_index_note_from_string(state->current_name_space);
+          index_new_note(index, state, Ii64(namespace_token), CodeIndexNote_Namespace, 0,
                          false);
           Code_Index_Nest *nest = generic_parse_namespace(index, state);
           code_index_push_nest(&index->nest_list, nest);

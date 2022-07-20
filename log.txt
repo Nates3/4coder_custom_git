@@ -2,6 +2,7 @@
 /////////////////////////////
 date-> 7/20/22
 
+(nates): Fixed highlighting on namespaces being declared multiple times
 (nates): Compile window at bottom
 (nates): Added support for namespace inedxing and parsing
 

@@ -385,7 +385,13 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
               
               if(note->is_name_space)
               {
-                if(code_index_nest_is_similar(nest, note->parent))
+                Surrounding_Range range = get_surrounding_range(app, buffer, token->pos);
+                Token_Iterator_Array find_it = token_iterator_pos(0, &token_array, range.r.min);
+                token_it_dec(&find_it);
+                Token *test = token_it_read(&find_it);
+                String_Const_u8 test_string = push_token_lexeme(app, scratch, buffer, test);
+                
+                if(string_match(test_string, note->name_space))
                 {
                   found_note = note;
                   break;
@@ -417,6 +423,7 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
                     continue;
                   }
                 }
+                
               }
               
               if(note->note_kind == CodeIndexNote_ForwardDeclaration &&
