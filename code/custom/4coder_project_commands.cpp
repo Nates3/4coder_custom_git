@@ -694,9 +694,14 @@ prj_exec_command(Application_Links *app, Variable_Handle cmd_var){
     Buffer_Identifier buffer_id = {};
     b32 set_fancy_font = false;
     String8 out = vars_string_from_var(scratch, vars_read_key(cmd_var, out_id));
-    if (out.size > 0){
+    if (out.size > 0)
+    {
       buffer_id = buffer_identifier(out);
-      
+      view = get_or_open_build_panel(app);
+      if (string_match(out, string_u8_litexpr("*compilation*"))){
+        set_fancy_font = true;
+      }
+#if 0
       b32 footer_panel = vars_b32_from_var(vars_read_key(cmd_var, footer_panel_id));
       if (footer_panel){
         view = get_or_open_build_panel(app);
@@ -713,6 +718,7 @@ prj_exec_command(Application_Links *app, Variable_Handle cmd_var){
           view = get_active_view(app, Access_Always);
         }
       }
+#endif
       
       block_zero_struct(&prev_location);
       lock_jump_buffer(app, out);

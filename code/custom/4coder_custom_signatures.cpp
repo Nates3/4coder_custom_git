@@ -530,3 +530,111 @@ CUSTOM_DOC("moves backward in mark history")
     view_set_cursor_and_preferred_x_no_set_mark_rel_index(app, view, seek_pos(mark_pos));
   }
 }
+
+
+CUSTOM_COMMAND_SIG(toggle_compilation_expand)
+CUSTOM_DOC("Expand the compilation window.")
+{
+  Buffer_ID buffer = view_get_buffer(app, global_compilation_view, Access_Always);
+  Face_ID face_id = get_face_id(app, buffer);
+  Face_Metrics metrics = get_face_metrics(app, face_id);
+  if(global_compilation_view_expanded ^= 1)
+  {
+    view_set_split_pixel_size(app, global_compilation_view, (i32)(metrics.line_height*40.0f));
+  }
+  else
+  {
+    view_set_split_pixel_size(app, global_compilation_view, (i32)(metrics.line_height*4.0f));
+  }
+}
+
+CUSTOM_COMMAND_SIG(custom_startup)
+CUSTOM_DOC("custom startup")
+{
+  User_Input input = get_current_input(app);
+  if(!match_core_code(&input, CoreCode_Startup))
+  {
+    return;
+  }
+  
+  String_Const_u8_Array file_names = input.event.core.file_names;
+  load_themes_default_folder(app);
+  default_4coder_initialize(app, file_names);
+  
+  // NOTE(nates): Create buffers
+  {
+    {
+      Buffer_ID buffer = create_buffer(app, string_u8_litexpr("*compilation*"),
+                                       BufferCreate_NeverAttachToFile |
+                                       BufferCreate_AlwaysNew);
+      buffer_set_setting(app, buffer, BufferSetting_Unimportant, true);
+      buffer_set_setting(app, buffer, BufferSetting_ReadOnly, true);
+    }
+  }
+  
+  // NOTE(nates): Set up panels
+  {
+    Buffer_Identifier comp = buffer_identifier(string_u8_litexpr("*compilation*"));
+    Buffer_Identifier left = buffer_identifier(string_u8_litexpr("*scratch*"));
+    Buffer_Identifier right = buffer_identifier(string_u8_litexpr("*messages*"));
+    Buffer_ID comp_id = buffer_identifier_to_id(app, comp);
+    Buffer_ID left_id = buffer_identifier_to_id(app, left);
+    Buffer_ID right_id = buffer_identifier_to_id(app, right);
+    
+    View_ID view = get_active_view(app, Access_Always);
+    new_view_settings(app, view);
+    view_set_buffer(app, view, left_id, 0);
+    
+    // NOTE(nates): Compilation panel
+    View_ID compilation_view = 0;
+    {
+      compilation_view = open_view(app, view, ViewSplit_Bottom);
+      new_view_settings(app, compilation_view);
+      Buffer_ID buffer = view_get_buffer(app, compilation_view, Access_Always);
+      Face_ID face_id = get_face_id(app, buffer);
+      Face_Metrics metrics = get_face_metrics(app, face_id);
+      view_set_split_pixel_size(app, compilation_view, (i32)(metrics.line_height*4.f));
+      view_set_passive(app, compilation_view, true);
+      global_compilation_view = compilation_view;
+      view_set_buffer(app, compilation_view, comp_id, 0);
+    }
+    
+    view_set_active(app, view);
+    
+    // NOTE(nates): Right Panel
+    open_panel_vsplit(app);
+    
+    View_ID right_view = get_active_view(app, Access_Always);
+    view_set_buffer(app, right_view, right_id, 0);
+    
+    // NOTE(nates): Restore Active to Left
+    view_set_active(app, view);
+  }
+  
+  // NOTE(nates): Audio
+  {
+    def_audio_init();
+  }
+  
+  // NOTE(nates): Load project
+  {
+    b32 auto_load = def_get_config_b32(vars_save_string_lit("automatically_load_project"));
+    if (auto_load)
+    {
+      load_project(app);
+    }
+  }
+  
+  
+  // NOTE(nates): View stuff
+  {
+    app_set_maps(app, command_mapid, insert_mapid);
+    b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
+    *is_global_modal = false;
+    if(*is_global_modal)
+    {
+      Modal_State_ID *global_state = app_get_global_modal_state_ptr(app);
+      *global_state = Modal_State_Command;
+    }
+  }
+}

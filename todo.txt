@@ -24,6 +24,8 @@ Not Empty :(
       and maybe stores a lister name, then you write some CUSTOM_COMMAND_SIG called, projects
       and that lists every single project you can load
 
+[ ] - Polish the file lister so that it's sorted and that it stores most recent position into the file
+
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
   [x] - Add CodeIndexNote_Forward_Declarition type
 	[x] - Add CodeIndexNote_Enum Type

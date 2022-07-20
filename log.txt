@@ -1,4 +1,10 @@
 
+/////////////////////////////
+date-> 7/20/22
+
+(nates): Compile window at bottom
+(nates): Added support for namespace inedxing and parsing
+
 ///////////////////////////
 date-> 7/18/22
 

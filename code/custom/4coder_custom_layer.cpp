@@ -97,7 +97,7 @@ void custom_layer_init(Application_Links *app)
   SelectMapping(&framework_mapping);
   
   SelectMap(global_mapid);
-  BindCore(default_startup, CoreCode_Startup);
+  BindCore(custom_startup, CoreCode_Startup);
   BindCore(default_try_exit, CoreCode_TryExit);
   cakez_bind_shared_keys(m, map);
   
@@ -115,15 +115,6 @@ void custom_layer_init(Application_Links *app)
   
   SelectMap(code_mapid);
   ParentMap(command_mapid);
-  
-  app_set_maps(app, command_mapid, insert_mapid);
-  b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
-  *is_global_modal = false;
-  if(*is_global_modal)
-  {
-    Modal_State_ID *global_state = app_get_global_modal_state_ptr(app);
-    *global_state = Modal_State_Command;
-  }
 }
 
 #endif
