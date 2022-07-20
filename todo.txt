@@ -16,6 +16,9 @@ Not Empty :(
 
 /////////////////////////////
 ---------- TODOS -------------
+[ ] - When in selection Mode, paste or "vim_paste" should copy the selection into the clipboard
+      delete the selection and paste what is currently in the clipboard over the selection.
+
 [ ] - Sometimes while in "Command Mode" they keybinds change to "Insert Mode",
       switching Views back and fourth fixed this issue. But it shouldn't happen in the 
       first place.
@@ -23,6 +26,7 @@ Not Empty :(
 [ ] - Project manager, stores strings to all project.4coder files that you want, 
       and maybe stores a lister name, then you write some CUSTOM_COMMAND_SIG called, projects
       and that lists every single project you can load
+  [ ] - When opening a project, 4coder did save the open buffers and where the cursor was
 
 [ ] - Polish the file lister so that it's sorted and that it stores most recent position into the file
 
