@@ -135,24 +135,34 @@ CUSTOM_DOC("Jump to the first definition in the code index matching an identifie
           }
         }
         
+        Code_Index_Note *found_note = 0;
         for(i32 index = 0;
             index < matching_note_count;
             ++index)
         {
-          Code_Index_Note *this_note = start + index;
+          Code_Index_Note *note = start + index;
           
-          if(this_note->note_kind != CodeIndexNote_ForwardDeclaration)
+          if(note->note_kind == CodeIndexNote_ForwardDeclaration &&
+             found_note == 0)
           {
-            point_stack_push_view_cursor(app, view);
-            jump_to_location(app, view, buffer, this_note->pos.first);
-            goto done;
+            found_note = note;
           }
+          
+          if(note->note_kind != CodeIndexNote_ForwardDeclaration)
+          {
+            found_note = note;
+          }
+        }
+        
+        if(found_note)
+        {
+          point_stack_push_view_cursor(app, view);
+          jump_to_location(app, view, buffer, found_note->pos.first);
         }
         
         end_temp(restore_point);
       }
     }
-    done:;
     code_index_unlock();
   }
 }
@@ -190,24 +200,34 @@ CUSTOM_DOC("Jump to the first definition in the code index matching an identifie
           }
         }
         
+        Code_Index_Note *found_note = 0;
         for(i32 index = 0;
             index < matching_note_count;
             ++index)
         {
-          Code_Index_Note *this_note = start + index;
+          Code_Index_Note *note = start + index;
           
-          if(this_note->note_kind != CodeIndexNote_ForwardDeclaration)
+          if(note->note_kind == CodeIndexNote_ForwardDeclaration &&
+             found_note == 0)
           {
-            point_stack_push_view_cursor(app, view);
-            jump_to_location(app, view, buffer, this_note->pos.first);
-            goto done;
+            found_note = note;
           }
+          
+          if(note->note_kind != CodeIndexNote_ForwardDeclaration)
+          {
+            found_note = note;
+          }
+        }
+        
+        if(found_note)
+        {
+          point_stack_push_view_cursor(app, view);
+          jump_to_location(app, view, buffer, found_note->pos.first);
         }
         
         end_temp(restore_point);
       }
     }
-    done:;
     code_index_unlock();
   }
 }

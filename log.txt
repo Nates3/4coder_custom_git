@@ -2,6 +2,7 @@
 /////////////////////////////
 date-> 7/21/22
 
+(nates): Fixed jump_to_definition_cursor not considering forward declarations
 (nates): Fixed code index not indexing code inside extern "C" bs
 (nates): Changed load_project to save and kill buffers when loading new project
 
