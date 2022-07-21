@@ -51,6 +51,8 @@ struct Model_Wind_Down_Co{
 
 struct Models
 {
+  String_Const_u8 exe_directory;
+  
   b32 is_global_modal_state;
   Modal_State_ID global_modal_state;
   i64 command_mapid;

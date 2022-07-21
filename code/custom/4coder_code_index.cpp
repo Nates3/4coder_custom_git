@@ -1297,6 +1297,20 @@ generic_parse_full_input_breaks(Code_Index_File *index, Generic_Parse_State *sta
     }
     else if (token->kind == TokenBaseKind_ScopeOpen)
     {
+      token_it_dec(&state->it);
+      Token *prev = token_it_read(&state->it);
+      token_it_inc(&state->it);
+      if(prev->kind == TokenBaseKind_LiteralString &&
+         prev->sub_kind == TokenCppKind_LiteralString)
+      {
+        String_Const_u8 string = SCu8(state->contents.str + prev->pos, prev->size);
+        if(string_match(string, SCu8("\"C\"")))
+        {
+          token_it_inc(&state->it);
+          continue;
+        }
+      }
+      
       Code_Index_Nest *nest = generic_parse_scope(index, state);
       code_index_push_nest(&index->nest_list, nest);
     }
@@ -1335,7 +1349,8 @@ generic_parse_full_input_breaks(Code_Index_File *index, Generic_Parse_State *sta
         generic_parse_inc(state);
       }
     }
-    else{
+    else
+    {
       generic_parse_inc(state);
     }
     

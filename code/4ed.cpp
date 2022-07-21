@@ -292,6 +292,8 @@ App_Init_Sig(app_init){
   Application_Links app = {};
   app.tctx = tctx;
   app.cmd_context = models;
+  models->exe_directory = current_directory;
+  
   custom_init(&app);
   
   // NOTE(allen): init baked in buffers

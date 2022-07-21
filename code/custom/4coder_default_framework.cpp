@@ -466,6 +466,18 @@ CUSTOM_DOC("Saves all buffers marked dirty (showing the '*' indicator).")
   save_all_dirty_buffers_with_postfix(app, empty);
 }
 
+CUSTOM_COMMAND_SIG(save_and_kill_all_buffers)
+CUSTOM_DOC("Kills all the loaded code files")
+{
+  save_all_dirty_buffers(app);
+  for (Buffer_ID buffer = get_buffer_next(app, 0, Access_ReadWriteVisible);
+       buffer != 0;
+       buffer = get_buffer_next(app, buffer, Access_ReadWriteVisible))
+  {
+    buffer_kill(app, buffer, BufferKill_AlwaysKill);
+  }
+}
+
 ////////////////////////////////
 
 function void

@@ -11,8 +11,6 @@ Not Empty :(
 [ ] - Bug: on code_index_note macros, sometimes you won't be able jump to the macro, in lister
       view you can, but using "jump_to_definition_at_cursor" it won't work
 
-[ ] - Bug?: When you load a project, and then load another project, everything from the previous project
-      isn't unloaded. Should we fix this so that's the case?
 
 /////////////////////////////
 ---------- TODOS -------------
@@ -26,7 +24,7 @@ Not Empty :(
 [ ] - Project manager, stores strings to all project.4coder files that you want, 
       and maybe stores a lister name, then you write some CUSTOM_COMMAND_SIG called, projects
       and that lists every single project you can load
-  [ ] - When opening a project, 4coder did save the open buffers and where the cursor was
+[ ] - When opening a project, 4coder did save the open buffers and where the cursor was
 
 [ ] - Polish the file lister so that it's sorted and that it stores most recent position into the file
 
@@ -53,6 +51,10 @@ Not Empty :(
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+[x] - Bug?: When you load a project, and then load another project, everything from the previous project
+      isn't unloaded. Should we fix this so that's the case?
+      (nates): changed so it saves then kills all buffers befor loading a project
+
 [x] - Yanking a full line (Shift + Y) and then pasting that line should create a new line(always)
       and then paste the contents, even if the cursor is in the middle of the line
 

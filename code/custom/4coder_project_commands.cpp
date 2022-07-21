@@ -861,13 +861,24 @@ CUSTOM_DOC("Works as open_all_code but also runs in all subdirectories.")
   prj_open_all_files_with_ext_in_hot(app, extensions, PrjOpenFileFlag_Recursive);
 }
 
+#if 0
+CUSTOM_COMMAND_SIG(project_lister)
+CUSTOM_DOC("Grabs all the project paths from project_list.4coder and lists them, if you select one it will load that project and set the hot directory to the directory the project file is in")
+{
+  Models *models = (Models *)app->cmd_context;
+  String_Const_u8 project_list_name = SCu8("project_list.4coder");
+  
+}
+#endif
+
+
 CUSTOM_COMMAND_SIG(load_project)
 CUSTOM_DOC("Looks for a project.4coder file in the current directory and tries to load it.  Looks in parent directories until a project file is found or there are no more parents.")
 {
   // TODO(allen): compress this _thoughtfully_
   
   ProfileScope(app, "load project");
-  save_all_dirty_buffers(app);
+  save_and_kill_all_buffers(app);
   Scratch_Block scratch(app);
   
   // NOTE(allen): Load the project file from the hot directory
@@ -940,7 +951,8 @@ CUSTOM_DOC("Looks for a project.4coder file in the current directory and tries t
   
   for (Variable_Handle load_path_var = vars_first_child(load_paths_os_var);
        !vars_is_nil(load_path_var);
-       load_path_var = vars_next_sibling(load_path_var)){
+       load_path_var = vars_next_sibling(load_path_var))
+  {
     Variable_Handle path_var = vars_read_key(load_path_var, path_id);
     Variable_Handle recursive_var = vars_read_key(load_path_var, recursive_id);
     Variable_Handle relative_var = vars_read_key(load_path_var, relative_id);

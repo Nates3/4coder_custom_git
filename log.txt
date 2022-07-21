@@ -1,5 +1,11 @@
 
 /////////////////////////////
+date-> 7/21/22
+
+(nates): Fixed code index not indexing code inside extern "C" bs
+(nates): Changed load_project to save and kill buffers when loading new project
+
+/////////////////////////////
 date-> 7/20/22
 
 (nates): Fixed highlighting on namespaces being declared multiple times
