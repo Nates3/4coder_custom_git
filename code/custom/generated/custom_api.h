@@ -15,6 +15,7 @@
 #define custom_buffer_replace_range_sig() b32 custom_buffer_replace_range(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, String_Const_u8 string)
 #define custom_buffer_batch_edit_sig() b32 custom_buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch)
 #define custom_buffer_seek_string_sig() String_Match custom_buffer_seek_string(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos)
+#define custom_buffer_seek_character_predicate_range_sig() Range_i64 custom_buffer_seek_character_predicate_range(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos)
 #define custom_buffer_seek_character_class_sig() String_Match custom_buffer_seek_character_class(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos)
 #define custom_buffer_line_y_difference_sig() f32 custom_buffer_line_y_difference(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b)
 #define custom_buffer_line_shift_y_sig() Line_Shift_Vertical custom_buffer_line_shift_y(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line, f32 y_shift)
@@ -209,6 +210,7 @@ typedef b32 custom_buffer_read_range_type(Application_Links* app, Buffer_ID buff
 typedef b32 custom_buffer_replace_range_type(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, String_Const_u8 string);
 typedef b32 custom_buffer_batch_edit_type(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch);
 typedef String_Match custom_buffer_seek_string_type(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos);
+typedef Range_i64 custom_buffer_seek_character_predicate_range_type(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos);
 typedef String_Match custom_buffer_seek_character_class_type(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos);
 typedef f32 custom_buffer_line_y_difference_type(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b);
 typedef Line_Shift_Vertical custom_buffer_line_shift_y_type(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line, f32 y_shift);
@@ -404,6 +406,7 @@ custom_buffer_read_range_type *buffer_read_range;
 custom_buffer_replace_range_type *buffer_replace_range;
 custom_buffer_batch_edit_type *buffer_batch_edit;
 custom_buffer_seek_string_type *buffer_seek_string;
+custom_buffer_seek_character_predicate_range_type *buffer_seek_character_predicate_range;
 custom_buffer_seek_character_class_type *buffer_seek_character_class;
 custom_buffer_line_y_difference_type *buffer_line_y_difference;
 custom_buffer_line_shift_y_type *buffer_line_shift_y;
@@ -600,6 +603,7 @@ internal b32 buffer_read_range(Application_Links* app, Buffer_ID buffer_id, Rang
 internal b32 buffer_replace_range(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, String_Const_u8 string);
 internal b32 buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch);
 internal String_Match buffer_seek_string(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos);
+internal Range_i64 buffer_seek_character_predicate_range(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos);
 internal String_Match buffer_seek_character_class(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos);
 internal f32 buffer_line_y_difference(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b);
 internal Line_Shift_Vertical buffer_line_shift_y(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line, f32 y_shift);
@@ -796,6 +800,7 @@ global custom_buffer_read_range_type *buffer_read_range = 0;
 global custom_buffer_replace_range_type *buffer_replace_range = 0;
 global custom_buffer_batch_edit_type *buffer_batch_edit = 0;
 global custom_buffer_seek_string_type *buffer_seek_string = 0;
+global custom_buffer_seek_character_predicate_range_type *buffer_seek_character_predicate_range = 0;
 global custom_buffer_seek_character_class_type *buffer_seek_character_class = 0;
 global custom_buffer_line_y_difference_type *buffer_line_y_difference = 0;
 global custom_buffer_line_shift_y_type *buffer_line_shift_y = 0;

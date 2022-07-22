@@ -293,6 +293,7 @@ App_Init_Sig(app_init){
   app.tctx = tctx;
   app.cmd_context = models;
   models->exe_directory = current_directory;
+  models->project_list_arena = make_arena_system(KB(4));
   
   custom_init(&app);
   
@@ -506,7 +507,8 @@ App_Step_Sig(app_step){
   }
   
   // NOTE(allen): First frame initialization
-  if (input->first_step){
+  if (input->first_step)
+  {
     Temp_Memory_Block temp(scratch);
     
     String_Const_u8_Array file_names = {};

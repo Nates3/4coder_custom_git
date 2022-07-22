@@ -9,11 +9,6 @@
 internal void
 cakez_bind_shared_keys(Mapping *m, Command_Map *map)
 {
-  Bind(goto_next_mark, KeyCode_M, KeyCode_Control);
-  Bind(goto_prev_mark, KeyCode_P, KeyCode_Control);
-  Bind(goto_line, KeyCode_G, KeyCode_Control);
-  Bind(comment_line_toggle, KeyCode_ForwardSlash, KeyCode_Control);
-  Bind(toggle_compilation_expand, KeyCode_Tick, KeyCode_Control);
   Bind(goto_next_jump, KeyCode_N, KeyCode_Alt);
   Bind(goto_prev_jump, KeyCode_P, KeyCode_Alt);
   Bind(move_line_up, KeyCode_K, KeyCode_Alt);
@@ -162,7 +157,8 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   
   Bind(jump_to_definition_at_cursor, KeyCode_Comma, KeyCode_Control);
   Bind(jump_to_definition_at_cursor_other_panel, KeyCode_Comma, KeyCode_Alt);
-  Bind(jump_to_definition_sorted, KeyCode_Quote, KeyCode_Control);
+  Bind(jump_to_definition, KeyCode_Quote, KeyCode_Control);
+  Bind(jump_to_definition_sorted, KeyCode_Quote, KeyCode_Control, KeyCode_Shift);
   Bind(goto_next_jump, KeyCode_B, KeyCode_Alt);
   Bind(goto_prev_jump, KeyCode_B, KeyCode_Alt, KeyCode_Shift);
   
@@ -219,7 +215,8 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(move_line_up, KeyCode_PageUp, KeyCode_Alt);
   Bind(move_line_down, KeyCode_PageDown, KeyCode_Alt);
   
-  Bind(delete_range, KeyCode_E);
+  Bind(delete_range, KeyCode_E, KeyCode_Control);
+  Bind(delete_alpha_numeric_identifier, KeyCode_E);
   Bind(delete_line, KeyCode_E, KeyCode_Alt);
   Bind(select_lines, KeyCode_J, KeyCode_Shift);
   Bind(search, KeyCode_U);

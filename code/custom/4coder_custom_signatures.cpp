@@ -552,6 +552,23 @@ CUSTOM_DOC("Expand the compilation window.")
   }
 }
 
+CUSTOM_COMMAND_SIG(delete_alpha_numeric_identifier)
+CUSTOM_DOC("deletes alpha numeric identifier at cursor position")
+{
+  Scratch_Block scratch(app);
+  
+  View_ID view = get_active_view(app, Access_ReadWriteVisible);
+  Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
+  i64 cursor_pos = view_get_cursor_pos(app, view);
+  Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
+                                                          cursor_pos);
+  if(range.min != -1)
+  {
+    buffer_replace_range(app, buffer, range, string_u8_empty);
+  }
+}
+
+
 CUSTOM_COMMAND_SIG(custom_startup)
 CUSTOM_DOC("custom startup")
 {
@@ -629,6 +646,42 @@ CUSTOM_DOC("custom startup")
     }
   }
   
+  // NOTE(nates): Load Project Paths
+#if 0
+  {
+    u64 string_cap = 512;
+    
+    Models *models = (Models *)app->cmd_context;
+    Scratch_Block scratch(app);
+    Arena *scratch_arena = scratch.arena;
+    u8 *start = push_array(scratch_arena, u8, 1);
+    pop_array(scratch_arena, u8, 1);
+    
+    String_u8 full_path = Su8(start, 0, string_cap);
+    // TODO(nates): Make sure that exe_path is correct
+    push_string_copy(scratch_arena, models->exe_path);
+    string_append(full_path, SCu8("project_list.4coder"));
+    Buffer_ID buffer_id = create_buffer(app, full_path, 0);
+    Editing_File *file = imp_get_file(models, buffer_id);
+    
+    Gap_Buffer buffer = file->state.buffer;
+    i64 line_start = 0;
+    for(u32 i = 0;
+        i < buffer.size1;
+        ++i)
+    {
+      u8 value = buffer.data[i];
+      if(value == "\n")
+      {
+        String_Const_u8 string = {buffer.data[line_start], i - line_start};
+        i64 line_start = i + 1;
+        String_Node *node = push_array();
+        
+        
+      }
+    }
+  }
+#endif
   
   // NOTE(nates): View stuff
   {

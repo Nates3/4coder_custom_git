@@ -867,10 +867,8 @@ CUSTOM_DOC("Grabs all the project paths from project_list.4coder and lists them,
 {
   Models *models = (Models *)app->cmd_context;
   String_Const_u8 project_list_name = SCu8("project_list.4coder");
-  
 }
 #endif
-
 
 CUSTOM_COMMAND_SIG(load_project)
 CUSTOM_DOC("Looks for a project.4coder file in the current directory and tries to load it.  Looks in parent directories until a project file is found or there are no more parents.")

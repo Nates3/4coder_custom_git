@@ -103,6 +103,7 @@ struct Code_Index_File_Storage{
 struct Code_Index{
   System_Mutex mutex;
   Arena node_arena;
+  Arena type_arena;
   Table_u64_u64 buffer_to_index_file;
   Code_Index_File_Storage *free_storage;
   Code_Index_File_Storage *storage_first;

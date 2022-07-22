@@ -329,6 +329,92 @@ buffer_seek_string(Application_Links *app, Buffer_ID buffer, String_Const_u8 nee
   return(result);
 }
 
+function Character_Predicate
+character_predicate_not_stack(Character_Predicate a){
+  Character_Predicate p = {};
+  for (i32 i = 0; i < ArrayCount(p.b); i += 1){
+    p.b[i] = ~(a.b[i]);
+  }
+  return(p);
+}
+
+
+api(custom) function Range_i64
+buffer_seek_character_predicate_range(Application_Links *app, Buffer_ID buffer, 
+                                      Character_Predicate *predicate, i64 cursor_pos)
+{
+  Models *models = (Models *)app->cmd_context;
+  Editing_File *file = imp_get_file(models, buffer);
+  Range_i64 range = {-1, 0};
+  if (api_check_buffer(file))
+  {
+    Scratch_Block scratch(app);
+    Gap_Buffer *gap_buffer = &file->state.buffer;
+    List_String_Const_u8 chunks_list = buffer_get_chunks(scratch, gap_buffer);
+    
+    if(chunks_list.node_count > 0)
+    {
+      String_Const_u8 chunk_mem[3] = {};
+      String_Const_u8_Array chunks = {chunk_mem};
+      for (Node_String_Const_u8 *node = chunks_list.first;
+           node != 0;
+           node = node->next){
+        chunks.vals[chunks.count] = node->string;
+        chunks.count += 1;
+      }
+      
+      i64 size = buffer_size(gap_buffer);
+      cursor_pos = clamp(-1, cursor_pos, size);
+      Buffer_Chunk_Position pos = buffer_get_chunk_position(chunks, size, cursor_pos);
+      u8 start_value = chunks.vals[pos.chunk_index].str[pos.chunk_pos];
+      if(character_predicate_check_character(*predicate, start_value))
+      {
+        Character_Predicate not = character_predicate_not_stack(*predicate);
+        
+        for(;;)
+        {
+          i32 past_end = buffer_chunk_position_iterate(chunks, &pos, Scan_Backward);
+          if (past_end == -1)
+          {
+            range.start = 0;
+            break;
+          }
+          else if (past_end == 1)
+          {
+            break;
+          }
+          u8 v = chunks.vals[pos.chunk_index].str[pos.chunk_pos];
+          if (character_predicate_check_character(not, v)){
+            range.start = pos.real_pos + 1;
+            break;
+          }
+        }
+        
+        for(;;)
+        {
+          i32 past_end = buffer_chunk_position_iterate(chunks, &pos, Scan_Forward);
+          if (past_end == -1)
+          {
+            break;
+          }
+          else if (past_end == 1)
+          {
+            range.one_past_last = size;
+            break;
+          }
+          u8 v = chunks.vals[pos.chunk_index].str[pos.chunk_pos];
+          if (character_predicate_check_character(not, v)){
+            range.one_past_last = pos.real_pos;
+            break;
+          }
+        }
+      }
+    }
+  }
+  
+  return(range);
+}
+
 api(custom) function String_Match
 buffer_seek_character_class(Application_Links *app, Buffer_ID buffer, Character_Predicate *predicate, Scan_Direction direction, i64 start_pos){
   Models *models = (Models*)app->cmd_context;
