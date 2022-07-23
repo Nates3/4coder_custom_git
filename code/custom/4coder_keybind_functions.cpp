@@ -9,6 +9,7 @@
 internal void
 cakez_bind_shared_keys(Mapping *m, Command_Map *map)
 {
+  Bind(center_view, KeyCode_L, KeyCode_Control);
   Bind(goto_next_jump, KeyCode_N, KeyCode_Alt);
   Bind(goto_prev_jump, KeyCode_P, KeyCode_Alt);
   Bind(move_line_up, KeyCode_K, KeyCode_Alt);
@@ -25,7 +26,8 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(build_in_build_panel, KeyCode_B, KeyCode_Control, KeyCode_Shift);
   Bind(toggle_fullscreen, KeyCode_F11);
   Bind(exit_4coder, KeyCode_F4, KeyCode_Alt);
-  Bind(load_project, KeyCode_L, KeyCode_Control, KeyCode_Shift);
+  Bind(load_project, KeyCode_R, KeyCode_Control, KeyCode_Shift);
+  Bind(list_projects, KeyCode_L, KeyCode_Control, KeyCode_Shift);
   Bind(quick_swap_buffer, KeyCode_BackwardSlash, KeyCode_Alt);
   Bind(save, KeyCode_S, KeyCode_Control);
   Bind(save_all_dirty_buffers, KeyCode_S, KeyCode_Control, KeyCode_Shift);

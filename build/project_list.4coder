@@ -1,6 +1,0 @@
-// NOTE(nates): Everything is parsed line based, so no wrapping text across lines
-// There are comments
-// USAGE: c:/to/path/name/ optional_lister_name
-// c:/to/path/name works aswell
-
-c:/4ed/code/ 4ed_main
