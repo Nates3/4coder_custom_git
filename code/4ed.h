@@ -15,21 +15,21 @@
 #define MAX_VIEWS 16
 
 struct Plat_Settings{
-    char *custom_dll;
-    b8 custom_dll_is_strict;
-    b8 fullscreen_window;
-    
-    i32 window_w;
-    i32 window_h;
-    i32 window_x;
-    i32 window_y;
-    b8 set_window_pos;
-    b8 set_window_size;
-    b8 maximize_window;
-    
-    b8 use_hinting;
-    
-    char *user_directory;
+  char *custom_dll;
+  b8 custom_dll_is_strict;
+  b8 fullscreen_window;
+  
+  i32 window_w;
+  i32 window_h;
+  i32 window_x;
+  i32 window_y;
+  b8 set_window_pos;
+  b8 set_window_size;
+  b8 maximize_window;
+  
+  b8 use_hinting;
+  
+  char *user_directory;
 };
 
 #define App_Read_Command_Line_Sig(name) \
@@ -44,15 +44,18 @@ char **argv)
 typedef App_Read_Command_Line_Sig(App_Read_Command_Line);
 
 struct Custom_API{
-    _Get_Version_Type *get_version;
-    _Init_APIs_Type *init_apis;
+  _Get_Version_Type *get_version;
+  _Init_APIs_Type *init_apis;
 };
 
+// TODO(nates): Clean this up so you pass minimally
 #define App_Init_Sig(name) \
 void name(Thread_Context *tctx,     \
 Render_Target *target,    \
 void *base_ptr,           \
 String_Const_u8 current_directory,\
+String_Const_u8 exe_directory,\
+Arena project_list_arena,\
 Custom_API api)
 
 typedef App_Init_Sig(App_Init);
@@ -60,21 +63,21 @@ typedef App_Init_Sig(App_Init);
 #include "4ed_cursor_codes.h"
 
 struct Application_Step_Result{
-    Application_Mouse_Cursor mouse_cursor_type;
-    b32 lctrl_lalt_is_altgr;
-    b32 perform_kill;
-    b32 animating;
-    b32 has_new_title;
-    char *title_string;
+  Application_Mouse_Cursor mouse_cursor_type;
+  b32 lctrl_lalt_is_altgr;
+  b32 perform_kill;
+  b32 animating;
+  b32 has_new_title;
+  char *title_string;
 };
 
 struct Application_Step_Input{
-    b32 first_step;
-    f32 dt;
-    Mouse_State mouse;
-    Input_List events;
-    String_Const_u8 clipboard;
-    b32 trying_to_kill;
+  b32 first_step;
+  f32 dt;
+  Mouse_State mouse;
+  Input_List events;
+  String_Const_u8 clipboard;
+  b32 trying_to_kill;
 };
 
 #define App_Step_Sig(name) Application_Step_Result \
@@ -92,11 +95,11 @@ typedef void App_Load_VTables(API_VTable_system *vtable_system,
                               API_VTable_graphics *vtable_graphics);
 
 struct App_Functions{
-    App_Load_VTables *load_vtables;
-    App_Get_Logger *get_logger;
-    App_Read_Command_Line *read_command_line;
-    App_Init *init;
-    App_Step *step;
+  App_Load_VTables *load_vtables;
+  App_Get_Logger *get_logger;
+  App_Read_Command_Line *read_command_line;
+  App_Init *init;
+  App_Step *step;
 };
 
 #define App_Get_Functions_Sig(name) App_Functions name()

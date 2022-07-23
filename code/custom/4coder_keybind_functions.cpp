@@ -154,6 +154,7 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(toggle_fullscreen, KeyCode_F11);
   Bind(exit_4coder, KeyCode_F4, KeyCode_Alt);
   Bind(load_project, KeyCode_L, KeyCode_Control, KeyCode_Shift);
+  Bind(list_projects, KeyCode_L, KeyCode_Control);
   
   Bind(jump_to_definition_at_cursor, KeyCode_Comma, KeyCode_Control);
   Bind(jump_to_definition_at_cursor_other_panel, KeyCode_Comma, KeyCode_Alt);

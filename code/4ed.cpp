@@ -292,8 +292,8 @@ App_Init_Sig(app_init){
   Application_Links app = {};
   app.tctx = tctx;
   app.cmd_context = models;
-  models->exe_directory = current_directory;
-  models->project_list_arena = make_arena_system(KB(4));
+  models->project_list_arena = project_list_arena;
+  models->exe_directory = exe_directory;
   
   custom_init(&app);
   

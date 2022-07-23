@@ -49,25 +49,11 @@ struct Model_Wind_Down_Co{
   Coroutine *co;
 };
 
-struct String_Node
-{
-  String_Node *prev;
-  String_Node *next;
-  String_Const_u8 contents;
-};
-
-struct Project_Path_List
-{
-  String_Node *first;
-  String_Node *last;
-  u32 count;
-};
-
 struct Models
 {
   String_Const_u8 exe_directory;
   Arena project_list_arena;
-  Project_Path_List project_list;
+  Project_List project_list;
   
   b32 is_global_modal_state;
   Modal_State_ID global_modal_state;

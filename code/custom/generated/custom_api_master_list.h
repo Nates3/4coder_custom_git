@@ -16,6 +16,8 @@ api(custom) function b32 buffer_replace_range(Application_Links* app, Buffer_ID 
 api(custom) function b32 buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch);
 api(custom) function String_Match buffer_seek_string(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos);
 api(custom) function Range_i64 buffer_seek_character_predicate_range(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos);
+api(custom) function void load_project_paths(Application_Links* app);
+api(custom) function Project_List get_project_list(Application_Links* app);
 api(custom) function String_Match buffer_seek_character_class(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos);
 api(custom) function f32 buffer_line_y_difference(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b);
 api(custom) function Line_Shift_Vertical buffer_line_shift_y(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line, f32 y_shift);

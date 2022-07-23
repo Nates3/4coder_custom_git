@@ -338,7 +338,7 @@ character_predicate_not_stack(Character_Predicate a){
   return(p);
 }
 
-
+// NOTE(nates): Custom
 api(custom) function Range_i64
 buffer_seek_character_predicate_range(Application_Links *app, Buffer_ID buffer, 
                                       Character_Predicate *predicate, i64 cursor_pos)
@@ -413,6 +413,79 @@ buffer_seek_character_predicate_range(Application_Links *app, Buffer_ID buffer,
   }
   
   return(range);
+}
+
+// NOTE(nates): Custom
+api(custom) function void
+load_project_paths(Application_Links *app)
+{
+  u64 string_cap = 512;
+  
+  Models *models = (Models *)app->cmd_context;
+  Scratch_Block scratch(app);
+  Arena *scratch_arena = scratch.arena;
+  u8 *start = push_array(scratch_arena, u8, string_cap);
+  String_u8 full_path = Su8(start, models->exe_directory.size, string_cap);
+  block_copy_dynamic_array(start, models->exe_directory.str, models->exe_directory.size);
+  string_append(&full_path, SCu8("project_list.4coder"));
+  Buffer_ID buffer_id = create_buffer(app, full_path.string, 0);
+  Editing_File *file = imp_get_file(models, buffer_id);
+  
+  if(file)
+  {
+    Gap_Buffer *buffer = &file->state.buffer;
+    List_String_Const_u8 chunk_list = buffer_get_chunks(scratch, buffer);
+    
+    String_Const_u8 chunk_mem[3] = {};
+    String_Const_u8_Array chunks = {chunk_mem};
+    for (Node_String_Const_u8 *node = chunk_list.first;
+         node != 0;
+         node = node->next){
+      chunks.vals[chunks.count] = node->string;
+      chunks.count += 1;
+    }
+    
+    
+    i64 line_start = 0;
+    String_Const_u8 contents = buffer_stringify(&models->project_list_arena, buffer, 
+                                                Ii64(0, (buffer->size1 + buffer->size2)));
+    for(u32 index = 0;
+        index < contents.size + 1;
+        ++index)
+    {
+      u64 str_index = clamp_top(index, contents.size - 1);
+      u8 value = contents.str[str_index];
+      if(value == '\n' || index == contents.size)
+      {
+        u64 line_size = (u64)(index - line_start);
+        if(line_size)
+        {
+          String_Const_u8 string = {contents.str + line_start, line_size};
+          if((string.size > 3))
+          {
+            if((string.str[0] != '/'))
+            {
+              String_Node *node = push_array(&models->project_list_arena, String_Node, 1);
+              zdll_push_front(models->project_list.first, models->project_list.last, node);
+              models->project_list.count++;
+              
+              node->contents = string;
+            }
+          }
+        }
+        line_start = index + 1;
+      }
+    }
+  }
+}
+
+//NOTE(nates): Custom
+api(custom) function Project_List
+get_project_list(Application_Links *app)
+{
+  Models *models = (Models *)app->cmd_context;
+  Project_List result = models->project_list;
+  return(result);
 }
 
 api(custom) function String_Match

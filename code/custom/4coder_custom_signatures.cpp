@@ -568,6 +568,63 @@ CUSTOM_DOC("deletes alpha numeric identifier at cursor position")
   }
 }
 
+CUSTOM_COMMAND_SIG(list_projects)
+CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
+{
+  save_and_kill_all_buffers(app);
+  
+  Project_List projects = get_project_list(app);
+  Scratch_Block scratch(app);
+  Lister_Block lister(app, scratch);
+  char *query = "Project Path:";
+  lister_set_query(lister, query);
+  lister_set_default_handlers(lister);
+  
+  code_index_lock();
+  String_Node *node = projects.first;
+  for(u32 node_index = 0;
+      node_index < projects.count;
+      ++node_index)
+  {
+    String_Const_u8 *string = &node->contents;
+    if(character_predicate_check_character(character_predicate_alpha, string->str[0]))
+    {
+      u64 first = string_find_first(*string, 0, ' ');
+      String_Const_u8 file_path = *string;
+      String_Const_u8 name = {};
+      if(first)
+      {
+        file_path = {string->str, first};
+        u64 name_index = clamp_top(first + 1, string->size);
+        if(string->size - name_index > 0)
+        {
+          name = SCu8(string->str + name_index, (string->size - name_index));
+          lister_add_item(lister, name, SCu8(""), string, 0);
+        }
+        else
+        {
+          lister_add_item(lister, *string, SCu8(""), string, 0);
+        }
+      }
+      else
+      {
+        lister_add_item(lister, *string, SCu8(""), string, 0);
+      }
+    }
+    
+    node = node->next;
+  }
+  code_index_unlock();
+  
+  
+  Lister_Result lister_result = run_lister(app, lister);
+  if(!lister_result.canceled && lister_result.user_data)
+  {
+    String_Const_u8 result_path = *(String_Const_u8 *)lister_result.user_data;
+    load_project_from_path(app, result_path);
+    set_hot_directory(app, result_path);
+  }
+}
 
 CUSTOM_COMMAND_SIG(custom_startup)
 CUSTOM_DOC("custom startup")
@@ -647,41 +704,9 @@ CUSTOM_DOC("custom startup")
   }
   
   // NOTE(nates): Load Project Paths
-#if 0
   {
-    u64 string_cap = 512;
-    
-    Models *models = (Models *)app->cmd_context;
-    Scratch_Block scratch(app);
-    Arena *scratch_arena = scratch.arena;
-    u8 *start = push_array(scratch_arena, u8, 1);
-    pop_array(scratch_arena, u8, 1);
-    
-    String_u8 full_path = Su8(start, 0, string_cap);
-    // TODO(nates): Make sure that exe_path is correct
-    push_string_copy(scratch_arena, models->exe_path);
-    string_append(full_path, SCu8("project_list.4coder"));
-    Buffer_ID buffer_id = create_buffer(app, full_path, 0);
-    Editing_File *file = imp_get_file(models, buffer_id);
-    
-    Gap_Buffer buffer = file->state.buffer;
-    i64 line_start = 0;
-    for(u32 i = 0;
-        i < buffer.size1;
-        ++i)
-    {
-      u8 value = buffer.data[i];
-      if(value == "\n")
-      {
-        String_Const_u8 string = {buffer.data[line_start], i - line_start};
-        i64 line_start = i + 1;
-        String_Node *node = push_array();
-        
-        
-      }
-    }
+    load_project_paths(app);
   }
-#endif
   
   // NOTE(nates): View stuff
   {

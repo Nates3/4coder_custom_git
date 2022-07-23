@@ -19,4 +19,19 @@ enum Modal_State_ID
   Modal_State_Command
 };
 
+struct String_Node
+{
+  String_Node *prev;
+  String_Node *next;
+  String_Const_u8 contents;
+};
+
+struct Project_List
+{
+  String_Node *first;
+  String_Node *last;
+  u32 count;
+};
+
+
 #endif //4CODER_SHARED_H

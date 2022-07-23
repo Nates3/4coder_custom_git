@@ -16,6 +16,8 @@
 #define custom_buffer_batch_edit_sig() b32 custom_buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch)
 #define custom_buffer_seek_string_sig() String_Match custom_buffer_seek_string(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos)
 #define custom_buffer_seek_character_predicate_range_sig() Range_i64 custom_buffer_seek_character_predicate_range(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos)
+#define custom_load_project_paths_sig() void custom_load_project_paths(Application_Links* app)
+#define custom_get_project_list_sig() Project_List custom_get_project_list(Application_Links* app)
 #define custom_buffer_seek_character_class_sig() String_Match custom_buffer_seek_character_class(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos)
 #define custom_buffer_line_y_difference_sig() f32 custom_buffer_line_y_difference(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b)
 #define custom_buffer_line_shift_y_sig() Line_Shift_Vertical custom_buffer_line_shift_y(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line, f32 y_shift)
@@ -211,6 +213,8 @@ typedef b32 custom_buffer_replace_range_type(Application_Links* app, Buffer_ID b
 typedef b32 custom_buffer_batch_edit_type(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch);
 typedef String_Match custom_buffer_seek_string_type(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos);
 typedef Range_i64 custom_buffer_seek_character_predicate_range_type(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos);
+typedef void custom_load_project_paths_type(Application_Links* app);
+typedef Project_List custom_get_project_list_type(Application_Links* app);
 typedef String_Match custom_buffer_seek_character_class_type(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos);
 typedef f32 custom_buffer_line_y_difference_type(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b);
 typedef Line_Shift_Vertical custom_buffer_line_shift_y_type(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line, f32 y_shift);
@@ -407,6 +411,8 @@ custom_buffer_replace_range_type *buffer_replace_range;
 custom_buffer_batch_edit_type *buffer_batch_edit;
 custom_buffer_seek_string_type *buffer_seek_string;
 custom_buffer_seek_character_predicate_range_type *buffer_seek_character_predicate_range;
+custom_load_project_paths_type *load_project_paths;
+custom_get_project_list_type *get_project_list;
 custom_buffer_seek_character_class_type *buffer_seek_character_class;
 custom_buffer_line_y_difference_type *buffer_line_y_difference;
 custom_buffer_line_shift_y_type *buffer_line_shift_y;
@@ -604,6 +610,8 @@ internal b32 buffer_replace_range(Application_Links* app, Buffer_ID buffer_id, R
 internal b32 buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch);
 internal String_Match buffer_seek_string(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos);
 internal Range_i64 buffer_seek_character_predicate_range(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos);
+internal void load_project_paths(Application_Links* app);
+internal Project_List get_project_list(Application_Links* app);
 internal String_Match buffer_seek_character_class(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos);
 internal f32 buffer_line_y_difference(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b);
 internal Line_Shift_Vertical buffer_line_shift_y(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line, f32 y_shift);
@@ -801,6 +809,8 @@ global custom_buffer_replace_range_type *buffer_replace_range = 0;
 global custom_buffer_batch_edit_type *buffer_batch_edit = 0;
 global custom_buffer_seek_string_type *buffer_seek_string = 0;
 global custom_buffer_seek_character_predicate_range_type *buffer_seek_character_predicate_range = 0;
+global custom_load_project_paths_type *load_project_paths = 0;
+global custom_get_project_list_type *get_project_list = 0;
 global custom_buffer_seek_character_class_type *buffer_seek_character_class = 0;
 global custom_buffer_line_y_difference_type *buffer_line_y_difference = 0;
 global custom_buffer_line_shift_y_type *buffer_line_shift_y = 0;

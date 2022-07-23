@@ -1668,9 +1668,13 @@ win32_gl_create_window(HWND *wnd_out, HGLRC *context_out, DWORD style, RECT rect
 ////////////////////////////////
 
 int CALL_CONVENTION
-WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow){
+WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+{
   i32 argc = __argc;
   char **argv = __argv;
+  
+  char exe_path[512] = {};
+  GetModuleFileNameA(0, exe_path, sizeof(exe_path));
   
   // NOTE(allen): someone get my shit togeth :(er for me
   
@@ -1986,8 +1990,10 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
   {
     Scratch_Block scratch(win32vars.tctx);
     String_Const_u8 curdir = system_get_path(scratch, SystemPath_CurrentDirectory);
+    Arena project_list_arena = make_arena_system(KB(4));
+    String_Const_u8 exedir = push_string_copy(&project_list_arena, string_remove_front_of_path(SCu8(exe_path)));
     curdir = string_mod_replace_character(curdir, '\\', '/');
-    app.init(win32vars.tctx, &target, base_ptr, curdir, custom);
+    app.init(win32vars.tctx, &target, base_ptr, curdir, exedir, project_list_arena, custom);
   }
   
   //

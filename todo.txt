@@ -21,12 +21,8 @@ Not Empty :(
       switching Views back and fourth fixed this issue. But it shouldn't happen in the 
       first place.
 
-[ ] - Project manager, stores strings to all project.4coder files that you want, 
-      and maybe stores a lister name, then you write some CUSTOM_COMMAND_SIG called, projects
-      and that lists every single project you can load
 [ ] - When opening a project, 4coder did save the open buffers and where the cursor was
 
-[ ] - Polish the file lister so that it's sorted and that it stores most recent position into the file
 
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
   [x] - Add CodeIndexNote_Forward_Declarition type
@@ -51,6 +47,10 @@ Not Empty :(
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+[x] - Project manager, stores strings to all project.4coder files that you want, 
+      and maybe stores a lister name, then you write some CUSTOM_COMMAND_SIG called, projects
+      and that lists every single project you can load
+
 [x] - Bug?: When you load a project, and then load another project, everything from the previous project
       isn't unloaded. Should we fix this so that's the case?
       (nates): changed so it saves then kills all buffers befor loading a project

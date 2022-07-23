@@ -61,12 +61,12 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
           
           case CodeIndexNote_CommentNOTE:
           {
-            sort = string_u8_litexpr("Note");
+            continue;
           } break;
           
           case CodeIndexNote_CommentTODO:
           {
-            sort = string_u8_litexpr("Todo");
+            continue;
           } break;
           
           case CodeIndexNote_Namespace:

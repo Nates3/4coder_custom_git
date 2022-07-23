@@ -53,6 +53,13 @@ global Character_Predicate character_predicate_alpha_numeric = { {
     0,   0,   0,   0,   0,   0,   0,   0, 
   } };
 
+global Character_Predicate character_predicate_file_path_acceptable = { {
+    0,   0,   0,   0,   1,   128, 255,   3, 
+    254, 255, 255,   7, 254, 255, 255,   7, 
+    0,   0,   0,   0,   0,   0,   0,   0, 
+    0,   0,   0,   0,   0,   0,   0,   0, 
+  } };
+
 global Character_Predicate character_predicate_alpha_numeric_underscore = { {
     0,   0,   0,   0,   0,   0, 255,   3, 
     254, 255, 255, 135, 254, 255, 255,   7, 

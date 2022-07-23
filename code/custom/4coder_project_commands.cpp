@@ -861,30 +861,14 @@ CUSTOM_DOC("Works as open_all_code but also runs in all subdirectories.")
   prj_open_all_files_with_ext_in_hot(app, extensions, PrjOpenFileFlag_Recursive);
 }
 
-#if 0
-CUSTOM_COMMAND_SIG(project_lister)
-CUSTOM_DOC("Grabs all the project paths from project_list.4coder and lists them, if you select one it will load that project and set the hot directory to the directory the project file is in")
+function void
+load_project_from_path(Application_Links *app, String_Const_u8 project_path)
 {
-  Models *models = (Models *)app->cmd_context;
-  String_Const_u8 project_list_name = SCu8("project_list.4coder");
-}
-#endif
-
-CUSTOM_COMMAND_SIG(load_project)
-CUSTOM_DOC("Looks for a project.4coder file in the current directory and tries to load it.  Looks in parent directories until a project file is found or there are no more parents.")
-{
-  // TODO(allen): compress this _thoughtfully_
-  
-  ProfileScope(app, "load project");
-  save_and_kill_all_buffers(app);
   Scratch_Block scratch(app);
-  
-  // NOTE(allen): Load the project file from the hot directory
-  String8 project_path = push_hot_directory(app, scratch);
   File_Name_Data dump = dump_file_search_up_path(app, scratch, project_path, string_u8_litexpr("project.4coder"));
   String8 project_root = string_remove_last_folder(dump.file_name);
-  
-  if (dump.data.str == 0){
+  if (dump.data.str == 0)
+  {
     print_message(app, string_u8_litexpr("Did not find project.4coder.\n"));
   }
   
@@ -987,6 +971,19 @@ CUSTOM_DOC("Looks for a project.4coder file in the current directory and tries t
     String8 title = push_u8_stringf(scratch, "4coder project: %.*s", string_expand(proj_name));
     set_window_title(app, title);
   }
+}
+
+CUSTOM_COMMAND_SIG(load_project)
+CUSTOM_DOC("Looks for a project.4coder file in the current directory and tries to load it.  Looks in parent directories until a project file is found or there are no more parents.")
+{
+  // TODO(allen): compress this _thoughtfully_
+  ProfileScope(app, "load project");
+  save_and_kill_all_buffers(app);
+  Scratch_Block scratch(app);
+  
+  // NOTE(allen): Load the project file from the hot directory
+  String8 project_path = push_hot_directory(app, scratch);
+  load_project_from_path(app, project_path);
 }
 
 CUSTOM_COMMAND_SIG(project_fkey_command)

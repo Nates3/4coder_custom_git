@@ -106,6 +106,14 @@ api_param(arena, call, "Character_Predicate*", "predicate");
 api_param(arena, call, "i64", "cursor_pos");
 }
 {
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("load_project_paths"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("get_project_list"), string_u8_litexpr("Project_List"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+}
+{
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("buffer_seek_character_class"), string_u8_litexpr("String_Match"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "Buffer_ID", "buffer");
