@@ -3,6 +3,7 @@
 ////////////////////////////
 date-> 7/22/22
 
+(nates): Fixed highlighting of namespaces failing
 (nates): Added list_projects command and file build/project_list.4coder
 (nates): Added delete_alpha_numeric_identifier
 

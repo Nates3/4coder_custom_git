@@ -1089,6 +1089,11 @@ generic_parse_namespace(Code_Index_File *index, Generic_Parse_State *state){
         generic_parse_inc(state);
         continue;
       }
+      else if(token->kind == TokenBaseKind_Operator)
+      {
+        generic_parse_inc(state);
+        continue;
+      }
     }
     
     if (state->in_preprocessor){
