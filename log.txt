@@ -1,4 +1,10 @@
+////////////////////////////
+date->7/23/22
 
+(nates): Readded project_list.4coder file and made it empty
+(nates): Disabeld compilation file_bar on startup because it blocks the first compilation line
+(nates): Fixed jump to defition at cursor only parsing the first buffer it runs into causing failed
+         jumps to forward declarations even though a function definition exists
 
 ////////////////////////////
 date-> 7/22/22

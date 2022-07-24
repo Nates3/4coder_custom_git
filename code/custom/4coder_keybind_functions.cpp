@@ -184,7 +184,8 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   
   Bind(seek_end_of_textual_line, KeyCode_Right, KeyCode_Shift);
   Bind(seek_beginning_of_textual_line, KeyCode_Left, KeyCode_Shift);
-  
+  Bind(move_line_up, KeyCode_PageUp, KeyCode_Alt);
+  Bind(move_line_down, KeyCode_PageDown, KeyCode_Alt);
   
   Bind(project_fkey_command, KeyCode_F1);
   Bind(project_fkey_command, KeyCode_F2);
@@ -219,15 +220,11 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(query_replace, KeyCode_O);
   Bind(replace_in_range, KeyCode_O, KeyCode_Control);
   
-  Bind(move_line_up, KeyCode_PageUp, KeyCode_Alt);
-  Bind(move_line_down, KeyCode_PageDown, KeyCode_Alt);
-  
-  Bind(delete_range, KeyCode_E, KeyCode_Control);
-  Bind(delete_alpha_numeric_identifier, KeyCode_E);
+  Bind(delete_range, KeyCode_E);
+  Bind(delete_alpha_numeric_identifier, KeyCode_U);
   Bind(delete_line, KeyCode_E, KeyCode_Alt);
   Bind(select_lines, KeyCode_J, KeyCode_Shift);
-  Bind(search, KeyCode_U);
-  Bind(reverse_search, KeyCode_U, KeyCode_Shift);
+  Bind(search, KeyCode_U, KeyCode_Control);
   Bind(undo, KeyCode_Semicolon);
   Bind(redo, KeyCode_Semicolon, KeyCode_Shift);
   Bind(change_to_insert_mode_front, KeyCode_A);

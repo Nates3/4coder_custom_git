@@ -482,6 +482,24 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
   }
 }
 
+CUSTOM_COMMAND_SIG(reload_changed_files)
+CUSTOM_DOC("if you change the file outside a program and reload it with this command, it will carry over all changes from the unloaded file and ignore everything you added in 4ed buffer")
+{
+  Scratch_Block scratch(app);
+  for (Buffer_ID buffer = get_buffer_next(app, 0, Access_ReadWriteVisible);
+       buffer != 0;
+       buffer = get_buffer_next(app, buffer, Access_ReadWriteVisible))
+  {
+    Dirty_State dirty = buffer_get_dirty_state(app, buffer);
+    if(dirty == DirtyState_UnloadedChanges || dirty == DirtyState_UnsavedChangesAndUnloadedChanges)
+    {
+      String_Const_u8 file_name = push_buffer_file_name(app, scratch, buffer);
+      buffer_kill(app, buffer, 0);
+      create_buffer(app, file_name, 0);
+    }
+  }
+}
+
 CUSTOM_COMMAND_SIG(goto_next_mark)
 CUSTOM_DOC("moves forward in mark history if user has searched backwards in history")
 {
@@ -673,6 +691,7 @@ CUSTOM_DOC("custom startup")
       Face_Metrics metrics = get_face_metrics(app, face_id);
       view_set_split_pixel_size(app, compilation_view, (i32)(metrics.line_height*COMPILATION_MIN_SIZE));
       view_set_passive(app, compilation_view, true);
+      view_set_setting(app, compilation_view, ViewSetting_ShowFileBar, false);
       global_compilation_view = compilation_view;
       view_set_buffer(app, compilation_view, comp_id, 0);
     }
