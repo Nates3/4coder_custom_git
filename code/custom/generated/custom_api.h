@@ -55,6 +55,7 @@
 #define custom_buffer_reopen_sig() Buffer_Reopen_Result custom_buffer_reopen(Application_Links* app, Buffer_ID buffer_id, Buffer_Reopen_Flag flags)
 #define custom_buffer_get_file_attributes_sig() File_Attributes custom_buffer_get_file_attributes(Application_Links* app, Buffer_ID buffer_id)
 #define custom_get_view_next_sig() View_ID custom_get_view_next(Application_Links* app, View_ID view_id, Access_Flag access)
+#define custom_app_get_view_count_sig() i32 custom_app_get_view_count(Application_Links* app)
 #define custom_get_view_prev_sig() View_ID custom_get_view_prev(Application_Links* app, View_ID view_id, Access_Flag access)
 #define custom_get_this_ctx_view_sig() View_ID custom_get_this_ctx_view(Application_Links* app, Access_Flag access)
 #define custom_get_active_view_sig() View_ID custom_get_active_view(Application_Links* app, Access_Flag access)
@@ -252,6 +253,7 @@ typedef Buffer_Kill_Result custom_buffer_kill_type(Application_Links* app, Buffe
 typedef Buffer_Reopen_Result custom_buffer_reopen_type(Application_Links* app, Buffer_ID buffer_id, Buffer_Reopen_Flag flags);
 typedef File_Attributes custom_buffer_get_file_attributes_type(Application_Links* app, Buffer_ID buffer_id);
 typedef View_ID custom_get_view_next_type(Application_Links* app, View_ID view_id, Access_Flag access);
+typedef i32 custom_app_get_view_count_type(Application_Links* app);
 typedef View_ID custom_get_view_prev_type(Application_Links* app, View_ID view_id, Access_Flag access);
 typedef View_ID custom_get_this_ctx_view_type(Application_Links* app, Access_Flag access);
 typedef View_ID custom_get_active_view_type(Application_Links* app, Access_Flag access);
@@ -450,6 +452,7 @@ custom_buffer_kill_type *buffer_kill;
 custom_buffer_reopen_type *buffer_reopen;
 custom_buffer_get_file_attributes_type *buffer_get_file_attributes;
 custom_get_view_next_type *get_view_next;
+custom_app_get_view_count_type *app_get_view_count;
 custom_get_view_prev_type *get_view_prev;
 custom_get_this_ctx_view_type *get_this_ctx_view;
 custom_get_active_view_type *get_active_view;
@@ -649,6 +652,7 @@ internal Buffer_Kill_Result buffer_kill(Application_Links* app, Buffer_ID buffer
 internal Buffer_Reopen_Result buffer_reopen(Application_Links* app, Buffer_ID buffer_id, Buffer_Reopen_Flag flags);
 internal File_Attributes buffer_get_file_attributes(Application_Links* app, Buffer_ID buffer_id);
 internal View_ID get_view_next(Application_Links* app, View_ID view_id, Access_Flag access);
+internal i32 app_get_view_count(Application_Links* app);
 internal View_ID get_view_prev(Application_Links* app, View_ID view_id, Access_Flag access);
 internal View_ID get_this_ctx_view(Application_Links* app, Access_Flag access);
 internal View_ID get_active_view(Application_Links* app, Access_Flag access);
@@ -848,6 +852,7 @@ global custom_buffer_kill_type *buffer_kill = 0;
 global custom_buffer_reopen_type *buffer_reopen = 0;
 global custom_buffer_get_file_attributes_type *buffer_get_file_attributes = 0;
 global custom_get_view_next_type *get_view_next = 0;
+global custom_app_get_view_count_type *app_get_view_count = 0;
 global custom_get_view_prev_type *get_view_prev = 0;
 global custom_get_this_ctx_view_type *get_this_ctx_view = 0;
 global custom_get_active_view_type *get_active_view = 0;

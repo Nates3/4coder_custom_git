@@ -359,6 +359,10 @@ api_param(arena, call, "View_ID", "view_id");
 api_param(arena, call, "Access_Flag", "access");
 }
 {
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_view_count"), string_u8_litexpr("i32"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+}
+{
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("get_view_prev"), string_u8_litexpr("View_ID"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");

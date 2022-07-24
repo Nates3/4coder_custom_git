@@ -55,6 +55,7 @@ api(custom) function Buffer_Kill_Result buffer_kill(Application_Links* app, Buff
 api(custom) function Buffer_Reopen_Result buffer_reopen(Application_Links* app, Buffer_ID buffer_id, Buffer_Reopen_Flag flags);
 api(custom) function File_Attributes buffer_get_file_attributes(Application_Links* app, Buffer_ID buffer_id);
 api(custom) function View_ID get_view_next(Application_Links* app, View_ID view_id, Access_Flag access);
+api(custom) function i32 app_get_view_count(Application_Links* app);
 api(custom) function View_ID get_view_prev(Application_Links* app, View_ID view_id, Access_Flag access);
 api(custom) function View_ID get_this_ctx_view(Application_Links* app, Access_Flag access);
 api(custom) function View_ID get_active_view(Application_Links* app, Access_Flag access);

@@ -1235,9 +1235,18 @@ get_view_next(Application_Links *app, View_ID view_id, Access_Flag access)
     view = get_view_next__inner(layout, view);
   }
   View_ID result = 0;
-  if (view != 0){
+  if (view != 0)
+  {
     result = view_get_id(&models->view_set, view);
   }
+  return(result);
+}
+
+api(custom) function i32
+app_get_view_count(Application_Links *app)
+{
+  Models *models = (Models *)app->cmd_context;
+  i32 result = models->view_set.count;
   return(result);
 }
 

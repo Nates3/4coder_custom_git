@@ -137,7 +137,8 @@ list_all_locations__generic(Application_Links *app, String_Const_u8_Array needle
 
 internal void
 list_all_locations__generic(Application_Links *app, String_Const_u8 needle, List_All_Locations_Flag flags){
-  if (needle.size != 0){
+  if (needle.size != 0)
+  {
     String_Const_u8_Array array = {&needle, 1};
     list_all_locations__generic(app, array, flags);
   }

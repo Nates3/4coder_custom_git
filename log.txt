@@ -1,3 +1,8 @@
+/////////////////////////////
+date->7/24/22
+
+(nates): Fixed goto_jump_at_cursor being slow when using list_all_substring_locations
+
 ////////////////////////////
 date->7/23/22
 

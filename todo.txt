@@ -23,6 +23,8 @@ Not Empty :(
 
 [ ] - When opening a project, 4coder did save the open buffers and where the cursor was
 
+[ ] - Fix goto_end_of_file being slow
+
 
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
   [x] - Add CodeIndexNote_Forward_Declarition type
