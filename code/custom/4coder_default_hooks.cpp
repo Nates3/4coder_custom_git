@@ -346,15 +346,10 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
     
     Code_Index_File *index_file = code_index_get_file(buffer);
     
-    // NOTE(nates): TODO Fix this, this count includes whitespace tokens, but in the for
-    // loop we skip those, so the count should be diff_count - whitespace_count
-    i64 diff_count = ((i64)end.ptr - (i64)it.ptr) / sizeof(Token);
-    for (i64 token_skip_index = 0;
-         token_skip_index < diff_count;
-         ++token_skip_index)
+    
+    while(it.ptr <= end.ptr)
     {
       Token *token = token_it_read(&it);
-      
       String_Const_u8 contents = push_token_lexeme(app, scratch, buffer, token);
       Code_Index_Nest *nest = code_index_get_nest(index_file, token->pos);
       

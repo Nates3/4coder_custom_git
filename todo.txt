@@ -14,6 +14,9 @@ Not Empty :(
 
 /////////////////////////////
 ---------- TODOS -------------
+
+[ ] - Draw 
+
 [ ] - When in selection Mode, paste or "vim_paste" should copy the selection into the clipboard
       delete the selection and paste what is currently in the clipboard over the selection.
 
@@ -25,6 +28,11 @@ Not Empty :(
 
 [ ] - Fix goto_end_of_file being slow
 
+[ ] - Listing code indexs isn't sorted
+
+[ ] - Jump to cursor sets buffer scroll wrong in compilation view only sometimes
+
+[ ] - Jump to definition sorts function code index notes without considering the stuff in parenthesis
 
 [ ] - Add more "CodeIndexNote_Types" for syntax highlighting
   [x] - Add CodeIndexNote_Forward_Declarition type

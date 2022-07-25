@@ -3092,7 +3092,8 @@ linalloc_pop(Cursor *cursor, u64 size){
   }
 }
 function String_Const_u8
-linalloc_align(Cursor *cursor, u64 alignment){
+linalloc_align(Cursor *cursor, u64 alignment)
+{
   u64 pos = round_up_u64(cursor->pos, alignment);
   u64 new_size = pos - cursor->pos;
   return(linalloc_push(cursor, new_size, file_name_line_number_lit_u8));
@@ -3174,7 +3175,8 @@ linalloc_align(Arena *arena, u64 alignment){
   arena->alignment = alignment;
   String_Const_u8 data = {};
   Cursor_Node *cursor_node = arena->cursor_node;
-  if (cursor_node != 0){
+  if (cursor_node != 0)
+  {
     data = linalloc_align(&cursor_node->cursor, arena->alignment);
   }
   return(data);
@@ -5414,6 +5416,17 @@ push_string_copy(Arena *arena, String_Const_u8 src){
   string.str[string.size] = 0;
   return(string);
 }
+
+function String_Const_u8
+push_string_copy_no_terminator(Arena *arena, String_Const_u8 src)
+{
+  String_Const_u8 string = {};
+  string.str = push_array(arena, u8, src.size);
+  string.size = src.size;
+  block_copy_dynamic_array(string.str, src.str, src.size);
+  return(string);
+}
+
 function String_Const_u16
 push_string_copy(Arena *arena, String_Const_u16 src){
   String_Const_u16 string = {};

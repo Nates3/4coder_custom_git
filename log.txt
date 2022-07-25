@@ -1,6 +1,7 @@
 /////////////////////////////
 date->7/24/22
 
+(nates): Added code index awarness for overloaded functions and it list's function params
 (nates): Fixed goto_jump_at_cursor being slow when using list_all_substring_locations
 
 ////////////////////////////

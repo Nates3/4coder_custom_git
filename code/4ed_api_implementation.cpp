@@ -428,11 +428,13 @@ load_project_paths(Application_Links *app)
   String_u8 full_path = Su8(start, models->exe_directory.size, string_cap);
   block_copy_dynamic_array(start, models->exe_directory.str, models->exe_directory.size);
   string_append(&full_path, SCu8("project_list.4coder"));
-  Buffer_ID buffer_id = create_buffer(app, full_path.string, 0);
-  Editing_File *file = imp_get_file(models, buffer_id);
   
-  if(file)
+  File_Attributes attributes = system_quick_file_attributes(scratch, full_path.string);
+  b32 exists = (attributes.last_write_time > 0);
+  if(exists)
   {
+    Buffer_ID buffer_id = create_buffer(app, full_path.string, 0);
+    Editing_File *file = imp_get_file(models, buffer_id);
     Gap_Buffer *buffer = &file->state.buffer;
     List_String_Const_u8 chunk_list = buffer_get_chunks(scratch, buffer);
     
@@ -476,6 +478,10 @@ load_project_paths(Application_Links *app)
         line_start = index + 1;
       }
     }
+  }
+  else
+  {
+    print_message(app, SCu8("Did not find the project_list.4coder file in the 4ed.exe directory.\n"));
   }
 }
 

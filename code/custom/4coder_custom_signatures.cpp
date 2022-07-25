@@ -403,6 +403,7 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
           jump->pos = note->pos.first;
           
           String_Const_u8 sort = {};
+          String_Const_u8 text = note->text;
           if (users_type == note->note_kind)
           {
             switch (note->note_kind)
@@ -415,6 +416,7 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
               case CodeIndexNote_Function:
               {
                 sort = string_u8_litexpr("Function");
+                text = note->function_text;
               }
               break;
               case CodeIndexNote_Macro:
@@ -459,7 +461,7 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
               InvalidDefaultCase;
             }
             
-            lister_add_item(lister, note->text, sort, jump, 0);
+            lister_add_item(lister, text, sort, jump, 0);
           }
         }
       }
@@ -589,58 +591,70 @@ CUSTOM_DOC("deletes alpha numeric identifier at cursor position")
 CUSTOM_COMMAND_SIG(list_projects)
 CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
 {
-  save_and_kill_all_buffers(app);
-  
   Project_List projects = get_project_list(app);
-  Scratch_Block scratch(app);
-  Lister_Block lister(app, scratch);
-  char *query = "Project Path:";
-  lister_set_query(lister, query);
-  lister_set_default_handlers(lister);
-  
-  code_index_lock();
-  String_Node *node = projects.first;
-  for(u32 node_index = 0;
-      node_index < projects.count;
-      ++node_index)
+  if(projects.count)
   {
-    String_Const_u8 *string = &node->contents;
-    if(character_predicate_check_character(character_predicate_alpha, string->str[0]))
+    save_and_kill_all_buffers(app);
+    
+    Scratch_Block scratch(app);
+    Lister_Block lister(app, scratch);
+    char *query = "Project Path:";
+    lister_set_query(lister, query);
+    lister_set_default_handlers(lister);
+    
+    code_index_lock();
+    String_Node *node = projects.first;
+    for(u32 node_index = 0;
+        node_index < projects.count;
+        ++node_index)
     {
-      u64 first = string_find_first(*string, 0, ' ');
-      String_Const_u8 file_path = *string;
-      String_Const_u8 name = {};
-      if(first)
+      String_Const_u8 *string = &node->contents;
+      if(character_predicate_check_character(character_predicate_alpha, string->str[0]))
       {
-        file_path = {string->str, first};
-        u64 name_index = clamp_top(first + 1, string->size);
-        if(string->size - name_index > 0)
+        u64 first = string_find_first(*string, 0, ' ');
+        String_Const_u8 file_path = *string;
+        String_Const_u8 name = {};
+        if(first)
         {
-          name = SCu8(string->str + name_index, (string->size - name_index));
-          lister_add_item(lister, name, SCu8(""), string, 0);
+          file_path = {string->str, first};
+          u64 name_index = clamp_top(first + 1, string->size);
+          if(string->size - name_index > 0)
+          {
+            name = SCu8(string->str + name_index, (string->size - name_index));
+            lister_add_item(lister, name, SCu8(""), string, 0);
+          }
+          else
+          {
+            lister_add_item(lister, *string, SCu8(""), string, 0);
+          }
         }
         else
         {
           lister_add_item(lister, *string, SCu8(""), string, 0);
         }
       }
-      else
-      {
-        lister_add_item(lister, *string, SCu8(""), string, 0);
-      }
+      
+      node = node->next;
     }
+    code_index_unlock();
     
-    node = node->next;
+    
+    Lister_Result lister_result = run_lister(app, lister);
+    if(!lister_result.canceled && lister_result.user_data)
+    {
+      String_Const_u8 result_path = *(String_Const_u8 *)lister_result.user_data;
+      load_project_from_path(app, result_path);
+      set_hot_directory(app, result_path);
+    }
   }
-  code_index_unlock();
-  
-  
-  Lister_Result lister_result = run_lister(app, lister);
-  if(!lister_result.canceled && lister_result.user_data)
+  else
   {
-    String_Const_u8 result_path = *(String_Const_u8 *)lister_result.user_data;
-    load_project_from_path(app, result_path);
-    set_hot_directory(app, result_path);
+    print_message(app, SCu8("Couldn't find any project files because the file is missing _or_ there are no projects in it.\n"));
+    
+    Buffer_Identifier message_iden = buffer_identifier(string_u8_litexpr("*messages*"));
+    Buffer_ID message_buffer_id = buffer_identifier_to_id(app, message_iden);
+    View_ID view = get_active_view(app, Access_ReadVisible);
+    view_set_buffer(app, view, message_buffer_id, 0);
   }
 }
 

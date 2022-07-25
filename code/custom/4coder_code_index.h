@@ -64,6 +64,7 @@ struct Code_Index_Note{
   Code_Index_Note_Kind note_kind;
   Range_i64 pos;
   String_Const_u8 text;
+  String_Const_u8 function_text;
   struct Code_Index_File *file;
   Code_Index_Nest *parent;
   

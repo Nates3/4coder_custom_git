@@ -10,9 +10,10 @@
 // TOP
 
 internal void
-init_command_line_settings(App_Settings *settings,
+init_command_line_settings(App_Settings *settings, 
                            Plat_Settings *plat_settings, 
-                           i32 argc, char **argv){
+                           i32 argc, char **argv)
+{
   char *arg = 0;
   Command_Line_Mode mode = CLMode_App;
   Command_Line_Action action = CLAct_Nothing;
@@ -202,7 +203,8 @@ App_Read_Command_Line_Sig(app_read_command_line){
   return(models);
 }
 
-App_Init_Sig(app_init){
+App_Init_Sig(app_init)
+{
   Models *models = (Models*)base_ptr;
   models->keep_playing = true;
   models->hard_exit = false;

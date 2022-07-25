@@ -34,6 +34,7 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
         jump->pos = note->pos.first;
         
         String_Const_u8 sort = {};
+        String_Const_u8 text = note->text;
         switch (note->note_kind)
         {
           case CodeIndexNote_Type:
@@ -43,6 +44,7 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
           case CodeIndexNote_Function:
           {
             sort = string_u8_litexpr("Function");
+            text = note->function_text;
           }break;
           case CodeIndexNote_Macro:
           {
@@ -81,7 +83,7 @@ CUSTOM_DOC("List all definitions in the code index and jump to one chosen by the
           
           InvalidDefaultCase;
         }
-        lister_add_item(lister, note->text, sort, jump, 0);
+        lister_add_item(lister, text, sort, jump, 0);
       }
     }
   }

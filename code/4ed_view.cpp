@@ -421,7 +421,8 @@ view_move_cursor_to_view(Thread_Context *tctx, Models *models, View *view, Buffe
 }
 
 internal void
-view_set_cursor(Thread_Context *tctx, Models *models, View *view, i64 pos){
+view_set_cursor(Thread_Context *tctx, Models *models, View *view, i64 pos)
+{
   File_Edit_Positions edit_pos = view_get_edit_pos(view);
   file_edit_positions_set_cursor(&edit_pos, pos);
   view_set_edit_pos(view, edit_pos);
@@ -433,11 +434,13 @@ view_set_cursor(Thread_Context *tctx, Models *models, View *view, i64 pos){
 }
 
 internal void
-view_set_scroll(Thread_Context *tctx, Models *models, View *view, Buffer_Scroll scroll){
+view_set_scroll(Thread_Context *tctx, Models *models, View *view, Buffer_Scroll scroll)
+{
   File_Edit_Positions edit_pos = view_get_edit_pos(view);
   file_edit_positions_set_scroll(&edit_pos, scroll);
   view_set_edit_pos(view, edit_pos);
-  if (view_move_cursor_to_view(tctx, models, view, edit_pos.scroll, &edit_pos.cursor_pos, view->preferred_x)){
+  if (view_move_cursor_to_view(tctx, models, view, edit_pos.scroll, &edit_pos.cursor_pos, view->preferred_x))
+  {
     view_set_edit_pos(view, edit_pos);
   }
 }

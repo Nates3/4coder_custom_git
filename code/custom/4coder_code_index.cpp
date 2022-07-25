@@ -423,7 +423,7 @@ function: <identifier> >"(" ["(" ")" | * - ("(" | ")")] ")" ("{" | ";")
 
 function Code_Index_Note*
 index_new_note(Code_Index_File *index, Generic_Parse_State *state, Range_i64 range, Code_Index_Note_Kind kind, Code_Index_Nest *parent,
-               b32 is_name_space)
+               b32 is_name_space, String_Const_u8 function_text = {})
 {
   Code_Index_Note *result = 0;
   if(kind != CodeIndexNote_Null)
@@ -434,6 +434,7 @@ index_new_note(Code_Index_File *index, Generic_Parse_State *state, Range_i64 ran
     result->note_kind = kind;
     result->pos = range;
     result->text = push_string_copy(state->arena, string_substring(state->contents, range));
+    result->function_text = function_text;
     result->file = index;
     result->parent = parent;
     result->is_name_space = is_name_space;
@@ -737,6 +738,8 @@ cpp_parse_function(Code_Index_File *index, Generic_Parse_State *state, Code_Inde
                    b32 is_name_space = false)
 {
   Token *token = token_it_read(&state->it);
+  Token *overloaded_start = token;
+  Token *overloaded_end = 0;
   
   generic_parse_inc(state);
   generic_parse_skip_soft_tokens(index, state);
@@ -750,7 +753,8 @@ cpp_parse_function(Code_Index_File *index, Generic_Parse_State *state, Code_Inde
   {
     b32 at_paren_close = false;
     i32 paren_nest_level = 0;
-    for (; peek != 0;){
+    for (; peek != 0;)
+    {
       generic_parse_inc(state);
       generic_parse_skip_soft_tokens(index, state);
       peek = token_it_read(&state->it);
@@ -767,6 +771,7 @@ cpp_parse_function(Code_Index_File *index, Generic_Parse_State *state, Code_Inde
         }
         else{
           at_paren_close = true;
+          overloaded_end = peek;
           break;
         }
       }
@@ -779,13 +784,40 @@ cpp_parse_function(Code_Index_File *index, Generic_Parse_State *state, Code_Inde
       peek = token_it_read(&state->it);
       if (peek != 0)
       {
+        u64 prev_align = state->arena->alignment;
+        state->arena->alignment = 1;
+        
+        u8 *start = push_array(state->arena, u8, 1);
+        pop_array(state->arena, u8, 1);
+        i64 overloaded_text_size = 0;
+        for(Token *current = overloaded_start;
+            current <= overloaded_end;
+            current += 1)
+        {
+          String_Const_u8 push_string = string_substring(state->contents, Ii64(current));
+          i64 size_to_add = current->size;
+          if(current->kind == TokenBaseKind_Whitespace)
+          {
+            push_string = SCu8(" ");
+            size_to_add = 1;
+          }
+          
+          push_string_copy_no_terminator(state->arena, push_string);
+          overloaded_text_size += size_to_add;
+        }
+        state->arena->alignment = prev_align;
+        
+        String_Const_u8 overloaded_function_text = SCu8(start, overloaded_text_size);
+        
         if(peek->kind == TokenBaseKind_ScopeOpen)
         {
-          index_new_note(index, state, Ii64(token), CodeIndexNote_Function, parent, is_name_space);
+          index_new_note(index, state, Ii64(token), CodeIndexNote_Function, parent, is_name_space,
+                         overloaded_function_text);
         }
         else if(peek->kind == TokenBaseKind_StatementClose)
         {
-          index_new_note(index, state, Ii64(token), CodeIndexNote_ForwardDeclaration, parent, is_name_space);
+          index_new_note(index, state, Ii64(token), CodeIndexNote_ForwardDeclaration, parent, is_name_space,
+                         overloaded_function_text);
         }
       }
     }
