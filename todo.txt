@@ -15,7 +15,7 @@ Not Empty :(
 /////////////////////////////
 ---------- TODOS -------------
 
-[ ] - Draw 
+[ ] - Backspace / Delete alpha numeric boundary shouldn't skip over deleting new lines
 
 [ ] - When in selection Mode, paste or "vim_paste" should copy the selection into the clipboard
       delete the selection and paste what is currently in the clipboard over the selection.
@@ -57,6 +57,13 @@ Not Empty :(
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+
+[x] - Cutting line when using vim_cut doesn't work
+
+[x] - Vim paste broken
+
+[x] - Mode set incorrectly when starting application
+
 [x] - Project manager, stores strings to all project.4coder files that you want, 
       and maybe stores a lister name, then you write some CUSTOM_COMMAND_SIG called, projects
       and that lists every single project you can load

@@ -220,7 +220,26 @@ CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
   b32 *is_selecting = view_get_is_selecting(app, view);
   if (is_selecting && *is_selecting)
   {
-    copy(app);
+    b32 *yanked_entire_line = view_get_yanked_entire_line(app, view);
+    if (yanked_entire_line)
+    {
+      *yanked_entire_line = true;
+    }
+    
+    i64 min_line = view_get_selection_begin(app, view);
+    i64 max_line = view_get_selection_end(app, view);
+    
+    if (min_line > max_line)
+    {
+      min_line ^= max_line;
+      max_line ^= min_line;
+      min_line ^= max_line;
+    }
+    
+    Range_i64 line_range = {min_line, max_line};
+    Range_i64 range = get_pos_range_from_line_range(app, buffer, line_range);
+    clipboard_post_buffer_range(app, 0, buffer, range);
+    *is_selecting = false;
   }
   else
   {
@@ -229,11 +248,91 @@ CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
     {
       *yanked_entire_line = true;
     }
+    
     i64 cursor_pos = view_get_cursor_pos(app, view);
     i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
     Range_i64 line_range = {cursor_line, cursor_line};
     Range_i64 range = get_pos_range_from_line_range(app, buffer, line_range);
+    if(range.min == range.max)
+    {
+      range.max += 1;
+    }
+    
     clipboard_post_buffer_range(app, 0, buffer, range);
+  }
+}
+
+CUSTOM_COMMAND_SIG(vim_cut)
+CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipboard.")
+{
+  View_ID view = get_active_view(app, Access_ReadWriteVisible);
+  Range_i64 range = {};
+  
+  b32 *is_selecting = view_get_is_selecting(app, view);
+  b32 *is_cutting = view_get_is_cutting(app, view);
+  Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
+  if (is_selecting && *is_selecting)
+  {
+    i64 min_line = view_get_selection_begin(app, view);
+    i64 max_line = view_get_selection_end(app, view);
+    
+    if (min_line > max_line)
+    {
+      min_line ^= max_line;
+      max_line ^= min_line;
+      min_line ^= max_line;
+    }
+    
+    Range_i64 line_range = {min_line, max_line};
+    range = get_pos_range_from_line_range(app, buffer, line_range);
+    
+    *is_selecting = false;
+    
+    if (clipboard_post_buffer_range(app, 0, buffer, range))
+    {
+      History_Group group = history_group_begin(app, buffer);
+      buffer_replace_range(app, buffer, range, string_u8_empty);
+      delete_line(app);
+      history_group_end(group);
+    }
+  }
+  else if (is_cutting && *is_cutting)
+  {
+    i64 cursor_pos = view_get_cursor_pos(app, view);
+    i64 line_number_cursor = get_line_number_from_pos(app, buffer, cursor_pos);
+    
+    Range_i64 line_range = {line_number_cursor, line_number_cursor};
+    range = get_pos_range_from_line_range(app, buffer, line_range);
+    
+    b32 edit_min = false;
+    if(range.min == range.max)
+    {
+      range.max += 1;
+    }
+    else
+    {
+      edit_min = true;
+    }
+    
+    *is_cutting = false;
+    if (clipboard_post_buffer_range(app, 0, buffer, range))
+    {
+      History_Group group = history_group_begin(app, buffer);
+      
+      if(edit_min)
+      {
+        range.min -= 1;
+      }
+      buffer_replace_range(app, buffer, range, string_u8_empty);
+      history_group_end(group);
+    }
+  }
+  else
+  {
+    if (is_cutting)
+    {
+      *is_cutting = true;
+    }
   }
 }
 
@@ -248,11 +347,21 @@ CUSTOM_DOC("If you yank a line, this will add a new line under the line you're o
   b32 *yanked_entire_line = view_get_yanked_entire_line(app, view);
   if (yanked_entire_line && *yanked_entire_line)
   {
+    Scratch_Block scratch(app);
+    String_Const_u8 string = push_clipboard_index(scratch, 0, 0);
+    
     seek_end_of_textual_line(app);
     write_text(app, SCu8("\n"));
+    
+    if(!(string.str[0] == '\n'))
+    {
+      paste(app);
+    }
   }
-  
-  paste(app);
+  else
+  {
+    paste(app);
+  }
   
   history_group_end(group);
 }
@@ -750,6 +859,11 @@ CUSTOM_DOC("custom startup")
     {
       Modal_State_ID *global_state = app_get_global_modal_state_ptr(app);
       *global_state = Modal_State_Command;
+    }
+    else
+    {
+      View_ID active_view = get_active_view(app, Access_ReadVisible);
+      view_set_modal_state(app, active_view, Modal_State_Command);
     }
   }
 }
