@@ -132,7 +132,7 @@ CUSTOM_DOC("Copy the text in the range from the cursor to the mark onto the clip
   {
     if (yanked_entire_line)
     {
-      *yanked_entire_line = false;
+      *yanked_entire_line = true;
     }
     
     i64 min_line = view_get_selection_begin(app, view);
