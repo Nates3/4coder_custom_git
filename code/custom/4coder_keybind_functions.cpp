@@ -9,13 +9,13 @@
 internal void
 cakez_bind_shared_keys(Mapping *m, Command_Map *map)
 {
-  Bind(goto_jump_at_cursor, KeyCode_F4);
+  Bind(goto_jump_at_cursor, KeyCode_Q, KeyCode_Control);
+  Bind(load_project, KeyCode_R, KeyCode_Shift, KeyCode_Control);
+  Bind(list_projects, KeyCode_L, KeyCode_Shift, KeyCode_Control);
   Bind(list_all_locations, KeyCode_F, KeyCode_Shift, KeyCode_Control);
   Bind(comment_line_toggle, KeyCode_ForwardSlash, KeyCode_Control);
   Bind(toggle_compilation_expand, KeyCode_Tick, KeyCode_Control);
   Bind(center_view, KeyCode_L, KeyCode_Control);
-  Bind(load_project, KeyCode_R, KeyCode_Control, KeyCode_Shift);
-  Bind(list_projects, KeyCode_L, KeyCode_Control, KeyCode_Shift);
   Bind(goto_next_jump, KeyCode_N, KeyCode_Alt);
   Bind(goto_prev_jump, KeyCode_P, KeyCode_Alt);
   Bind(move_line_up, KeyCode_K, KeyCode_Alt);
@@ -47,7 +47,6 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(jump_to_definition_at_cursor, KeyCode_W, KeyCode_Control);
   Bind(jump_to_last_point, KeyCode_Minus, KeyCode_Control);
   Bind(jump_to_definition_at_cursor_other_panel, KeyCode_W, KeyCode_Alt);
-  Bind(jump_to_definition, KeyCode_Q, KeyCode_Control);
   
   Bind(move_left, KeyCode_Left);
   Bind(move_right, KeyCode_Right);
@@ -93,9 +92,7 @@ cakez_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(move_cursor_to_beginning_and_switch_to_insert, KeyCode_I, KeyCode_Shift);
   Bind(new_line_and_switch_to_insert, KeyCode_O);
   BindTextInput(insert_return);
-  Bind(auto_indent_range, KeyCode_F, KeyCode_Shift);
-  Bind(search, KeyCode_F);
-  Bind(reverse_search, KeyCode_F, KeyCode_Shift);
+  Bind(search, KeyCode_F, KeyCode_Control);
   Bind(jump_from_brace_to_brace, KeyCode_5, KeyCode_Shift);
   
   Bind(move_up, KeyCode_K);
