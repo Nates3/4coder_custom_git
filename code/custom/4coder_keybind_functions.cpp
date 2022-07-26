@@ -74,6 +74,7 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
 internal void
 cakez_bind_command_keys(Mapping *m, Command_Map *map)
 {
+  Bind(delete_alpha_numeric_identifier, KeyCode_X);
   Bind(cancel_command, KeyCode_Escape);
   Bind(vim_cut, KeyCode_C);
   Bind(vim_cut, KeyCode_D);
