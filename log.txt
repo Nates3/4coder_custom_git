@@ -1,4 +1,10 @@
 /////////////////////////////
+date->7/28/22
+
+(nates): Added commands "delete_to_end_of_line", "delete_to_start_of_line", and "copy_alpha_numeric_identifier"
+
+
+/////////////////////////////
 date->7/24/22
 
 (nates): Fixed vim yank line being broken with line selection 

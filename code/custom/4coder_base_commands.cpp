@@ -1920,7 +1920,8 @@ CUSTOM_DOC("Advances backwards through the undo history of the current buffer.")
       }
     }
     
-    if (do_immedite_undo){
+    if (do_immedite_undo)
+    {
       buffer_history_set_current_state_index(app, buffer, current - 1);
       if (record.single_string_backward.size > 0){
         Range_i64 range = Ii64_size(record.single_first, record.single_string_backward.size);

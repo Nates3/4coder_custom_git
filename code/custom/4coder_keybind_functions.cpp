@@ -18,7 +18,7 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(center_view, KeyCode_L, KeyCode_Control);
   Bind(goto_next_jump, KeyCode_N, KeyCode_Alt);
   Bind(goto_prev_jump, KeyCode_P, KeyCode_Alt);
-  Bind(move_line_up, KeyCode_K, KeyCode_Alt);
+	Bind(move_line_up, KeyCode_K, KeyCode_Alt);
   Bind(move_line_down, KeyCode_J, KeyCode_Alt);
   Bind(change_to_command_mode, KeyCode_Escape);
   Bind(command_lister, KeyCode_X, KeyCode_Alt);
@@ -56,7 +56,7 @@ cakez_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(project_fkey_command, KeyCode_F1);
   Bind(project_fkey_command, KeyCode_F2);
   Bind(project_fkey_command, KeyCode_F3);
-  Bind(project_fkey_command, KeyCode_F4);
+	Bind(project_fkey_command, KeyCode_F4);
   Bind(project_fkey_command, KeyCode_F5);
   Bind(project_fkey_command, KeyCode_F6);
   Bind(project_fkey_command, KeyCode_F7);
@@ -134,8 +134,8 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(swap_panels, KeyCode_A, KeyCode_Alt);
   Bind(word_complete, KeyCode_P, KeyCode_Control);
   Bind(word_complete_drop_down, KeyCode_P, KeyCode_Alt);
-  Bind(center_view, KeyCode_Period, KeyCode_Control);
-  Bind(left_adjust_view, KeyCode_Period, KeyCode_Alt);
+  Bind(center_view, KeyCode_V, KeyCode_Control);
+  Bind(left_adjust_view, KeyCode_V, KeyCode_Alt);
   Bind(save, KeyCode_S, KeyCode_Control);
   Bind(save_all_dirty_buffers, KeyCode_S, KeyCode_Control, KeyCode_Shift);
   Bind(toggle_compilation_expand, KeyCode_Insert);
@@ -208,6 +208,7 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
 {
   Bind(cut, KeyCode_Q);
   Bind(copy, KeyCode_J);
+	Bind(copy_alpha_numeric_identifier, KeyCode_P);
   Bind(paste, KeyCode_K);
   Bind(set_mark, KeyCode_Space);
   Bind(goto_next_mark, KeyCode_Equal);
@@ -219,10 +220,12 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(replace_in_range, KeyCode_O, KeyCode_Control);
   
   Bind(delete_range, KeyCode_E);
-  Bind(delete_alpha_numeric_identifier, KeyCode_U);
+  Bind(delete_alpha_numeric_identifier, KeyCode_Period);
+  Bind(delete_to_end_of_line, KeyCode_U);
+  Bind(delete_to_start_of_line, KeyCode_U, KeyCode_Control);
   Bind(delete_line, KeyCode_E, KeyCode_Alt);
   Bind(select_lines, KeyCode_J, KeyCode_Shift);
-  Bind(search, KeyCode_U, KeyCode_Control);
+  Bind(search, KeyCode_G);
   Bind(undo, KeyCode_Semicolon);
   Bind(redo, KeyCode_Semicolon, KeyCode_Shift);
   Bind(change_to_insert_mode_front, KeyCode_A);
@@ -239,6 +242,9 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   
   Bind(move_up_10, KeyCode_C, KeyCode_Alt);
   Bind(move_down_10, KeyCode_T, KeyCode_Alt);
+  
+  Bind(page_up, KeyCode_C, KeyCode_Control, KeyCode_Alt);
+  Bind(page_down, KeyCode_T, KeyCode_Control, KeyCode_Alt);
   
   Bind(move_right_alpha_numeric_boundary, KeyCode_N, KeyCode_Control);
   Bind(move_left_alpha_numeric_boundary, KeyCode_H, KeyCode_Control);

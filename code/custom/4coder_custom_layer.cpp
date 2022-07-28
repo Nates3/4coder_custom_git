@@ -99,15 +99,15 @@ void custom_layer_init(Application_Links *app)
   SelectMap(global_mapid);
   BindCore(custom_startup, CoreCode_Startup);
   BindCore(default_try_exit, CoreCode_TryExit);
-  cakez_bind_shared_keys(m, map);
+  nates_bind_shared_keys(m, map);
   
   SelectMap(command_mapid);
   ParentMap(global_mapid);
-  cakez_bind_command_keys(m, map);
+  nates_bind_command_keys(m, map);
   
   SelectMap(insert_mapid);
   ParentMap(global_mapid);
-  cakez_bind_text_input(m, map);
+  nates_bind_text_input(m, map);
   
   // NOTE(nates): You have to bind the "global_map, file_map, and code_map for some reason"
   SelectMap(file_mapid);

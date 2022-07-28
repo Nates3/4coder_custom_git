@@ -890,7 +890,8 @@ buffer_shift_fade_ranges(Buffer_ID buffer_id, i64 shift_after_p, i64 shift_amoun
 }
 
 function b32
-tick_all_fade_ranges(Application_Links *app, f32 t){
+tick_all_fade_ranges(Application_Links *app, f32 t)
+{
   Fade_Range **prev_next = &buffer_fade_ranges.first;
   for (Fade_Range *node = buffer_fade_ranges.first, *next = 0;
        node != 0;
