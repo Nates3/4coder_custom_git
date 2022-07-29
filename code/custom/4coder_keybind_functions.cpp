@@ -138,7 +138,7 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(left_adjust_view, KeyCode_V, KeyCode_Alt);
   Bind(save, KeyCode_S, KeyCode_Control);
   Bind(save_all_dirty_buffers, KeyCode_S, KeyCode_Control, KeyCode_Shift);
-  Bind(toggle_compilation_expand, KeyCode_Insert);
+	Bind(toggle_compilation_expand, KeyCode_Insert);
   
   Bind(page_up, KeyCode_PageUp);
   Bind(page_down, KeyCode_PageDown);
@@ -206,6 +206,7 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
 internal void
 nates_bind_command_keys(Mapping *m, Command_Map *map)
 {
+	Bind(toggle_compilation_expand, KeyCode_Tick);
   Bind(cut, KeyCode_Q);
   Bind(copy, KeyCode_J);
 	Bind(copy_alpha_numeric_identifier, KeyCode_P);

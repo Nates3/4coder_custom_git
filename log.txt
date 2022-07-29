@@ -1,6 +1,7 @@
 /////////////////////////////
 date->7/28/22
 
+(nates): Changed macros to be prioritized when jumping to definition at cursor
 (nates): Added commands "delete_to_end_of_line", "delete_to_start_of_line", and "copy_alpha_numeric_identifier"
 
 

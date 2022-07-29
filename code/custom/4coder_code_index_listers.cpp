@@ -153,6 +153,12 @@ CUSTOM_DOC("Jump to the first definition in the code index matching an identifie
     {
       Note_Buffer_Pair *pair = start + index;
       
+			if(pair->note->note_kind == CodeIndexNote_Macro)
+			{
+				found_pair = pair;
+				break;
+			}
+			
       if(pair->note->note_kind == CodeIndexNote_ForwardDeclaration &&
          found_pair == 0)
       {
@@ -221,6 +227,12 @@ CUSTOM_DOC("Jump to the first definition in the code index matching an identifie
     {
       Note_Buffer_Pair *pair = start + index;
       
+			if(pair->note->note_kind == CodeIndexNote_Macro)
+			{
+				found_pair = pair;
+				break;
+			}
+			
       if(pair->note->note_kind == CodeIndexNote_ForwardDeclaration &&
          found_pair == 0)
       {
