@@ -33,7 +33,8 @@ generate_all_buffers_list(Application_Links *app, Lister *lister){
        view = get_view_next(app, view, Access_Always)){
     Buffer_ID new_buffer_id = view_get_buffer(app, view, Access_Always);
     for (i32 i = 0; i < viewed_buffer_count; i += 1){
-      if (new_buffer_id == viewed_buffers[i]){
+      if (new_buffer_id == viewed_buffers[i])
+			{
         goto skip0;
       }
     }
@@ -41,12 +42,19 @@ generate_all_buffers_list(Application_Links *app, Lister *lister){
     skip0:;
   }
   
+	// NOTE(nates): Viwes are now prioritized over the other two
+	// Buffers That Are Open in Views
+  for (i32 i = 0; i < viewed_buffer_count; i += 1){
+    generate_all_buffers_list__output_buffer(app, lister, viewed_buffers[i]);
+  }
+	
   // Regular Buffers
   for (Buffer_ID buffer = get_buffer_next(app, 0, Access_Always);
        buffer != 0;
        buffer = get_buffer_next(app, buffer, Access_Always)){
     for (i32 i = 0; i < viewed_buffer_count; i += 1){
-      if (buffer == viewed_buffers[i]){
+      if (buffer == viewed_buffers[i])
+			{
         goto skip1;
       }
     }
@@ -61,7 +69,8 @@ generate_all_buffers_list(Application_Links *app, Lister *lister){
        buffer != 0;
        buffer = get_buffer_next(app, buffer, Access_Always)){
     for (i32 i = 0; i < viewed_buffer_count; i += 1){
-      if (buffer == viewed_buffers[i]){
+      if (buffer == viewed_buffers[i])
+			{
         goto skip2;
       }
     }
@@ -70,11 +79,9 @@ generate_all_buffers_list(Application_Links *app, Lister *lister){
     }
     skip2:;
   }
-  
-  // Buffers That Are Open in Views
-  for (i32 i = 0; i < viewed_buffer_count; i += 1){
-    generate_all_buffers_list__output_buffer(app, lister, viewed_buffers[i]);
-  }
+	
+	// NOTE(nates): If you want views prioritized last again then put the 
+	// generate_all_buffers_list__output_buffer(app, lister, viewed_buffers[i]) right here
 }
 
 function Buffer_ID
