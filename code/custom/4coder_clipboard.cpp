@@ -127,10 +127,10 @@ CUSTOM_DOC("Copy the text in the range from the cursor to the mark onto the clip
   Range_i64 range = {};
   
 	b32 line_selection_mode = view_get_line_selection_mode(app, view);
-  b32 yanked_entire_line = view_get_yanked_entire_line(app, view);
+  b32 yanked_entire_line = app_get_yanked_entire_line(app);
   if(line_selection_mode)
   {
-		view_set_yanked_entire_line(app, view, true);
+		app_set_yanked_entire_line(app, true);
     
     i64 min_line = view_get_selection_begin(app, view);
     i64 max_line = view_get_selection_end(app, view);
@@ -149,7 +149,7 @@ CUSTOM_DOC("Copy the text in the range from the cursor to the mark onto the clip
   }
   else
   {
-		view_set_yanked_entire_line(app, view, false);
+		app_set_yanked_entire_line(app, false);
     range = get_view_range(app, view);
   }
   

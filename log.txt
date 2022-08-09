@@ -1,6 +1,7 @@
 /////////////////////////////
 date-> 8/8/22
 
+(nates): Fixed vim yank line to be persistant across the app and not just the current view
 (nates): Made it so when multi_cursor_mode != Multi_Cursor_Disabled, the cursor is always
          a different color so you don't get confused whether or not you're in multi cursor mode
 (nates): fixed crashing bug because of not checking View * when getting multi cursors

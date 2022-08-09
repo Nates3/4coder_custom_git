@@ -370,7 +370,7 @@ CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
 	b32 line_selection_mode = view_get_line_selection_mode(app, view);
 	if (line_selection_mode)
 	{
-		view_set_yanked_entire_line(app, view, true);
+		app_set_yanked_entire_line(app, true);
 		
 		i64 min_line = view_get_selection_begin(app, view);
 		i64 max_line = view_get_selection_end(app, view);
@@ -390,7 +390,7 @@ CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
 	}
 	else
 	{
-		view_set_yanked_entire_line(app, view, true);
+		app_set_yanked_entire_line(app, true);
 		
 		i64 cursor_pos = view_get_cursor(app, view);
 		i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
@@ -484,7 +484,7 @@ CUSTOM_DOC("If you yank a line, this will add a new line under the line you're o
 	
 	History_Group group = history_group_begin(app, buffer);
 	
-	b32 yanked_entire_line = view_get_yanked_entire_line(app, view);
+	b32 yanked_entire_line = app_get_yanked_entire_line(app);
 	if (yanked_entire_line)
 	{
 		Scratch_Block scratch(app);

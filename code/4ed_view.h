@@ -76,7 +76,6 @@ struct View
   
 	Multi_Cursor_Mode multi_cursor_mode;
 	b32 line_selection_mode;
-  b32 yanked_entire_line;
   b32 vim_cutting_mode;
   i64 selection_begin;
   i64 selection_end;

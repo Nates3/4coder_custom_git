@@ -2316,30 +2316,18 @@ view_clear_multi_cursors(Application_Links *app, View_ID view_id)
 }
 
 api(custom) function b32
-view_get_yanked_entire_line(Application_Links *app, View_ID view_id)
+app_get_yanked_entire_line(Application_Links *app)
 {
   Models *models = (Models*)app->cmd_context;
-  View *view = imp_get_view(models, view_id);
-  
-  b32 result = 0;
-  if(api_check_view(view))
-  {
-    result = view->yanked_entire_line;
-  }
+	b32 result = models->app_yanked_entire_line;
   return(result);
 }
 
 api(custom) function void
-view_set_yanked_entire_line(Application_Links *app, View_ID view_id,
-														b32 value)
+app_set_yanked_entire_line(Application_Links *app, b32 value)
 {
   Models *models = (Models*)app->cmd_context;
-  View *view = imp_get_view(models, view_id);
-  
-  if(api_check_view(view))
-  {
-    view->yanked_entire_line = value;
-  }
+	models->app_yanked_entire_line = value;
 }
 
 api(custom) function b32

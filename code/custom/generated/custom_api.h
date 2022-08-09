@@ -115,8 +115,8 @@
 #define custom_view_add_multi_cursor_sig() void custom_view_add_multi_cursor(Application_Links* app, View_ID view_id, i64 cursor_pos)
 #define custom_view_remove_most_recent_multi_cursor_sig() void custom_view_remove_most_recent_multi_cursor(Application_Links* app, View_ID view_id)
 #define custom_view_clear_multi_cursors_sig() void custom_view_clear_multi_cursors(Application_Links* app, View_ID view_id)
-#define custom_view_get_yanked_entire_line_sig() b32 custom_view_get_yanked_entire_line(Application_Links* app, View_ID view_id)
-#define custom_view_set_yanked_entire_line_sig() void custom_view_set_yanked_entire_line(Application_Links* app, View_ID view_id, b32 value)
+#define custom_app_get_yanked_entire_line_sig() b32 custom_app_get_yanked_entire_line(Application_Links* app)
+#define custom_app_set_yanked_entire_line_sig() void custom_app_set_yanked_entire_line(Application_Links* app, b32 value)
 #define custom_view_get_vim_cutting_mode_sig() b32 custom_view_get_vim_cutting_mode(Application_Links* app, View_ID view_id)
 #define custom_view_set_vim_cutting_mode_sig() void custom_view_set_vim_cutting_mode(Application_Links* app, View_ID view_id, b32 value)
 #define custom_view_set_selection_begin_sig() void custom_view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num)
@@ -334,8 +334,8 @@ typedef void custom_view_set_multi_cursor_preferred_x_type(Application_Links* ap
 typedef void custom_view_add_multi_cursor_type(Application_Links* app, View_ID view_id, i64 cursor_pos);
 typedef void custom_view_remove_most_recent_multi_cursor_type(Application_Links* app, View_ID view_id);
 typedef void custom_view_clear_multi_cursors_type(Application_Links* app, View_ID view_id);
-typedef b32 custom_view_get_yanked_entire_line_type(Application_Links* app, View_ID view_id);
-typedef void custom_view_set_yanked_entire_line_type(Application_Links* app, View_ID view_id, b32 value);
+typedef b32 custom_app_get_yanked_entire_line_type(Application_Links* app);
+typedef void custom_app_set_yanked_entire_line_type(Application_Links* app, b32 value);
 typedef b32 custom_view_get_vim_cutting_mode_type(Application_Links* app, View_ID view_id);
 typedef void custom_view_set_vim_cutting_mode_type(Application_Links* app, View_ID view_id, b32 value);
 typedef void custom_view_set_selection_begin_type(Application_Links* app, View_ID view_id, i64 line_num);
@@ -554,8 +554,8 @@ custom_view_set_multi_cursor_preferred_x_type *view_set_multi_cursor_preferred_x
 custom_view_add_multi_cursor_type *view_add_multi_cursor;
 custom_view_remove_most_recent_multi_cursor_type *view_remove_most_recent_multi_cursor;
 custom_view_clear_multi_cursors_type *view_clear_multi_cursors;
-custom_view_get_yanked_entire_line_type *view_get_yanked_entire_line;
-custom_view_set_yanked_entire_line_type *view_set_yanked_entire_line;
+custom_app_get_yanked_entire_line_type *app_get_yanked_entire_line;
+custom_app_set_yanked_entire_line_type *app_set_yanked_entire_line;
 custom_view_get_vim_cutting_mode_type *view_get_vim_cutting_mode;
 custom_view_set_vim_cutting_mode_type *view_set_vim_cutting_mode;
 custom_view_set_selection_begin_type *view_set_selection_begin;
@@ -775,8 +775,8 @@ internal void view_set_multi_cursor_preferred_x(Application_Links* app, View_ID 
 internal void view_add_multi_cursor(Application_Links* app, View_ID view_id, i64 cursor_pos);
 internal void view_remove_most_recent_multi_cursor(Application_Links* app, View_ID view_id);
 internal void view_clear_multi_cursors(Application_Links* app, View_ID view_id);
-internal b32 view_get_yanked_entire_line(Application_Links* app, View_ID view_id);
-internal void view_set_yanked_entire_line(Application_Links* app, View_ID view_id, b32 value);
+internal b32 app_get_yanked_entire_line(Application_Links* app);
+internal void app_set_yanked_entire_line(Application_Links* app, b32 value);
 internal b32 view_get_vim_cutting_mode(Application_Links* app, View_ID view_id);
 internal void view_set_vim_cutting_mode(Application_Links* app, View_ID view_id, b32 value);
 internal void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
@@ -996,8 +996,8 @@ global custom_view_set_multi_cursor_preferred_x_type *view_set_multi_cursor_pref
 global custom_view_add_multi_cursor_type *view_add_multi_cursor = 0;
 global custom_view_remove_most_recent_multi_cursor_type *view_remove_most_recent_multi_cursor = 0;
 global custom_view_clear_multi_cursors_type *view_clear_multi_cursors = 0;
-global custom_view_get_yanked_entire_line_type *view_get_yanked_entire_line = 0;
-global custom_view_set_yanked_entire_line_type *view_set_yanked_entire_line = 0;
+global custom_app_get_yanked_entire_line_type *app_get_yanked_entire_line = 0;
+global custom_app_set_yanked_entire_line_type *app_set_yanked_entire_line = 0;
 global custom_view_get_vim_cutting_mode_type *view_get_vim_cutting_mode = 0;
 global custom_view_set_vim_cutting_mode_type *view_set_vim_cutting_mode = 0;
 global custom_view_set_selection_begin_type *view_set_selection_begin = 0;

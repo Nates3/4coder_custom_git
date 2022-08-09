@@ -60,6 +60,7 @@ struct Models
   Modal_State global_modal_state;
   i64 command_mapid;
   i64 insert_mapid;
+	b32 app_yanked_entire_line;
   
   Arena arena_;
   Arena *arena;
