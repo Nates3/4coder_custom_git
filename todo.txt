@@ -11,6 +11,8 @@ Not Empty :(
 [ ] - Bug: on code_index_note macros, sometimes you won't be able jump to the macro, in lister
       view you can, but using "jump_to_definition_at_cursor" it won't work
 
+[ ] - Bug: System clipboard copying from outside of 4coder has a rare case of not working
+
 [ ] - Possible Bug: Sometimes while in "Command Mode" they keybinds change to "Insert Mode",
       switching Views back and fourth fixed this issue. But it shouldn't happen in the 
       first place.
@@ -29,7 +31,6 @@ Not Empty :(
 
 [ ] - When in selection Mode, paste or "vim_paste" should copy the selection into the clipboard
       delete the selection and paste what is currently in the clipboard over the selection.
-
 
 [ ] - When opening a project, 4coder did save the open buffers and where the cursor was
 

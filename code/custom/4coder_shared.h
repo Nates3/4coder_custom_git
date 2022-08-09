@@ -29,17 +29,18 @@ enum Multi_Cursor_Mode
 	Multi_Cursor_Enabled,
 };
 
-struct String_Node
+struct Project_List_Node
 {
-  String_Node *prev;
-  String_Node *next;
-  String_Const_u8 contents;
+	Project_List_Node *prev;
+	Project_List_Node *next;
+	String_Const_u8 full_path;
+	String_Const_u8 name;
 };
 
 struct Project_List
 {
-  String_Node *first;
-  String_Node *last;
+	Project_List_Node *first;
+	Project_List_Node *last;
   u32 count;
 };
 

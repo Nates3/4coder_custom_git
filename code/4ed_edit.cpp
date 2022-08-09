@@ -564,10 +564,12 @@ edit_batch(Thread_Context *tctx, Models *models, Editing_File *file,
 ////////////////////////////////
 
 function Editing_File*
-create_file(Thread_Context *tctx, Models *models, String_Const_u8 file_name, Buffer_Create_Flag flags){
+create_file(Thread_Context *tctx, Models *models, String_Const_u8 file_name, Buffer_Create_Flag flags)
+{
 	Editing_File *result = 0;
 	
-	if (file_name.size > 0){
+	if (file_name.size > 0)
+	{
 		Working_Set *working_set = &models->working_set;
 		Heap *heap = &models->heap;
 		

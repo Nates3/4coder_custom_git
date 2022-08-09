@@ -1,6 +1,8 @@
 /////////////////////////////
 date-> 8/8/22
 
+(nates): project_list_file parsing reworked to use token parsing (now supports '/' at end of path)
+(nates): fixed some bugs with loading the project_list_file
 (nates): Fixed vim yank line to be persistant across the app and not just the current view
 (nates): Made it so when multi_cursor_mode != Multi_Cursor_Disabled, the cursor is always
          a different color so you don't get confused whether or not you're in multi cursor mode

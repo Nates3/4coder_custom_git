@@ -157,7 +157,8 @@ working_set_add__generic(Table_Data_u64 *table, Buffer_ID id, String_Const_u8 na
 }
 
 internal void
-working_set_remove__generic(Table_Data_u64 *table, String_Const_u8 name){
+working_set_remove__generic(Table_Data_u64 *table, String_Const_u8 name)
+{
   table_erase(table, make_data(name.str, name.size));
 }
 

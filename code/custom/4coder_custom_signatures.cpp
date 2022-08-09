@@ -823,8 +823,6 @@ CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
 	Project_List projects = get_project_list(app);
 	if(projects.count)
 	{
-		save_and_kill_all_buffers(app);
-		
 		Scratch_Block scratch(app);
 		Lister_Block lister(app, scratch);
 		char *query = "Project Path:";
@@ -832,37 +830,12 @@ CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
 		lister_set_default_handlers(lister);
 		
 		code_index_lock();
-		String_Node *node = projects.first;
+		Project_List_Node *node = projects.first;
 		for(u32 node_index = 0;
 				node_index < projects.count;
 				++node_index)
 		{
-			String_Const_u8 *string = &node->contents;
-			if(character_predicate_check_character(character_predicate_alpha, string->str[0]))
-			{
-				u64 first = string_find_first(*string, 0, ' ');
-				String_Const_u8 file_path = *string;
-				String_Const_u8 name = {};
-				if(first)
-				{
-					file_path = {string->str, first};
-					u64 name_index = clamp_top(first + 1, string->size);
-					if(string->size - name_index > 0)
-					{
-						name = SCu8(string->str + name_index, (string->size - name_index));
-						lister_add_item(lister, name, SCu8(""), string, 0);
-					}
-					else
-					{
-						lister_add_item(lister, *string, SCu8(""), string, 0);
-					}
-				}
-				else
-				{
-					lister_add_item(lister, *string, SCu8(""), string, 0);
-				}
-			}
-			
+			lister_add_item(lister, node->name, SCu8(""), &node->full_path, 0);
 			node = node->next;
 		}
 		code_index_unlock();
@@ -871,6 +844,7 @@ CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
 		Lister_Result lister_result = run_lister(app, lister);
 		if(!lister_result.canceled && lister_result.user_data)
 		{
+			save_and_kill_all_buffers(app);
 			String_Const_u8 result_path = *(String_Const_u8 *)lister_result.user_data;
 			load_project_from_path(app, result_path);
 			set_hot_directory(app, result_path);

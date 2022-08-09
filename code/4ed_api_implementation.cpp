@@ -422,6 +422,91 @@ buffer_seek_character_predicate_range(Application_Links *app, Buffer_ID buffer,
   return(range);
 }
 
+enum Project_List_Token_Type
+{
+	Project_List_Token_Full_Path,
+	Project_List_Token_Name,
+};
+
+struct Project_List_Token
+{
+	Project_List_Token_Type type;
+	u64 pos;
+	u64 size;
+};
+
+#define MaxProjectListTokens 2048
+struct Project_List_Token_Array
+{
+	u32 token_count;
+	u32 current_token;
+	Project_List_Token tokens[MaxProjectListTokens];
+};
+
+function Project_List_Token *
+project_list_grab_new_token_ptr(Project_List_Token_Array *array)
+{
+	Project_List_Token *result = &array->tokens[array->token_count++];
+	return(result);
+}
+
+function Project_List_Token *
+project_list_grab_next_token_ptr(Project_List_Token_Array *array)
+{
+	Project_List_Token *token = 0;
+	if(array->current_token < array->token_count)
+	{
+		token = &array->tokens[array->current_token++];
+	}
+	return(token);
+}
+
+function Project_List_Token_Array
+project_list_file_tokenize_contents(String_Const_u8 contents)
+{
+	Project_List_Token_Array token_array = {};
+	u8 *str = contents.str;
+	for(u32 index = 0;
+			index < contents.size;
+			)
+	{
+		if(str[index] == '/' &&
+			 str[index + 1] == '/')
+		{
+			for(;str[index] != '\n' && index < contents.size; ++index);
+		}
+		else if((character_is_alpha(str[index])) && 
+						(str[index + 1] == ':') &&
+						(str[index + 2] == '/'))
+		{
+			Project_List_Token *token = project_list_grab_new_token_ptr(&token_array);
+			if(token)
+			{
+				token->type = Project_List_Token_Full_Path;
+				token->pos = index;
+				for(;str[index] != ' ' && index < contents.size; ++index);
+				token->size = index - token->pos;
+			}
+		}
+		else if(character_is_alpha_numeric(str[index]))
+		{
+			Project_List_Token *token = project_list_grab_new_token_ptr(&token_array);
+			if(token)
+			{
+				token->type = Project_List_Token_Name;
+				token->pos = index;
+				for(;str[index] != '\n' && str[index] != '\r' && index < contents.size; ++index);
+				token->size = index - token->pos;
+			}
+		}
+		else
+		{
+			++index;
+		}
+	}
+	return(token_array);
+}
+
 // NOTE(nates): Custom
 api(custom) function void
 load_project_list_file_func(Application_Links *app)
@@ -436,7 +521,6 @@ load_project_list_file_func(Application_Links *app)
 		end_temp(models->project_list_string_node_memory);
 	}
 	models->project_list_string_node_memory = begin_temp(&models->project_list_arena);
-	
 	
   Scratch_Block scratch(app);
   Arena *scratch_arena = scratch.arena;
@@ -467,33 +551,43 @@ load_project_list_file_func(Application_Links *app)
     i64 line_start = 0;
     String_Const_u8 contents = buffer_stringify(&models->project_list_arena, buffer, 
                                                 Ii64(0, (buffer->size1 + buffer->size2)));
-    for(u32 index = 0;
-        index < contents.size + 1;
-        ++index)
-    {
-      u64 str_index = clamp_top(index, contents.size - 1);
-      u8 value = contents.str[str_index];
-      if(value == '\n' || index == contents.size)
-      {
-        u64 line_size = (index == contents.size) ? (u64)(index - line_start) : (u64)(index - line_start - 1);
-        if(line_size)
-        {
-          String_Const_u8 string = {contents.str + line_start, line_size};
-          if((string.size > 3))
-          {
-            if((string.str[0] != '/'))
-            {
-              String_Node *node = push_array(&models->project_list_arena, String_Node, 1);
-              zdll_push_front(models->project_list.first, models->project_list.last, node);
-              models->project_list.count++;
-              
-              node->contents = string;
-            }
-          }
-        }
-        line_start = index + 1;
-      }
-    }
+		Project_List_Token_Array token_array = project_list_file_tokenize_contents(contents);
+		for(;;)
+		{
+			Project_List_Token *path = project_list_grab_next_token_ptr(&token_array);
+			Project_List_Token *name = project_list_grab_next_token_ptr(&token_array);
+			
+			if(path && name)
+			{
+				models->project_list.count++;
+				Project_List_Node *node = push_array(&models->project_list_arena, Project_List_Node, 1);
+				zdll_push_front(models->project_list.first, models->project_list.last, node);
+				
+				u64 prev_align = models->project_list_arena.alignment;
+				models->project_list_arena.alignment = 1;
+				String_Const_u8 path_str = SCu8(contents.str + path->pos, path->size);
+				String_Const_u8 name_str = SCu8(contents.str + name->pos, name->size);
+				
+				String_Const_u8 path_copy = push_string_copy(&models->project_list_arena, path_str);
+				if(path_copy.str[path_copy.size - 1] != '/')
+				{
+					u8 *new_terminator = push_array(&models->project_list_arena, u8, 1);
+					path_copy.str[path_copy.size] = '/';
+					*new_terminator = 0;
+				}
+				String_Const_u8 name_copy = push_string_copy(&models->project_list_arena, name_str);
+				models->project_list_arena.alignment = prev_align;
+				
+				node->full_path = path_copy;
+				node->name = name_copy;
+			}
+			else
+			{
+				break;
+			}
+		}
+    
+		buffer_kill(app, buffer_id, BufferKill_AlwaysKill);
   }
   else
   {
@@ -1024,7 +1118,8 @@ create_buffer(Application_Links *app, String_Const_u8 file_name, Buffer_Create_F
   Models *models = (Models*)app->cmd_context;
   Editing_File *new_file = create_file(app->tctx, models, file_name, flags);
   Buffer_ID result = 0;
-  if (new_file != 0){
+  if (new_file != 0)
+	{
     result = new_file->id;
   }
   return(result);
