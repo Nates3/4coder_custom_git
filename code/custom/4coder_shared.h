@@ -13,10 +13,20 @@ struct Mark_History
   i32 mark_count;
 };
 
-enum Modal_State_ID
+#define VIEW_MULTI_CURSOR_MAXIMUM_COUNT 128
+
+enum Modal_State
 {
+	Modal_State_Null,
   Modal_State_Insert,
   Modal_State_Command
+};
+
+enum Multi_Cursor_Mode
+{
+	Multi_Cursor_Disabled,
+	Multi_Cursor_Place_Cursors,
+	Multi_Cursor_Enabled,
 };
 
 struct String_Node

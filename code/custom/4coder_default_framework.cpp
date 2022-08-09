@@ -28,7 +28,7 @@ point_stack_push(Application_Links *app, Buffer_ID buffer, i64 pos){
 function void
 point_stack_push_view_cursor(Application_Links *app, View_ID view){
   Buffer_ID buffer = view_get_buffer(app, view, Access_Always);
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   point_stack_push(app, buffer, pos);
 }
 
@@ -516,11 +516,13 @@ CUSTOM_DOC("Sets the edit mode to 4coder original.")
   fcoder_mode = FCoderMode_Original;
 }
 
+#if 0
 CUSTOM_COMMAND_SIG(set_mode_to_notepad_like)
 CUSTOM_DOC("Sets the edit mode to Notepad like.")
 {
   begin_notepad_mode(app);
 }
+#endif
 
 CUSTOM_COMMAND_SIG(toggle_highlight_line_at_cursor)
 CUSTOM_DOC("Toggles the line highlight at the cursor.")
@@ -1015,7 +1017,8 @@ clipboard_post_internal_only(i32 clipboard_id, String_Const_u8 string){
 }
 
 function b32
-clipboard_post(i32 clipboard_id, String_Const_u8 string){
+clipboard_post(i32 clipboard_id, String_Const_u8 string)
+{
   clipboard_post_internal_only(clipboard_id, string);
   system_post_clipboard(string, clipboard_id);
   return(true);
@@ -1134,7 +1137,7 @@ default_post_command(Application_Links *app, Managed_Scope scope){
       b32 *snap_mark_to_cursor =
         scope_attachment(app, scope_it, view_snap_mark_to_cursor, b32);
       if (*snap_mark_to_cursor){
-        i64 pos = view_get_cursor_pos(app, view_it);
+        i64 pos = view_get_cursor(app, view_it);
         view_set_mark(app, view_it, seek_pos(pos));
       }
     }

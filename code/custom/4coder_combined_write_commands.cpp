@@ -5,21 +5,40 @@
 // TOP
 
 function void
-write_string(Application_Links *app, View_ID view, Buffer_ID buffer, String_Const_u8 string){
-  i64 pos = view_get_cursor_pos(app, view);
+write_string(Application_Links *app, View_ID view, Buffer_ID buffer, 
+						 String_Const_u8 string, u32 multi_cursor_index)
+{
+  i64 pos = view_get_cursor(app, view);
   buffer_replace_range(app, buffer, Ii64(pos), string);
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos + string.size));
 }
 
 function void
-write_string(Application_Links *app, String_Const_u8 string){
+write_string(Application_Links *app, String_Const_u8 string)
+{
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-  write_string(app, view, buffer, string);
+	
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+	if(multi_cursor_mode == Multi_Cursor_Disabled)
+	{
+		write_string(app, view, buffer, string, 0);
+	}
+	else if(multi_cursor_mode == Multi_Cursor_Enabled)
+	{
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			write_string(app, view, buffer, string, multi_cursor_index);
+		}
+	}
 }
 
 function void
-write_named_comment_string(Application_Links *app, char *type_string){
+write_named_comment_string(Application_Links *app, char *type_string)
+{
   Scratch_Block scratch(app);
   String_Const_u8 name = def_get_config_string(scratch, vars_save_string_lit("user_name"));
   String_Const_u8 str = {};
@@ -29,14 +48,17 @@ write_named_comment_string(Application_Links *app, char *type_string){
   else{
     str = push_u8_stringf(scratch, "// %s: ", type_string);
   }
+	
   write_string(app, str);
 }
 
 function void
-long_braces(Application_Links *app, char *text, i32 size){
+long_braces(Application_Links *app, char *text, i32 size)
+{
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
+	// TODO(nates): Multi cursor support?
   buffer_replace_range(app, buffer, Ii64(pos), SCu8(text, size));
   view_set_cursor_and_preferred_x(app, view, seek_pos(pos + 2));
   auto_indent_buffer(app, buffer, Ii64_size(pos, size));
@@ -105,9 +127,18 @@ CUSTOM_DOC("At the cursor, insert a ' = {};'.")
 
 function i64
 get_start_of_line_at_cursor(Application_Links *app, View_ID view, Buffer_ID buffer){
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   i64 line = get_line_number_from_pos(app, buffer, pos);
   return(get_pos_past_lead_whitespace_from_line_number(app, buffer, line));
+}
+
+function i64
+get_start_of_line_at_multi_cursor(Application_Links *app, View_ID view, Buffer_ID buffer,
+																	u32 multi_cursor_index)
+{
+	i64 pos = view_get_multi_cursor(app, view, multi_cursor_index);
+	i64 line = get_line_number_from_pos(app, buffer, pos);
+	return(get_pos_past_lead_whitespace_from_line_number(app, buffer, line));
 }
 
 function b32
@@ -122,15 +153,38 @@ c_line_comment_starts_at_position(Application_Links *app, Buffer_ID buffer, i64 
   return(alread_has_comment);
 }
 
+
+
 CUSTOM_COMMAND_SIG(comment_line)
 CUSTOM_DOC("Insert '//' at the beginning of the line after leading whitespace.")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-  i64 pos = get_start_of_line_at_cursor(app, view, buffer);
-  b32 alread_has_comment = c_line_comment_starts_at_position(app, buffer, pos);
-  if (!alread_has_comment){
-    buffer_replace_range(app, buffer, Ii64(pos), string_u8_litexpr("//"));
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+	String_Const_u8 string = string_u8_litexpr("//");
+	if(multi_cursor_mode == Multi_Cursor_Disabled)
+	{
+		i64 start_of_line = get_start_of_line_at_cursor(app, view, buffer);
+		b32 alread_has_comment = c_line_comment_starts_at_position(app, buffer, start_of_line);
+		if (!alread_has_comment)
+		{
+			buffer_replace_range(app, buffer, Ii64(start_of_line), string);
+		}
+	}
+	else if(multi_cursor_mode == Multi_Cursor_Enabled)
+	{
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			i64 start_of_line = get_start_of_line_at_multi_cursor(app, view, buffer, multi_cursor_index);
+			b32 alread_has_comment = c_line_comment_starts_at_position(app, buffer, start_of_line);
+			if (!alread_has_comment)
+			{
+				buffer_replace_range(app, buffer, Ii64(start_of_line), string);
+			}
+		}
   }
 }
 
@@ -139,11 +193,33 @@ CUSTOM_DOC("If present, delete '//' at the beginning of the line after leading w
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-  i64 pos = get_start_of_line_at_cursor(app, view, buffer);
-  b32 alread_has_comment = c_line_comment_starts_at_position(app, buffer, pos);
-  if (alread_has_comment){
-    buffer_replace_range(app, buffer, Ii64(pos, pos + 2), string_u8_empty);
-  }
+	
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+	
+	if(multi_cursor_mode == Multi_Cursor_Disabled)
+	{
+		i64 pos = get_start_of_line_at_cursor(app, view, buffer);
+		b32 alread_has_comment = c_line_comment_starts_at_position(app, buffer, pos);
+		if (alread_has_comment)
+		{
+			buffer_replace_range(app, buffer, Ii64(pos, pos + 2), string_u8_empty);
+		}
+	}
+	else if(multi_cursor_mode == Multi_Cursor_Enabled)
+	{
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			i64 pos = get_start_of_line_at_multi_cursor(app, view, buffer, multi_cursor_index);
+			b32 alread_has_comment = c_line_comment_starts_at_position(app, buffer, pos);
+			if (alread_has_comment)
+			{
+				buffer_replace_range(app, buffer, Ii64(pos, pos + 2), string_u8_empty);
+			}
+		}
+	}
 }
 
 CUSTOM_COMMAND_SIG(comment_line_toggle)
@@ -244,7 +320,7 @@ CUSTOM_DOC("Opens a snippet lister for inserting whole pre-written snippets of t
                                              "Snippet:");
     
     Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-    i64 pos = view_get_cursor_pos(app, view);
+    i64 pos = view_get_cursor(app, view);
     write_snippet(app, view, buffer, pos, snippet);
   }
 }

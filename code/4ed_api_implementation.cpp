@@ -30,7 +30,7 @@ file_cursor_to_end(Thread_Context *tctx, Models *models, Editing_File *file){
       continue;
     }
     view_set_cursor(tctx, models, view, pos);
-    view->mark = pos;
+    view->marks[0] = pos;
   }
 }
 
@@ -239,16 +239,19 @@ buffer_read_range(Application_Links *app, Buffer_ID buffer_id, Range_i64 range, 
 }
 
 function Edit_Behaviors
-get_active_edit_behaviors(Models *models, Editing_File *file){
+get_active_edit_behaviors(Models *models, Editing_File *file)
+{
   Panel *panel = layout_get_active_panel(&models->layout);
   Assert(panel != 0);
   View *view = panel->view;
   Assert(view != 0);
   Edit_Behaviors behaviors = {};
-  if (view->file == file){
-    behaviors.pos_before_edit = view->edit_pos_.cursor_pos;
+  if (view->file == file)
+	{
+		behaviors.pos_before_edit = view->edit_pos_.cursors[0];
   }
-  else{
+  else
+	{
     behaviors.pos_before_edit = -1;
   }
   return(behaviors);
@@ -260,9 +263,11 @@ buffer_replace_range(Application_Links *app, Buffer_ID buffer_id, Range_i64 rang
   Models *models = (Models*)app->cmd_context;
   Editing_File *file = imp_get_file(models, buffer_id);
   b32 result = false;
-  if (api_check_buffer(file)){
+  if (api_check_buffer(file))
+	{
     i64 size = buffer_size(&file->state.buffer);
-    if (0 <= range.first && range.first <= range.one_past_last && range.one_past_last <= size){
+    if (0 <= range.first && range.first <= range.one_past_last && range.one_past_last <= size)
+		{
       Edit_Behaviors behaviors = get_active_edit_behaviors(models, file);
       edit_single(app->tctx, models, file, range, string, behaviors);
       result = true;
@@ -271,8 +276,10 @@ buffer_replace_range(Application_Links *app, Buffer_ID buffer_id, Range_i64 rang
   return(result);
 }
 
+
 api(custom) function b32
-buffer_batch_edit(Application_Links *app, Buffer_ID buffer_id, Batch_Edit *batch)
+buffer_batch_edit(Application_Links *app, Buffer_ID buffer_id, Batch_Edit *batch, 
+									u32 multi_cursor_index)
 {
   Models *models = (Models*)app->cmd_context;
   Editing_File *file = imp_get_file(models, buffer_id);
@@ -417,7 +424,7 @@ buffer_seek_character_predicate_range(Application_Links *app, Buffer_ID buffer,
 
 // NOTE(nates): Custom
 api(custom) function void
-load_project_paths(Application_Links *app)
+load_project_list_file_func(Application_Links *app)
 {
   u64 string_cap = 512;
   
@@ -1142,8 +1149,8 @@ buffer_reopen(Application_Links *app, Buffer_ID buffer_id, Buffer_Reopen_Flag fl
               View *view_it = panel->view;
               if (view_it->file == file){
                 vptrs[vptr_count] = view_it;
-                File_Edit_Positions edit_pos = view_get_edit_pos(view_it);
-                Buffer_Cursor cursor = file_compute_cursor(view_it->file, seek_pos(edit_pos.cursor_pos));
+                File_Edit_Position edit_pos = view_get_edit_pos(view_it);
+                Buffer_Cursor cursor = file_compute_cursor(view_it->file, seek_pos(edit_pos.cursors[0]));
                 line_numbers[vptr_count]   = (i32)cursor.line;
                 column_numbers[vptr_count] = (i32)cursor.col;
                 view_it->file = models->scratch_buffer;
@@ -1331,26 +1338,40 @@ view_get_buffer(Application_Links *app, View_ID view_id, Access_Flag access){
 }
 
 api(custom) function i64
-view_get_cursor_pos(Application_Links *app, View_ID view_id){
+view_get_cursor(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   i64 result = 0;
   if (api_check_view(view)){
-    File_Edit_Positions edit_pos = view_get_edit_pos(view);
-    result = edit_pos.cursor_pos;
+    File_Edit_Position edit_pos = view_get_edit_pos(view);
+    result = edit_pos.cursors[0];
   }
   return(result);
 }
 
 api(custom) function i64
-view_get_mark_pos(Application_Links *app, View_ID view_id){
+view_get_mark(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   i64 result = 0;
   if (api_check_view(view)){
-    result = view->mark;
+    result = view->marks[0];
   }
   return(result);
+}
+
+api(custom) function i64
+view_get_multi_mark(Application_Links *app, View_ID view_id,
+										u32 multi_cursor_index)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	i64 result = 0;
+	if(api_check_view(view))
+	{
+		result = view->marks[multi_cursor_index];
+	}
+	return(result);
 }
 
 api(custom) function i64
@@ -1380,11 +1401,11 @@ view_get_selection_end(Application_Links *app, View_ID view_id){
   return(result);
 }
 
-api(custom) function Modal_State_ID
+api(custom) function Modal_State
 view_get_modal_state(Application_Links *app, View_ID view_id){
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  Modal_State_ID result = Modal_State_Command;
+  Modal_State result = Modal_State_Null;
   if (api_check_view(view))
   {
     result = view->modal_state;
@@ -1393,23 +1414,29 @@ view_get_modal_state(Application_Links *app, View_ID view_id){
 }
 
 api(custom) function f32
-view_get_preferred_x(Application_Links *app, View_ID view_id){
+view_get_preferred_x(Application_Links *app, View_ID view_id, 
+										 u32 multi_cursor_index)
+{
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
-  f32 result = 0.f;;
-  if (api_check_view(view)){
-    result = view->preferred_x;
+  f32 result = 0.f;
+  if (api_check_view(view))
+	{
+    result = view->preferred_x[multi_cursor_index];
   }
   return(result);
 }
 
 api(custom) function b32
-view_set_preferred_x(Application_Links *app, View_ID view_id, f32 x){
+view_set_preferred_x(Application_Links *app, View_ID view_id, f32 x,
+										 u32 multi_cursor_index)
+{
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   b32 result = false;
-  if (api_check_view(view)){
-    view->preferred_x = x;
+  if (api_check_view(view))
+	{
+    view->preferred_x[multi_cursor_index] = x;
     result = true;
   }
   return(result);
@@ -1627,7 +1654,7 @@ view_get_buffer_scroll(Application_Links *app, View_ID view_id){
   Buffer_Scroll  result = {};
   View *view = imp_get_view(models, view_id);
   if (api_check_view(view)){
-    File_Edit_Positions edit_pos = view_get_edit_pos(view);
+    File_Edit_Position edit_pos = view_get_edit_pos(view);
     result = edit_pos.scroll;
   }
   return(result);
@@ -1670,10 +1697,10 @@ view_set_active(Application_Links *app, View_ID view_id)
       }
       
       i64 mapid = 0;
-      Modal_State_ID modal_state;
-      if(*app_get_is_global_modal_state_ptr(app))
+      Modal_State modal_state;
+      if(app_get_is_global_modal(app))
       {
-        modal_state = *app_get_global_modal_state_ptr(app);
+        modal_state = app_get_global_modal_state(app);
       }
       else
       {
@@ -1809,7 +1836,8 @@ buffer_compute_cursor(Application_Links *app, Buffer_ID buffer, Buffer_Seek seek
 }
 
 api(custom) function Buffer_Cursor
-view_compute_cursor(Application_Links *app, View_ID view_id, Buffer_Seek seek){
+view_compute_cursor(Application_Links *app, View_ID view_id, Buffer_Seek seek)
+{
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   Buffer_Cursor result = {};
@@ -1873,7 +1901,7 @@ view_set_cursor(Application_Links *app, View_ID view_id, Buffer_Seek seek)
     Mark_History *history = view_get_mark_history(app, view_id);
     history->rel_index = 1;
     
-    if(view->is_selecting)
+    if(view->line_selection_mode)
     {
       Buffer_ID buffer = view_get_buffer(app, view_id, Access_ReadVisible);
       view_set_selection_end(app, view_id, cursor.line);
@@ -1902,7 +1930,7 @@ view_set_cursor_no_set_mark_rel_index(Application_Links *app, View_ID view_id, B
       result = true;
     }
     
-    if(view->is_selecting)
+    if(view->line_selection_mode)
     {
       Buffer_ID buffer = view_get_buffer(app, view_id, Access_ReadVisible);
       view_set_selection_end(app, view_id, cursor.line);
@@ -1936,7 +1964,7 @@ view_set_buffer_scroll(Application_Links *app, View_ID view_id, Buffer_Scroll sc
       view_set_scroll(tctx, models, view, scroll);
     }
     else{
-      File_Edit_Positions edit_pos = view_get_edit_pos(view);
+      File_Edit_Position edit_pos = view_get_edit_pos(view);
       edit_pos.scroll = scroll;
       view_set_edit_pos(view, edit_pos);
     }
@@ -1963,7 +1991,7 @@ view_get_mark_history(Application_Links *app, View_ID view_id)
 }
 
 api(custom) function void
-view_record_mark(Application_Links *app, View_ID view_id)
+view_record_mark(Application_Links *app, View_ID view_id, u32 multi_cursor_index)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
@@ -1976,7 +2004,7 @@ view_record_mark(Application_Links *app, View_ID view_id)
     {
       history->recent_index = 0;
     }
-    history->marks[history->recent_index] = view->mark;
+    history->marks[history->recent_index] = view->marks[multi_cursor_index];
     
     history->mark_count++;
     history->mark_count = clamp_top(history->mark_count, MARK_HISTORY_ARRAY_COUNT);
@@ -1997,10 +2025,10 @@ view_set_mark(Application_Links *app, View_ID view_id, Buffer_Seek seek)
     if (api_check_buffer(file)){
       if (seek.type != buffer_seek_pos){
         Buffer_Cursor cursor = file_compute_cursor(file, seek);
-        view->mark = cursor.pos;
+        view->marks[0] = cursor.pos;
       }
       else{
-        view->mark = seek.pos;
+        view->marks[0] = seek.pos;
       }
       result = true;
     }
@@ -2008,46 +2036,343 @@ view_set_mark(Application_Links *app, View_ID view_id, Buffer_Seek seek)
   return(result);
 }
 
-api(custom) function b32 *
-view_get_is_selecting(Application_Links *app, View_ID view_id)
+api(custom) function b32 
+view_set_mark_record(Application_Links *app, View_ID view, Buffer_Seek seek)
 {
-  Models *models = (Models*)app->cmd_context;
+  b32 result = view_set_mark(app, view, seek);
+  view_record_mark(app, view, 0);
+  return(result);
+}
+
+api(custom) function b32
+view_set_multi_mark(Application_Links *app, View_ID view_id, Buffer_Seek seek,
+										u32 multi_cursor_index)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	
+	b32 result = false;
+	if(api_check_view(view))
+	{
+		Editing_File *file = view->file;
+		Assert(file != 0);
+		if(api_check_buffer(file))
+		{
+			if(seek.type != buffer_seek_pos)
+			{
+				Buffer_Cursor cursor = file_compute_cursor(file, seek);
+				view->marks[multi_cursor_index] = cursor.pos;
+			}
+			else
+			{
+				view->marks[multi_cursor_index] = seek.pos;
+			}
+			result = true;
+		}
+	}
+	return(result);
+}
+
+api(custom) function b32
+view_get_line_selection_mode(Application_Links *app, View_ID view_id)
+{
+	Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   
-  b32 *result = 0;
+	b32 result = false;
   if(api_check_view(view))
   {
-    result = &view->is_selecting;
+    result = view->line_selection_mode;
   }
   return(result);
 }
 
-api(custom) function b32 *
+api(custom) function void
+view_set_line_selection_mode(Application_Links *app, View_ID view_id,
+														 b32 value)
+{
+	Models *models = (Models*)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	
+	if(api_check_view(view))
+	{
+		view->line_selection_mode = value;
+	}
+}
+
+api(custom) function Multi_Cursor_Mode
+view_get_multi_cursor_mode(Application_Links *app, View_ID view_id)
+{
+	Multi_Cursor_Mode result = Multi_Cursor_Disabled;
+	Models *models = (Models*)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	if(api_check_view(view))
+	{
+		result = view->multi_cursor_mode;
+	}
+	return(result);
+}
+
+api(custom) function void
+view_set_multi_cursor_mode(Application_Links *app, View_ID view_id, Multi_Cursor_Mode mode)
+{
+	Models *models = (Models*)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	if(api_check_view(view))
+	{
+		view->multi_cursor_mode = mode;
+	}
+}
+
+api(custom) function i64
+view_get_multi_cursor_count(Application_Links *app, View_ID view_id)
+{
+	i64 result = 0;
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	if(api_check_view(view))
+	{
+		result = view->cursor_count;
+		Assert(result >= 1);
+	}
+	return(result);
+}
+
+api(custom) function i64
+view_get_multi_cursor(Application_Links *app, View_ID view_id, u32 multi_cursor_index)
+{
+	i64 result = 0;
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	
+	if(api_check_view(view))
+	{
+		i64 multi_cursor_count = view->cursor_count;
+		Assert(multi_cursor_index < multi_cursor_count);
+		result = view->edit_pos_.cursors[multi_cursor_index];
+	}
+	return(result);
+}
+
+api(custom) function i64
+view_get_first_or_current_multi_cursor(Application_Links *app, View_ID view_id)
+{
+	i64 result = 0;
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	
+	if(api_check_view(view))
+	{
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view_id);
+		if(multi_cursor_count > 1)
+		{
+			result = view_get_multi_cursor(app, view_id, 1);
+		}
+		else
+		{
+			result = view_get_multi_cursor(app, view_id, 0);
+		}
+	}
+	return(result);
+}
+
+api(custom) function i64
+view_get_top_most_multi_cursor(Application_Links *app, View_ID view_id)
+{
+	i64 result = 0;
+	i64 first = view_get_first_or_current_multi_cursor(app, view_id);
+	i64 current = view_get_cursor(app, view_id);
+	
+	if(current <= first)
+	{
+		result = current;
+	}
+	else
+	{
+		result = first;
+	}
+	return(result);
+}
+
+api(custom) function i64
+view_get_bottom_most_multi_cursor(Application_Links *app, View_ID view_id)
+{
+	i64 result = 0;
+	i64 first = view_get_first_or_current_multi_cursor(app, view_id);
+	i64 current = view_get_cursor(app, view_id);
+	
+	if(current >= first)
+	{
+		result = current;
+	}
+	else
+	{
+		result = first;
+	}
+	return(result);
+}
+
+api(custom) function i64
+view_get_most_recent_multi_cursor(Application_Links *app, View_ID view_id)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	i64 result = view_get_multi_cursor(app, view_id, (u32)(view->cursor_count - 1));
+	return(result);
+}
+
+api(custom) function void
+view_set_multi_cursor(Application_Links *app, View_ID view_id, 
+											u32 multi_cursor_index, Buffer_Seek seek)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	if(api_check_view(view))
+	{
+		Buffer_Cursor cursor = {};
+		Editing_File *file = view->file;
+		Assert(file != 0);
+		if(api_check_buffer(file))
+		{
+			cursor = file_compute_cursor(file, seek);
+			view->edit_pos_.cursors[multi_cursor_index] = cursor.pos;
+		}
+	}
+}
+
+api(custom) function void
+view_set_multi_cursor_preferred_x(Application_Links *app, View_ID view_id,
+																	u32 multi_cursor_index, Buffer_Seek seek)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	if(api_check_view(view))
+	{
+		Buffer_Cursor cursor = {};
+		Editing_File *file = view->file;
+		Assert(file != 0);
+		if(api_check_buffer(file))
+		{
+			cursor = file_compute_cursor(file, seek);
+			view->edit_pos_.cursors[multi_cursor_index] = cursor.pos;
+			
+			Vec2_f32 p = view_relative_xy_of_pos(app->tctx, models, view, cursor.line, cursor.pos);
+			view_set_preferred_x(app, view_id, p.x, multi_cursor_index);
+		}
+	}
+}
+
+api(custom) function void
+view_add_multi_cursor(Application_Links *app, View_ID view_id, i64 cursor_pos)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	
+	if(api_check_view(view))
+	{
+		Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view_id);
+		if(multi_cursor_mode == Multi_Cursor_Place_Cursors)
+		{
+			u32 index = (u32)view->cursor_count++;
+			view_set_multi_cursor_preferred_x(app, view_id, index, seek_pos(cursor_pos));
+			view->marks[index] = cursor_pos;
+		}
+	}
+}
+
+api(custom) function void
+view_remove_most_recent_multi_cursor(Application_Links *app, View_ID view_id)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	if(api_check_view(view))
+	{
+		view->cursor_count--;
+	}
+}
+
+api(custom) function void
+view_clear_multi_cursors(Application_Links *app, View_ID view_id)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	view->cursor_count = 1;
+}
+
+api(custom) function void
+view_correct_multi_cursors(Application_Links *app, View_ID view_id, 
+													 u32 at_multi_cursor_index, i64 at_old_bottom_most_pos, 
+													 i64 adjust_size)
+{
+	Models *models = (Models *)app->cmd_context;
+	View *view = imp_get_view(models, view_id);
+	
+	i64 multi_cursor_count = view->cursor_count;
+	for(u32 multi_cursor_index = 0;
+			multi_cursor_index < multi_cursor_count;
+			++multi_cursor_index)
+	{
+		i64 current_pos = view->edit_pos_.cursors[multi_cursor_index];
+		if(at_multi_cursor_index != multi_cursor_index &&
+			 current_pos > at_old_bottom_most_pos)
+		{
+			view->edit_pos_.cursors[multi_cursor_index] += adjust_size;
+		}
+	}
+}
+
+
+api(custom) function b32
 view_get_yanked_entire_line(Application_Links *app, View_ID view_id)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   
-  b32 *result = 0;
+  b32 result = 0;
   if(api_check_view(view))
   {
-    result = &view->yanked_entire_line;
+    result = view->yanked_entire_line;
   }
   return(result);
 }
 
-api(custom) function b32 *
-view_get_is_cutting(Application_Links *app, View_ID view_id)
+api(custom) function void
+view_set_yanked_entire_line(Application_Links *app, View_ID view_id,
+														b32 value)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
   
-  b32 *result = 0;
   if(api_check_view(view))
   {
-    result = &view->is_cutting;
+    view->yanked_entire_line = value;
+  }
+}
+
+api(custom) function b32
+view_get_vim_cutting_mode(Application_Links *app, View_ID view_id)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  
+  b32 result = 0;
+  if(api_check_view(view))
+  {
+    result = view->vim_cutting_mode;
   }
   return(result);
+}
+
+api(custom) function void
+view_set_vim_cutting_mode(Application_Links *app, View_ID view_id, b32 value)
+{
+  Models *models = (Models*)app->cmd_context;
+  View *view = imp_get_view(models, view_id);
+  
+  if(api_check_view(view))
+  {
+		view->vim_cutting_mode = value;
+  }
 }
 
 api(custom) function void
@@ -2073,7 +2398,7 @@ view_set_selection_end(Application_Links *app, View_ID view_id, i64 line_num)
 }
 
 api(custom) function b32
-view_set_modal_state(Application_Links *app, View_ID view_id, Modal_State_ID modal_state)
+view_set_modal_state(Application_Links *app, View_ID view_id, Modal_State modal_state)
 {
   Models *models = (Models*)app->cmd_context;
   View *view = imp_get_view(models, view_id);
@@ -2091,28 +2416,49 @@ view_set_modal_state(Application_Links *app, View_ID view_id, Modal_State_ID mod
   return(result);
 }
 
-api(custom) function b32 *
-app_get_is_global_modal_state_ptr(Application_Links *app)
+api(custom) function Modal_State
+app_get_global_modal_state(Application_Links *app)
 {
-  b32 *result = 0;
+	Modal_State result = Modal_State_Null;
+	if(app)
+	{
+		Models *models = (Models *)app->cmd_context;
+		result = models->global_modal_state;
+	}
+	return(result);
+}
+
+api(custom) function void
+app_set_global_modal_state(Application_Links *app,
+													 Modal_State state)
+{
+	if(app)
+	{
+		Models *models = (Models *)app->cmd_context;
+		models->global_modal_state = state;
+	}
+}
+
+api(custom) function b32
+app_get_is_global_modal(Application_Links *app)
+{
+  b32 result = 0;
   if(app)
   {
     Models *models = (Models *)app->cmd_context;
-    result = &models->is_global_modal_state;
+    result = models->is_global_modal;
   }
   return(result);
 }
 
-api(custom) function Modal_State_ID *
-app_get_global_modal_state_ptr(Application_Links *app)
+api(custom) function void
+app_set_is_global_modal(Application_Links *app, b32 value)
 {
-  Modal_State_ID *result = 0;
-  if(app)
-  {
-    Models *models = (Models *)app->cmd_context;
-    result = &models->global_modal_state;
-  }
-  return(result);
+	if(app)
+	{
+		Models *models = (Models *)app->cmd_context;
+		models->is_global_modal = value;
+	}
 }
 
 api(custom) function void

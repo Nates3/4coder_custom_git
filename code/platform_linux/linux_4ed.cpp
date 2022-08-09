@@ -1745,7 +1745,8 @@ linux_epoll_process(struct epoll_event* events, int num_events) {
 }
 
 int
-main(int argc, char **argv){
+main(int argc, char **argv)
+{
   // NOTE(allen): fucking bullshit. someone get my shit togeth :(er
   
   for (i32 i = 0; i < argc; i += 1){

@@ -13,10 +13,10 @@
 #define custom_get_buffer_by_file_name_sig() Buffer_ID custom_get_buffer_by_file_name(Application_Links* app, String_Const_u8 file_name, Access_Flag access)
 #define custom_buffer_read_range_sig() b32 custom_buffer_read_range(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, u8* out)
 #define custom_buffer_replace_range_sig() b32 custom_buffer_replace_range(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, String_Const_u8 string)
-#define custom_buffer_batch_edit_sig() b32 custom_buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch)
+#define custom_buffer_batch_edit_sig() b32 custom_buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch, u32 multi_cursor_index)
 #define custom_buffer_seek_string_sig() String_Match custom_buffer_seek_string(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos)
 #define custom_buffer_seek_character_predicate_range_sig() Range_i64 custom_buffer_seek_character_predicate_range(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos)
-#define custom_load_project_paths_sig() void custom_load_project_paths(Application_Links* app)
+#define custom_load_project_list_file_func_sig() void custom_load_project_list_file_func(Application_Links* app)
 #define custom_get_project_list_sig() Project_List custom_get_project_list(Application_Links* app)
 #define custom_buffer_seek_character_class_sig() String_Match custom_buffer_seek_character_class(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos)
 #define custom_buffer_line_y_difference_sig() f32 custom_buffer_line_y_difference(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b)
@@ -61,13 +61,14 @@
 #define custom_get_active_view_sig() View_ID custom_get_active_view(Application_Links* app, Access_Flag access)
 #define custom_view_exists_sig() b32 custom_view_exists(Application_Links* app, View_ID view_id)
 #define custom_view_get_buffer_sig() Buffer_ID custom_view_get_buffer(Application_Links* app, View_ID view_id, Access_Flag access)
-#define custom_view_get_cursor_pos_sig() i64 custom_view_get_cursor_pos(Application_Links* app, View_ID view_id)
-#define custom_view_get_mark_pos_sig() i64 custom_view_get_mark_pos(Application_Links* app, View_ID view_id)
+#define custom_view_get_cursor_sig() i64 custom_view_get_cursor(Application_Links* app, View_ID view_id)
+#define custom_view_get_mark_sig() i64 custom_view_get_mark(Application_Links* app, View_ID view_id)
+#define custom_view_get_multi_mark_sig() i64 custom_view_get_multi_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index)
 #define custom_view_get_selection_begin_sig() i64 custom_view_get_selection_begin(Application_Links* app, View_ID view_id)
 #define custom_view_get_selection_end_sig() i64 custom_view_get_selection_end(Application_Links* app, View_ID view_id)
-#define custom_view_get_modal_state_sig() Modal_State_ID custom_view_get_modal_state(Application_Links* app, View_ID view_id)
-#define custom_view_get_preferred_x_sig() f32 custom_view_get_preferred_x(Application_Links* app, View_ID view_id)
-#define custom_view_set_preferred_x_sig() b32 custom_view_set_preferred_x(Application_Links* app, View_ID view_id, f32 x)
+#define custom_view_get_modal_state_sig() Modal_State custom_view_get_modal_state(Application_Links* app, View_ID view_id)
+#define custom_view_get_preferred_x_sig() f32 custom_view_get_preferred_x(Application_Links* app, View_ID view_id, u32 multi_cursor_index)
+#define custom_view_set_preferred_x_sig() b32 custom_view_set_preferred_x(Application_Links* app, View_ID view_id, f32 x, u32 multi_cursor_index)
 #define custom_view_get_screen_rect_sig() Rect_f32 custom_view_get_screen_rect(Application_Links* app, View_ID view_id)
 #define custom_view_get_panel_sig() Panel_ID custom_view_get_panel(Application_Links* app, View_ID view_id)
 #define custom_panel_get_view_sig() View_ID custom_panel_get_view(Application_Links* app, Panel_ID panel_id, Access_Flag access)
@@ -95,16 +96,37 @@
 #define custom_view_set_cursor_no_set_mark_rel_index_sig() b32 custom_view_set_cursor_no_set_mark_rel_index(Application_Links* app, View_ID view_id, Buffer_Seek seek)
 #define custom_view_set_buffer_scroll_sig() b32 custom_view_set_buffer_scroll(Application_Links* app, View_ID view_id, Buffer_Scroll scroll, Set_Buffer_Scroll_Rule rule)
 #define custom_view_get_mark_history_sig() Mark_History* custom_view_get_mark_history(Application_Links* app, View_ID view_id)
-#define custom_view_record_mark_sig() void custom_view_record_mark(Application_Links* app, View_ID view_id)
+#define custom_view_record_mark_sig() void custom_view_record_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index)
 #define custom_view_set_mark_sig() b32 custom_view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek)
-#define custom_view_get_is_selecting_sig() b32* custom_view_get_is_selecting(Application_Links* app, View_ID view_id)
-#define custom_view_get_yanked_entire_line_sig() b32* custom_view_get_yanked_entire_line(Application_Links* app, View_ID view_id)
-#define custom_view_get_is_cutting_sig() b32* custom_view_get_is_cutting(Application_Links* app, View_ID view_id)
+#define custom_view_set_mark_record_sig() b32 custom_view_set_mark_record(Application_Links* app, View_ID view, Buffer_Seek seek)
+#define custom_view_set_multi_mark_sig() b32 custom_view_set_multi_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek, u32 multi_cursor_index)
+#define custom_view_get_line_selection_mode_sig() b32 custom_view_get_line_selection_mode(Application_Links* app, View_ID view_id)
+#define custom_view_set_line_selection_mode_sig() void custom_view_set_line_selection_mode(Application_Links* app, View_ID view_id, b32 value)
+#define custom_view_get_multi_cursor_mode_sig() Multi_Cursor_Mode custom_view_get_multi_cursor_mode(Application_Links* app, View_ID view_id)
+#define custom_view_set_multi_cursor_mode_sig() void custom_view_set_multi_cursor_mode(Application_Links* app, View_ID view_id, Multi_Cursor_Mode mode)
+#define custom_view_get_multi_cursor_count_sig() i64 custom_view_get_multi_cursor_count(Application_Links* app, View_ID view_id)
+#define custom_view_get_multi_cursor_sig() i64 custom_view_get_multi_cursor(Application_Links* app, View_ID view_id, u32 multi_cursor_index)
+#define custom_view_get_first_or_current_multi_cursor_sig() i64 custom_view_get_first_or_current_multi_cursor(Application_Links* app, View_ID view_id)
+#define custom_view_get_top_most_multi_cursor_sig() i64 custom_view_get_top_most_multi_cursor(Application_Links* app, View_ID view_id)
+#define custom_view_get_bottom_most_multi_cursor_sig() i64 custom_view_get_bottom_most_multi_cursor(Application_Links* app, View_ID view_id)
+#define custom_view_get_most_recent_multi_cursor_sig() i64 custom_view_get_most_recent_multi_cursor(Application_Links* app, View_ID view_id)
+#define custom_view_set_multi_cursor_sig() void custom_view_set_multi_cursor(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek)
+#define custom_view_set_multi_cursor_preferred_x_sig() void custom_view_set_multi_cursor_preferred_x(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek)
+#define custom_view_add_multi_cursor_sig() void custom_view_add_multi_cursor(Application_Links* app, View_ID view_id, i64 cursor_pos)
+#define custom_view_remove_most_recent_multi_cursor_sig() void custom_view_remove_most_recent_multi_cursor(Application_Links* app, View_ID view_id)
+#define custom_view_clear_multi_cursors_sig() void custom_view_clear_multi_cursors(Application_Links* app, View_ID view_id)
+#define custom_view_correct_multi_cursors_sig() void custom_view_correct_multi_cursors(Application_Links* app, View_ID view_id, u32 at_multi_cursor_index, i64 at_old_bottom_most_pos, i64 adjust_size)
+#define custom_view_get_yanked_entire_line_sig() b32 custom_view_get_yanked_entire_line(Application_Links* app, View_ID view_id)
+#define custom_view_set_yanked_entire_line_sig() void custom_view_set_yanked_entire_line(Application_Links* app, View_ID view_id, b32 value)
+#define custom_view_get_vim_cutting_mode_sig() b32 custom_view_get_vim_cutting_mode(Application_Links* app, View_ID view_id)
+#define custom_view_set_vim_cutting_mode_sig() void custom_view_set_vim_cutting_mode(Application_Links* app, View_ID view_id, b32 value)
 #define custom_view_set_selection_begin_sig() void custom_view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num)
 #define custom_view_set_selection_end_sig() void custom_view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num)
-#define custom_view_set_modal_state_sig() b32 custom_view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State_ID modal_state)
-#define custom_app_get_is_global_modal_state_ptr_sig() b32* custom_app_get_is_global_modal_state_ptr(Application_Links* app)
-#define custom_app_get_global_modal_state_ptr_sig() Modal_State_ID* custom_app_get_global_modal_state_ptr(Application_Links* app)
+#define custom_view_set_modal_state_sig() b32 custom_view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State modal_state)
+#define custom_app_get_global_modal_state_sig() Modal_State custom_app_get_global_modal_state(Application_Links* app)
+#define custom_app_set_global_modal_state_sig() void custom_app_set_global_modal_state(Application_Links* app, Modal_State state)
+#define custom_app_get_is_global_modal_sig() b32 custom_app_get_is_global_modal(Application_Links* app)
+#define custom_app_set_is_global_modal_sig() void custom_app_set_is_global_modal(Application_Links* app, b32 value)
 #define custom_app_set_maps_sig() void custom_app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid)
 #define custom_view_quit_ui_sig() b32 custom_view_quit_ui(Application_Links* app, View_ID view_id)
 #define custom_view_set_buffer_sig() b32 custom_view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags)
@@ -211,10 +233,10 @@ typedef Buffer_ID custom_get_buffer_by_name_type(Application_Links* app, String_
 typedef Buffer_ID custom_get_buffer_by_file_name_type(Application_Links* app, String_Const_u8 file_name, Access_Flag access);
 typedef b32 custom_buffer_read_range_type(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, u8* out);
 typedef b32 custom_buffer_replace_range_type(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, String_Const_u8 string);
-typedef b32 custom_buffer_batch_edit_type(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch);
+typedef b32 custom_buffer_batch_edit_type(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch, u32 multi_cursor_index);
 typedef String_Match custom_buffer_seek_string_type(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos);
 typedef Range_i64 custom_buffer_seek_character_predicate_range_type(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos);
-typedef void custom_load_project_paths_type(Application_Links* app);
+typedef void custom_load_project_list_file_func_type(Application_Links* app);
 typedef Project_List custom_get_project_list_type(Application_Links* app);
 typedef String_Match custom_buffer_seek_character_class_type(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos);
 typedef f32 custom_buffer_line_y_difference_type(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b);
@@ -259,13 +281,14 @@ typedef View_ID custom_get_this_ctx_view_type(Application_Links* app, Access_Fla
 typedef View_ID custom_get_active_view_type(Application_Links* app, Access_Flag access);
 typedef b32 custom_view_exists_type(Application_Links* app, View_ID view_id);
 typedef Buffer_ID custom_view_get_buffer_type(Application_Links* app, View_ID view_id, Access_Flag access);
-typedef i64 custom_view_get_cursor_pos_type(Application_Links* app, View_ID view_id);
-typedef i64 custom_view_get_mark_pos_type(Application_Links* app, View_ID view_id);
+typedef i64 custom_view_get_cursor_type(Application_Links* app, View_ID view_id);
+typedef i64 custom_view_get_mark_type(Application_Links* app, View_ID view_id);
+typedef i64 custom_view_get_multi_mark_type(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
 typedef i64 custom_view_get_selection_begin_type(Application_Links* app, View_ID view_id);
 typedef i64 custom_view_get_selection_end_type(Application_Links* app, View_ID view_id);
-typedef Modal_State_ID custom_view_get_modal_state_type(Application_Links* app, View_ID view_id);
-typedef f32 custom_view_get_preferred_x_type(Application_Links* app, View_ID view_id);
-typedef b32 custom_view_set_preferred_x_type(Application_Links* app, View_ID view_id, f32 x);
+typedef Modal_State custom_view_get_modal_state_type(Application_Links* app, View_ID view_id);
+typedef f32 custom_view_get_preferred_x_type(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
+typedef b32 custom_view_set_preferred_x_type(Application_Links* app, View_ID view_id, f32 x, u32 multi_cursor_index);
 typedef Rect_f32 custom_view_get_screen_rect_type(Application_Links* app, View_ID view_id);
 typedef Panel_ID custom_view_get_panel_type(Application_Links* app, View_ID view_id);
 typedef View_ID custom_panel_get_view_type(Application_Links* app, Panel_ID panel_id, Access_Flag access);
@@ -293,16 +316,37 @@ typedef b32 custom_view_set_cursor_type(Application_Links* app, View_ID view_id,
 typedef b32 custom_view_set_cursor_no_set_mark_rel_index_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 typedef b32 custom_view_set_buffer_scroll_type(Application_Links* app, View_ID view_id, Buffer_Scroll scroll, Set_Buffer_Scroll_Rule rule);
 typedef Mark_History* custom_view_get_mark_history_type(Application_Links* app, View_ID view_id);
-typedef void custom_view_record_mark_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_record_mark_type(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
 typedef b32 custom_view_set_mark_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
-typedef b32* custom_view_get_is_selecting_type(Application_Links* app, View_ID view_id);
-typedef b32* custom_view_get_yanked_entire_line_type(Application_Links* app, View_ID view_id);
-typedef b32* custom_view_get_is_cutting_type(Application_Links* app, View_ID view_id);
+typedef b32 custom_view_set_mark_record_type(Application_Links* app, View_ID view, Buffer_Seek seek);
+typedef b32 custom_view_set_multi_mark_type(Application_Links* app, View_ID view_id, Buffer_Seek seek, u32 multi_cursor_index);
+typedef b32 custom_view_get_line_selection_mode_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_set_line_selection_mode_type(Application_Links* app, View_ID view_id, b32 value);
+typedef Multi_Cursor_Mode custom_view_get_multi_cursor_mode_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_set_multi_cursor_mode_type(Application_Links* app, View_ID view_id, Multi_Cursor_Mode mode);
+typedef i64 custom_view_get_multi_cursor_count_type(Application_Links* app, View_ID view_id);
+typedef i64 custom_view_get_multi_cursor_type(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
+typedef i64 custom_view_get_first_or_current_multi_cursor_type(Application_Links* app, View_ID view_id);
+typedef i64 custom_view_get_top_most_multi_cursor_type(Application_Links* app, View_ID view_id);
+typedef i64 custom_view_get_bottom_most_multi_cursor_type(Application_Links* app, View_ID view_id);
+typedef i64 custom_view_get_most_recent_multi_cursor_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_set_multi_cursor_type(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek);
+typedef void custom_view_set_multi_cursor_preferred_x_type(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek);
+typedef void custom_view_add_multi_cursor_type(Application_Links* app, View_ID view_id, i64 cursor_pos);
+typedef void custom_view_remove_most_recent_multi_cursor_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_clear_multi_cursors_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_correct_multi_cursors_type(Application_Links* app, View_ID view_id, u32 at_multi_cursor_index, i64 at_old_bottom_most_pos, i64 adjust_size);
+typedef b32 custom_view_get_yanked_entire_line_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_set_yanked_entire_line_type(Application_Links* app, View_ID view_id, b32 value);
+typedef b32 custom_view_get_vim_cutting_mode_type(Application_Links* app, View_ID view_id);
+typedef void custom_view_set_vim_cutting_mode_type(Application_Links* app, View_ID view_id, b32 value);
 typedef void custom_view_set_selection_begin_type(Application_Links* app, View_ID view_id, i64 line_num);
 typedef void custom_view_set_selection_end_type(Application_Links* app, View_ID view_id, i64 line_num);
-typedef b32 custom_view_set_modal_state_type(Application_Links* app, View_ID view_id, Modal_State_ID modal_state);
-typedef b32* custom_app_get_is_global_modal_state_ptr_type(Application_Links* app);
-typedef Modal_State_ID* custom_app_get_global_modal_state_ptr_type(Application_Links* app);
+typedef b32 custom_view_set_modal_state_type(Application_Links* app, View_ID view_id, Modal_State modal_state);
+typedef Modal_State custom_app_get_global_modal_state_type(Application_Links* app);
+typedef void custom_app_set_global_modal_state_type(Application_Links* app, Modal_State state);
+typedef b32 custom_app_get_is_global_modal_type(Application_Links* app);
+typedef void custom_app_set_is_global_modal_type(Application_Links* app, b32 value);
 typedef void custom_app_set_maps_type(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 typedef b32 custom_view_quit_ui_type(Application_Links* app, View_ID view_id);
 typedef b32 custom_view_set_buffer_type(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
@@ -413,7 +457,7 @@ custom_buffer_replace_range_type *buffer_replace_range;
 custom_buffer_batch_edit_type *buffer_batch_edit;
 custom_buffer_seek_string_type *buffer_seek_string;
 custom_buffer_seek_character_predicate_range_type *buffer_seek_character_predicate_range;
-custom_load_project_paths_type *load_project_paths;
+custom_load_project_list_file_func_type *load_project_list_file_func;
 custom_get_project_list_type *get_project_list;
 custom_buffer_seek_character_class_type *buffer_seek_character_class;
 custom_buffer_line_y_difference_type *buffer_line_y_difference;
@@ -458,8 +502,9 @@ custom_get_this_ctx_view_type *get_this_ctx_view;
 custom_get_active_view_type *get_active_view;
 custom_view_exists_type *view_exists;
 custom_view_get_buffer_type *view_get_buffer;
-custom_view_get_cursor_pos_type *view_get_cursor_pos;
-custom_view_get_mark_pos_type *view_get_mark_pos;
+custom_view_get_cursor_type *view_get_cursor;
+custom_view_get_mark_type *view_get_mark;
+custom_view_get_multi_mark_type *view_get_multi_mark;
 custom_view_get_selection_begin_type *view_get_selection_begin;
 custom_view_get_selection_end_type *view_get_selection_end;
 custom_view_get_modal_state_type *view_get_modal_state;
@@ -494,14 +539,35 @@ custom_view_set_buffer_scroll_type *view_set_buffer_scroll;
 custom_view_get_mark_history_type *view_get_mark_history;
 custom_view_record_mark_type *view_record_mark;
 custom_view_set_mark_type *view_set_mark;
-custom_view_get_is_selecting_type *view_get_is_selecting;
+custom_view_set_mark_record_type *view_set_mark_record;
+custom_view_set_multi_mark_type *view_set_multi_mark;
+custom_view_get_line_selection_mode_type *view_get_line_selection_mode;
+custom_view_set_line_selection_mode_type *view_set_line_selection_mode;
+custom_view_get_multi_cursor_mode_type *view_get_multi_cursor_mode;
+custom_view_set_multi_cursor_mode_type *view_set_multi_cursor_mode;
+custom_view_get_multi_cursor_count_type *view_get_multi_cursor_count;
+custom_view_get_multi_cursor_type *view_get_multi_cursor;
+custom_view_get_first_or_current_multi_cursor_type *view_get_first_or_current_multi_cursor;
+custom_view_get_top_most_multi_cursor_type *view_get_top_most_multi_cursor;
+custom_view_get_bottom_most_multi_cursor_type *view_get_bottom_most_multi_cursor;
+custom_view_get_most_recent_multi_cursor_type *view_get_most_recent_multi_cursor;
+custom_view_set_multi_cursor_type *view_set_multi_cursor;
+custom_view_set_multi_cursor_preferred_x_type *view_set_multi_cursor_preferred_x;
+custom_view_add_multi_cursor_type *view_add_multi_cursor;
+custom_view_remove_most_recent_multi_cursor_type *view_remove_most_recent_multi_cursor;
+custom_view_clear_multi_cursors_type *view_clear_multi_cursors;
+custom_view_correct_multi_cursors_type *view_correct_multi_cursors;
 custom_view_get_yanked_entire_line_type *view_get_yanked_entire_line;
-custom_view_get_is_cutting_type *view_get_is_cutting;
+custom_view_set_yanked_entire_line_type *view_set_yanked_entire_line;
+custom_view_get_vim_cutting_mode_type *view_get_vim_cutting_mode;
+custom_view_set_vim_cutting_mode_type *view_set_vim_cutting_mode;
 custom_view_set_selection_begin_type *view_set_selection_begin;
 custom_view_set_selection_end_type *view_set_selection_end;
 custom_view_set_modal_state_type *view_set_modal_state;
-custom_app_get_is_global_modal_state_ptr_type *app_get_is_global_modal_state_ptr;
-custom_app_get_global_modal_state_ptr_type *app_get_global_modal_state_ptr;
+custom_app_get_global_modal_state_type *app_get_global_modal_state;
+custom_app_set_global_modal_state_type *app_set_global_modal_state;
+custom_app_get_is_global_modal_type *app_get_is_global_modal;
+custom_app_set_is_global_modal_type *app_set_is_global_modal;
 custom_app_set_maps_type *app_set_maps;
 custom_view_quit_ui_type *view_quit_ui;
 custom_view_set_buffer_type *view_set_buffer;
@@ -610,10 +676,10 @@ internal Buffer_ID get_buffer_by_name(Application_Links* app, String_Const_u8 na
 internal Buffer_ID get_buffer_by_file_name(Application_Links* app, String_Const_u8 file_name, Access_Flag access);
 internal b32 buffer_read_range(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, u8* out);
 internal b32 buffer_replace_range(Application_Links* app, Buffer_ID buffer_id, Range_i64 range, String_Const_u8 string);
-internal b32 buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch);
+internal b32 buffer_batch_edit(Application_Links* app, Buffer_ID buffer_id, Batch_Edit* batch, u32 multi_cursor_index);
 internal String_Match buffer_seek_string(Application_Links* app, Buffer_ID buffer, String_Const_u8 needle, Scan_Direction direction, i64 start_pos);
 internal Range_i64 buffer_seek_character_predicate_range(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, i64 cursor_pos);
-internal void load_project_paths(Application_Links* app);
+internal void load_project_list_file_func(Application_Links* app);
 internal Project_List get_project_list(Application_Links* app);
 internal String_Match buffer_seek_character_class(Application_Links* app, Buffer_ID buffer, Character_Predicate* predicate, Scan_Direction direction, i64 start_pos);
 internal f32 buffer_line_y_difference(Application_Links* app, Buffer_ID buffer_id, f32 width, Face_ID face_id, i64 line_a, i64 line_b);
@@ -658,13 +724,14 @@ internal View_ID get_this_ctx_view(Application_Links* app, Access_Flag access);
 internal View_ID get_active_view(Application_Links* app, Access_Flag access);
 internal b32 view_exists(Application_Links* app, View_ID view_id);
 internal Buffer_ID view_get_buffer(Application_Links* app, View_ID view_id, Access_Flag access);
-internal i64 view_get_cursor_pos(Application_Links* app, View_ID view_id);
-internal i64 view_get_mark_pos(Application_Links* app, View_ID view_id);
+internal i64 view_get_cursor(Application_Links* app, View_ID view_id);
+internal i64 view_get_mark(Application_Links* app, View_ID view_id);
+internal i64 view_get_multi_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
 internal i64 view_get_selection_begin(Application_Links* app, View_ID view_id);
 internal i64 view_get_selection_end(Application_Links* app, View_ID view_id);
-internal Modal_State_ID view_get_modal_state(Application_Links* app, View_ID view_id);
-internal f32 view_get_preferred_x(Application_Links* app, View_ID view_id);
-internal b32 view_set_preferred_x(Application_Links* app, View_ID view_id, f32 x);
+internal Modal_State view_get_modal_state(Application_Links* app, View_ID view_id);
+internal f32 view_get_preferred_x(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
+internal b32 view_set_preferred_x(Application_Links* app, View_ID view_id, f32 x, u32 multi_cursor_index);
 internal Rect_f32 view_get_screen_rect(Application_Links* app, View_ID view_id);
 internal Panel_ID view_get_panel(Application_Links* app, View_ID view_id);
 internal View_ID panel_get_view(Application_Links* app, Panel_ID panel_id, Access_Flag access);
@@ -692,16 +759,37 @@ internal b32 view_set_cursor(Application_Links* app, View_ID view_id, Buffer_See
 internal b32 view_set_cursor_no_set_mark_rel_index(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 internal b32 view_set_buffer_scroll(Application_Links* app, View_ID view_id, Buffer_Scroll scroll, Set_Buffer_Scroll_Rule rule);
 internal Mark_History* view_get_mark_history(Application_Links* app, View_ID view_id);
-internal void view_record_mark(Application_Links* app, View_ID view_id);
+internal void view_record_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
 internal b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek);
-internal b32* view_get_is_selecting(Application_Links* app, View_ID view_id);
-internal b32* view_get_yanked_entire_line(Application_Links* app, View_ID view_id);
-internal b32* view_get_is_cutting(Application_Links* app, View_ID view_id);
+internal b32 view_set_mark_record(Application_Links* app, View_ID view, Buffer_Seek seek);
+internal b32 view_set_multi_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek, u32 multi_cursor_index);
+internal b32 view_get_line_selection_mode(Application_Links* app, View_ID view_id);
+internal void view_set_line_selection_mode(Application_Links* app, View_ID view_id, b32 value);
+internal Multi_Cursor_Mode view_get_multi_cursor_mode(Application_Links* app, View_ID view_id);
+internal void view_set_multi_cursor_mode(Application_Links* app, View_ID view_id, Multi_Cursor_Mode mode);
+internal i64 view_get_multi_cursor_count(Application_Links* app, View_ID view_id);
+internal i64 view_get_multi_cursor(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
+internal i64 view_get_first_or_current_multi_cursor(Application_Links* app, View_ID view_id);
+internal i64 view_get_top_most_multi_cursor(Application_Links* app, View_ID view_id);
+internal i64 view_get_bottom_most_multi_cursor(Application_Links* app, View_ID view_id);
+internal i64 view_get_most_recent_multi_cursor(Application_Links* app, View_ID view_id);
+internal void view_set_multi_cursor(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek);
+internal void view_set_multi_cursor_preferred_x(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek);
+internal void view_add_multi_cursor(Application_Links* app, View_ID view_id, i64 cursor_pos);
+internal void view_remove_most_recent_multi_cursor(Application_Links* app, View_ID view_id);
+internal void view_clear_multi_cursors(Application_Links* app, View_ID view_id);
+internal void view_correct_multi_cursors(Application_Links* app, View_ID view_id, u32 at_multi_cursor_index, i64 at_old_bottom_most_pos, i64 adjust_size);
+internal b32 view_get_yanked_entire_line(Application_Links* app, View_ID view_id);
+internal void view_set_yanked_entire_line(Application_Links* app, View_ID view_id, b32 value);
+internal b32 view_get_vim_cutting_mode(Application_Links* app, View_ID view_id);
+internal void view_set_vim_cutting_mode(Application_Links* app, View_ID view_id, b32 value);
 internal void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
 internal void view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num);
-internal b32 view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State_ID modal_state);
-internal b32* app_get_is_global_modal_state_ptr(Application_Links* app);
-internal Modal_State_ID* app_get_global_modal_state_ptr(Application_Links* app);
+internal b32 view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State modal_state);
+internal Modal_State app_get_global_modal_state(Application_Links* app);
+internal void app_set_global_modal_state(Application_Links* app, Modal_State state);
+internal b32 app_get_is_global_modal(Application_Links* app);
+internal void app_set_is_global_modal(Application_Links* app, b32 value);
 internal void app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid);
 internal b32 view_quit_ui(Application_Links* app, View_ID view_id);
 internal b32 view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
@@ -813,7 +901,7 @@ global custom_buffer_replace_range_type *buffer_replace_range = 0;
 global custom_buffer_batch_edit_type *buffer_batch_edit = 0;
 global custom_buffer_seek_string_type *buffer_seek_string = 0;
 global custom_buffer_seek_character_predicate_range_type *buffer_seek_character_predicate_range = 0;
-global custom_load_project_paths_type *load_project_paths = 0;
+global custom_load_project_list_file_func_type *load_project_list_file_func = 0;
 global custom_get_project_list_type *get_project_list = 0;
 global custom_buffer_seek_character_class_type *buffer_seek_character_class = 0;
 global custom_buffer_line_y_difference_type *buffer_line_y_difference = 0;
@@ -858,8 +946,9 @@ global custom_get_this_ctx_view_type *get_this_ctx_view = 0;
 global custom_get_active_view_type *get_active_view = 0;
 global custom_view_exists_type *view_exists = 0;
 global custom_view_get_buffer_type *view_get_buffer = 0;
-global custom_view_get_cursor_pos_type *view_get_cursor_pos = 0;
-global custom_view_get_mark_pos_type *view_get_mark_pos = 0;
+global custom_view_get_cursor_type *view_get_cursor = 0;
+global custom_view_get_mark_type *view_get_mark = 0;
+global custom_view_get_multi_mark_type *view_get_multi_mark = 0;
 global custom_view_get_selection_begin_type *view_get_selection_begin = 0;
 global custom_view_get_selection_end_type *view_get_selection_end = 0;
 global custom_view_get_modal_state_type *view_get_modal_state = 0;
@@ -894,14 +983,35 @@ global custom_view_set_buffer_scroll_type *view_set_buffer_scroll = 0;
 global custom_view_get_mark_history_type *view_get_mark_history = 0;
 global custom_view_record_mark_type *view_record_mark = 0;
 global custom_view_set_mark_type *view_set_mark = 0;
-global custom_view_get_is_selecting_type *view_get_is_selecting = 0;
+global custom_view_set_mark_record_type *view_set_mark_record = 0;
+global custom_view_set_multi_mark_type *view_set_multi_mark = 0;
+global custom_view_get_line_selection_mode_type *view_get_line_selection_mode = 0;
+global custom_view_set_line_selection_mode_type *view_set_line_selection_mode = 0;
+global custom_view_get_multi_cursor_mode_type *view_get_multi_cursor_mode = 0;
+global custom_view_set_multi_cursor_mode_type *view_set_multi_cursor_mode = 0;
+global custom_view_get_multi_cursor_count_type *view_get_multi_cursor_count = 0;
+global custom_view_get_multi_cursor_type *view_get_multi_cursor = 0;
+global custom_view_get_first_or_current_multi_cursor_type *view_get_first_or_current_multi_cursor = 0;
+global custom_view_get_top_most_multi_cursor_type *view_get_top_most_multi_cursor = 0;
+global custom_view_get_bottom_most_multi_cursor_type *view_get_bottom_most_multi_cursor = 0;
+global custom_view_get_most_recent_multi_cursor_type *view_get_most_recent_multi_cursor = 0;
+global custom_view_set_multi_cursor_type *view_set_multi_cursor = 0;
+global custom_view_set_multi_cursor_preferred_x_type *view_set_multi_cursor_preferred_x = 0;
+global custom_view_add_multi_cursor_type *view_add_multi_cursor = 0;
+global custom_view_remove_most_recent_multi_cursor_type *view_remove_most_recent_multi_cursor = 0;
+global custom_view_clear_multi_cursors_type *view_clear_multi_cursors = 0;
+global custom_view_correct_multi_cursors_type *view_correct_multi_cursors = 0;
 global custom_view_get_yanked_entire_line_type *view_get_yanked_entire_line = 0;
-global custom_view_get_is_cutting_type *view_get_is_cutting = 0;
+global custom_view_set_yanked_entire_line_type *view_set_yanked_entire_line = 0;
+global custom_view_get_vim_cutting_mode_type *view_get_vim_cutting_mode = 0;
+global custom_view_set_vim_cutting_mode_type *view_set_vim_cutting_mode = 0;
 global custom_view_set_selection_begin_type *view_set_selection_begin = 0;
 global custom_view_set_selection_end_type *view_set_selection_end = 0;
 global custom_view_set_modal_state_type *view_set_modal_state = 0;
-global custom_app_get_is_global_modal_state_ptr_type *app_get_is_global_modal_state_ptr = 0;
-global custom_app_get_global_modal_state_ptr_type *app_get_global_modal_state_ptr = 0;
+global custom_app_get_global_modal_state_type *app_get_global_modal_state = 0;
+global custom_app_set_global_modal_state_type *app_set_global_modal_state = 0;
+global custom_app_get_is_global_modal_type *app_get_is_global_modal = 0;
+global custom_app_set_is_global_modal_type *app_set_is_global_modal = 0;
 global custom_app_set_maps_type *app_set_maps = 0;
 global custom_view_quit_ui_type *view_quit_ui = 0;
 global custom_view_set_buffer_type *view_set_buffer = 0;

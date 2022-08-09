@@ -11,18 +11,25 @@ Not Empty :(
 [ ] - Bug: on code_index_note macros, sometimes you won't be able jump to the macro, in lister
       view you can, but using "jump_to_definition_at_cursor" it won't work
 
+[ ] - Possible Bug: Sometimes while in "Command Mode" they keybinds change to "Insert Mode",
+      switching Views back and fourth fixed this issue. But it shouldn't happen in the 
+      first place.
 
 /////////////////////////////
 ---------- TODOS -------------
+
+[ ] - IMPORTANT: Multi cursor mode has most of the move / edit features supported,
+      but there's nothing stopping the user from executing commands
+      that aren't meant to be used _while_ multi cursor is enabled. The fix for this
+      is to flag commands so that 4ed knows to disable multi cursor once the command is executed.
+      maybe flag commands with CUSTOM_COMMAND_SIG_MULTI_CURSOR(); and in 4ed.exe loop through those
+      separately
 
 [ ] - Backspace / Delete alpha numeric boundary shouldn't skip over deleting new lines
 
 [ ] - When in selection Mode, paste or "vim_paste" should copy the selection into the clipboard
       delete the selection and paste what is currently in the clipboard over the selection.
 
-[ ] - Sometimes while in "Command Mode" they keybinds change to "Insert Mode",
-      switching Views back and fourth fixed this issue. But it shouldn't happen in the 
-      first place.
 
 [ ] - When opening a project, 4coder did save the open buffers and where the cursor was
 

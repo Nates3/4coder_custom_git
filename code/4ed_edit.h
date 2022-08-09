@@ -12,9 +12,10 @@
 #if !defined(FRED_EDIT_H)
 #define FRED_EDIT_H
 
-struct Edit_Behaviors{
-    b32 do_not_post_to_history;
-    i64 pos_before_edit;
+struct Edit_Behaviors
+{
+	b32 do_not_post_to_history;
+	i64 pos_before_edit;
 };
 
 #endif

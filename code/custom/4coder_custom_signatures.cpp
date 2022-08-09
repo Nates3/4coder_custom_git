@@ -8,36 +8,118 @@
 // NOTE(nates): All these CUSTOM_COMMAND_SIGS's are just functions
 // you can call them if you want to!
 
+CUSTOM_COMMAND_SIG(cycle_multi_cursor_mode)
+CUSTOM_DOC("set the multi cursor mode")
+{
+	View_ID active_view = get_active_view(app, Access_ReadVisible);
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, active_view);
+	switch(multi_cursor_mode)
+	{
+		case Multi_Cursor_Disabled:
+		{
+			view_set_multi_cursor_mode(app, active_view, Multi_Cursor_Place_Cursors);
+		} break;
+		
+		case Multi_Cursor_Place_Cursors:
+		{
+			view_set_multi_cursor_mode(app, active_view, Multi_Cursor_Enabled);
+		} break;
+		
+		case Multi_Cursor_Enabled:
+		{
+			view_set_multi_cursor_mode(app, active_view, Multi_Cursor_Disabled);
+			view_clear_multi_cursors(app, active_view);
+		} break;
+		
+		InvalidDefaultCase;
+	}
+}
+
+CUSTOM_COMMAND_SIG(load_project_list_file)
+CUSTOM_DOC("loads project list file and parses for full paths to projet.4coder files")
+{
+	load_project_list_file_func(app);
+}
 
 
 CUSTOM_COMMAND_SIG(delete_to_end_of_line)
 CUSTOM_DOC("Delete's from the cursor to the end of the line")
 {
   View_ID view = get_active_view(app, 0);
-  Buffer_ID buffer = view_get_buffer(app, view, 0);
-  i64 cursor_pos = view_get_cursor_pos(app, view);
-  i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
-  i64 line_end = get_line_end_pos(app, buffer, cursor_line);
-  
-  Range_i64 range = {};
-  range.start = cursor_pos;
-  range.end = line_end;
-  buffer_replace_range(app, buffer, range, string_u8_empty);
+  Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
+	
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+	if(multi_cursor_mode == Multi_Cursor_Disabled)
+	{
+		i64 cursor_pos = view_get_cursor(app, view);
+		i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
+		i64 line_end = get_line_end_pos(app, buffer, cursor_line);
+		
+		Range_i64 range = {};
+		range.start = cursor_pos;
+		range.end = line_end;
+		buffer_replace_range(app, buffer, range, string_u8_empty);
+	}
+	else if(multi_cursor_mode == Multi_Cursor_Enabled)
+	{
+		History_Group history_group = history_group_begin(app, buffer);
+		
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			i64 cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
+			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
+			i64 line_end = get_line_end_pos(app, buffer, cursor_line);
+			
+			Range_i64 range = {};
+			range.start = cursor_pos;
+			range.end = line_end;
+			buffer_replace_range(app, buffer, range, string_u8_empty);
+		}
+		history_group_end(history_group);
+	}
 }
 
 CUSTOM_COMMAND_SIG(delete_to_start_of_line)
 CUSTOM_DOC("Delete's from the start of line to the cursor position")
 {
   View_ID view = get_active_view(app, 0);
-  Buffer_ID buffer = view_get_buffer(app, view, 0);
-  i64 cursor_pos = view_get_cursor_pos(app, view);
-  i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
-  i64 line_start = get_line_start_pos(app, buffer, cursor_line);
-  
-  Range_i64 range = {};
-  range.start = line_start;
-  range.end = cursor_pos;
-  buffer_replace_range(app, buffer, range, string_u8_empty);
+  Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
+	
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+	if(multi_cursor_mode == Multi_Cursor_Disabled)
+	{
+		i64 cursor_pos = view_get_cursor(app, view);
+		i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
+		i64 line_end = get_line_start_pos(app, buffer, cursor_line);
+		
+		Range_i64 range = {};
+		range.start = cursor_pos;
+		range.end = line_end;
+		buffer_replace_range(app, buffer, range, string_u8_empty);
+	}
+	else if(multi_cursor_mode == Multi_Cursor_Enabled)
+	{
+		History_Group history_group = history_group_begin(app, buffer);
+		
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			i64 cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
+			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
+			i64 line_end = get_line_start_pos(app, buffer, cursor_line);
+			
+			Range_i64 range = {};
+			range.start = cursor_pos;
+			range.end = line_end;
+			buffer_replace_range(app, buffer, range, string_u8_empty);
+		}
+		history_group_end(history_group);
+	}
 }
 
 CUSTOM_COMMAND_SIG(delete_alpha_numeric_identifier)
@@ -47,7 +129,7 @@ CUSTOM_DOC("deletes alpha numeric identifier at cursor position")
 	
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-	i64 cursor_pos = view_get_cursor_pos(app, view);
+	i64 cursor_pos = view_get_cursor(app, view);
 	Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
 																													cursor_pos);
 	if(range.min != -1)
@@ -63,7 +145,7 @@ CUSTOM_DOC("Copies characters between the seek left result for a alpha numeric a
 	
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-	i64 cursor_pos = view_get_cursor_pos(app, view);
+	i64 cursor_pos = view_get_cursor(app, view);
 	Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
 																													cursor_pos);
 	if(range.min != -1)
@@ -78,12 +160,11 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
 	View_ID view = get_active_view(app, 0);
 	Buffer_ID buffer = view_get_buffer(app, view, 0);
 	
-	Modal_State_ID modal_state;
-	b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
-	Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
-	if (*is_global_modal)
+	Modal_State modal_state;
+	b32 is_global_modal = app_get_is_global_modal(app);
+	if (is_global_modal)
 	{
-		modal_state = *app_modal_state;
+		modal_state = app_get_global_modal_state(app);
 	}
 	else
 	{
@@ -92,16 +173,16 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
 	
 	if (modal_state != Modal_State_Command)
 	{
-		if (*is_global_modal)
+		if (is_global_modal)
 		{
-			*app_modal_state = Modal_State_Command;
+			app_set_global_modal_state(app, Modal_State_Command);
 		}
 		else
 		{
 			view_set_modal_state(app, view, Modal_State_Command);
 		}
 		
-		i64 cursor_pos = view_get_cursor_pos(app, view);
+		i64 cursor_pos = view_get_cursor(app, view);
 		if (cursor_pos > 0)
 		{
 			i64 cursor_line_before = get_line_number_from_pos(app, buffer, cursor_pos);
@@ -125,12 +206,11 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap, but doesn't mov
 	View_ID view = get_active_view(app, 0);
 	Buffer_ID buffer = view_get_buffer(app, view, 0);
 	
-	Modal_State_ID modal_state;
-	b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
-	Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
-	if (*is_global_modal)
+	Modal_State modal_state;
+	b32 is_global_modal = app_get_is_global_modal(app);
+	if (is_global_modal)
 	{
-		modal_state = *app_modal_state;
+		modal_state = app_get_global_modal_state(app);
 	}
 	else
 	{
@@ -139,9 +219,9 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap, but doesn't mov
 	
 	if (modal_state != Modal_State_Command)
 	{
-		if (*is_global_modal)
+		if (is_global_modal)
 		{
-			*app_modal_state = Modal_State_Command;
+			app_set_global_modal_state(app, Modal_State_Command);
 		}
 		else
 		{
@@ -161,13 +241,12 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 	Buffer_ID buffer = view_get_buffer(app, view, 0);
 	
 	// TODO(cakez77): Switch on the view type? Only change in certain views?
-	Modal_State_ID modal_state;
+	Modal_State modal_state;
 	
-	b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
-	Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
-	if (*is_global_modal)
+	b32 is_global_modal = app_get_is_global_modal(app);
+	if (is_global_modal)
 	{
-		modal_state = *app_modal_state;
+		modal_state = app_get_global_modal_state(app);
 	}
 	else
 	{
@@ -176,9 +255,9 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 	
 	if (modal_state != Modal_State_Insert)
 	{
-		if (*is_global_modal)
+		if (is_global_modal)
 		{
-			*app_modal_state = Modal_State_Insert;
+			app_set_global_modal_state(app, Modal_State_Insert);
 		}
 		else
 		{
@@ -198,13 +277,12 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 	Buffer_ID buffer = view_get_buffer(app, view, 0);
 	
 	// TODO(cakez77): Switch on the view type? Only change in certain views?
-	Modal_State_ID modal_state;
+	Modal_State modal_state;
 	
-	b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
-	Modal_State_ID *app_modal_state = app_get_global_modal_state_ptr(app);
-	if (*is_global_modal)
+	b32 is_global_modal = app_get_is_global_modal(app);
+	if (is_global_modal)
 	{
-		modal_state = *app_modal_state;
+		modal_state = app_get_global_modal_state(app);
 	}
 	else
 	{
@@ -213,9 +291,9 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 	
 	if (modal_state != Modal_State_Insert)
 	{
-		if (*is_global_modal)
+		if (is_global_modal)
 		{
-			*app_modal_state = Modal_State_Insert;
+			app_set_global_modal_state(app, Modal_State_Insert);
 		}
 		else
 		{
@@ -227,7 +305,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 		set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
 	}
 	
-	i64 cursor_pos = view_get_cursor_pos(app, view);
+	i64 cursor_pos = view_get_cursor(app, view);
 	i64 cursor_line_before = get_line_number_from_pos(app, buffer, cursor_pos);
 	i64 cursor_line_after = get_line_number_from_pos(app, buffer, cursor_pos + 1);
 	
@@ -242,7 +320,7 @@ CUSTOM_DOC("Jump from Brace to brace")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-	i64 cursor_pos = view_get_cursor_pos(app, view);
+	i64 cursor_pos = view_get_cursor(app, view);
 	u8 char_under_cursor = buffer_get_char(app, buffer, cursor_pos);
 	u8 prev_char_under_cursor = buffer_get_char(app, buffer, cursor_pos - 1);
 	i64 bracePos;
@@ -281,14 +359,10 @@ CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
 	View_ID view = get_active_view(app, Access_ReadVisible);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
 	
-	b32 *is_selecting = view_get_is_selecting(app, view);
-	if (is_selecting && *is_selecting)
+	b32 line_selection_mode = view_get_line_selection_mode(app, view);
+	if (line_selection_mode)
 	{
-		b32 *yanked_entire_line = view_get_yanked_entire_line(app, view);
-		if (yanked_entire_line)
-		{
-			*yanked_entire_line = true;
-		}
+		view_set_yanked_entire_line(app, view, true);
 		
 		i64 min_line = view_get_selection_begin(app, view);
 		i64 max_line = view_get_selection_end(app, view);
@@ -303,17 +377,14 @@ CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
 		Range_i64 line_range = {min_line, max_line};
 		Range_i64 range = get_pos_range_from_line_range(app, buffer, line_range);
 		clipboard_post_buffer_range(app, 0, buffer, range);
-		*is_selecting = false;
+		
+		view_set_line_selection_mode(app, view, false);
 	}
 	else
 	{
-		b32 *yanked_entire_line = view_get_yanked_entire_line(app, view);
-		if (yanked_entire_line)
-		{
-			*yanked_entire_line = true;
-		}
+		view_set_yanked_entire_line(app, view, true);
 		
-		i64 cursor_pos = view_get_cursor_pos(app, view);
+		i64 cursor_pos = view_get_cursor(app, view);
 		i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
 		Range_i64 line_range = {cursor_line, cursor_line};
 		Range_i64 range = get_pos_range_from_line_range(app, buffer, line_range);
@@ -332,10 +403,10 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
 	Range_i64 range = {};
 	
-	b32 *is_selecting = view_get_is_selecting(app, view);
-	b32 *is_cutting = view_get_is_cutting(app, view);
+	b32 line_selection_mode = view_get_line_selection_mode(app, view);
+	b32 vim_cutting_mode = view_get_vim_cutting_mode(app, view);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-	if (is_selecting && *is_selecting)
+	if (line_selection_mode)
 	{
 		i64 min_line = view_get_selection_begin(app, view);
 		i64 max_line = view_get_selection_end(app, view);
@@ -350,7 +421,7 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
 		Range_i64 line_range = {min_line, max_line};
 		range = get_pos_range_from_line_range(app, buffer, line_range);
 		
-		*is_selecting = false;
+		view_set_line_selection_mode(app, view, false);
 		
 		if (clipboard_post_buffer_range(app, 0, buffer, range))
 		{
@@ -360,9 +431,9 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
 			history_group_end(group);
 		}
 	}
-	else if (is_cutting && *is_cutting)
+	else if (vim_cutting_mode)
 	{
-		i64 cursor_pos = view_get_cursor_pos(app, view);
+		i64 cursor_pos = view_get_cursor(app, view);
 		i64 line_number_cursor = get_line_number_from_pos(app, buffer, cursor_pos);
 		
 		Range_i64 line_range = {line_number_cursor, line_number_cursor};
@@ -378,7 +449,7 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
 			edit_min = true;
 		}
 		
-		*is_cutting = false;
+		view_set_vim_cutting_mode(app, view, false);
 		if (clipboard_post_buffer_range(app, 0, buffer, range))
 		{
 			History_Group group = history_group_begin(app, buffer);
@@ -393,10 +464,7 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
 	}
 	else
 	{
-		if (is_cutting)
-		{
-			*is_cutting = true;
-		}
+		view_set_vim_cutting_mode(app, view, true);
 	}
 }
 
@@ -408,14 +476,14 @@ CUSTOM_DOC("If you yank a line, this will add a new line under the line you're o
 	
 	History_Group group = history_group_begin(app, buffer);
 	
-	b32 *yanked_entire_line = view_get_yanked_entire_line(app, view);
-	if (yanked_entire_line && *yanked_entire_line)
+	b32 yanked_entire_line = view_get_yanked_entire_line(app, view);
+	if (yanked_entire_line)
 	{
 		Scratch_Block scratch(app);
 		String_Const_u8 string = push_clipboard_index(scratch, 0, 0);
 		
 		seek_end_of_textual_line(app);
-		write_text(app, SCu8("\n"));
+		write_text_multi_cursor(app, SCu8("\n"));
 		
 		if(!(string.str[0] == '\n'))
 		{
@@ -436,14 +504,14 @@ CUSTOM_DOC("Selects a line region that can be used inside other commantds like c
 	View_ID view = get_active_view(app, Access_ReadVisible);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
 	
-	b32 *is_selecting = view_get_is_selecting(app, view);
-	b32 *is_cutting = view_get_is_cutting(app, view);
-	if (is_selecting && is_cutting && !(*is_cutting))
+	b32 line_selection_mode = view_get_line_selection_mode(app, view);
+	b32 vim_cutting_mode = view_get_vim_cutting_mode(app, view);
+	if(!vim_cutting_mode)
 	{
-		if (!(*is_selecting))
+		if(line_selection_mode)
 		{
-			*is_selecting = true;
-			i64 cursor_pos = view_get_cursor_pos(app, view);
+			view_set_line_selection_mode(app, view, false);
+			i64 cursor_pos = view_get_cursor(app, view);
 			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
 			
 			view_set_selection_begin(app, view, cursor_line);
@@ -451,7 +519,11 @@ CUSTOM_DOC("Selects a line region that can be used inside other commantds like c
 		}
 		else
 		{
-			*is_selecting = false;
+			view_set_line_selection_mode(app, view, true);
+			i64 cursor_pos = view_get_cursor(app, view);
+			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
+			view_set_selection_begin(app, view, cursor_line);
+			view_set_selection_end(app, view, cursor_line);
 		}
 	}
 }
@@ -468,7 +540,7 @@ CUSTOM_DOC("add new line and switch to insert mode")
 {
 	seek_end_of_textual_line(app);
 	change_to_insert_mode_front(app);
-	write_text(app, SCu8("\n"));
+	write_text_multi_cursor(app, SCu8("\n"));
 }
 
 CUSTOM_COMMAND_SIG(move_cursor_to_beginning_and_switch_to_insert)
@@ -482,18 +554,10 @@ CUSTOM_COMMAND_SIG(cancel_command)
 CUSTOM_DOC("cancel context modes")
 {
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
-	b32 *is_selecting = view_get_is_selecting(app, view);
-	b32 *is_cutting = view_get_is_cutting(app, view);
-	
-	if (is_selecting && *is_selecting)
-	{
-		*is_selecting = false;
-	}
-	
-	if (is_cutting && *is_cutting)
-	{
-		*is_cutting = false;
-	}
+	view_set_vim_cutting_mode(app, view, false);
+	view_set_line_selection_mode(app, view, false);
+	view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
+	view_clear_multi_cursors(app, view);
 }
 
 CUSTOM_COMMAND_SIG(insert_return)
@@ -895,18 +959,17 @@ CUSTOM_DOC("custom startup")
 	
 	// NOTE(nates): Load Project Paths
 	{
-		load_project_paths(app);
+		load_project_list_file(app);
 	}
 	
 	// NOTE(nates): View stuff
 	{
 		app_set_maps(app, command_mapid, insert_mapid);
-		b32 *is_global_modal = app_get_is_global_modal_state_ptr(app);
-		*is_global_modal = false;
-		if(*is_global_modal)
+		app_set_is_global_modal(app, false);
+		b32 is_global_modal = app_get_is_global_modal(app);
+		if(is_global_modal)
 		{
-			Modal_State_ID *global_state = app_get_global_modal_state_ptr(app);
-			*global_state = Modal_State_Command;
+			app_set_global_modal_state(app, Modal_State_Command);
 		}
 		else
 		{

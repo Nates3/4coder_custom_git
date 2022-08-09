@@ -89,6 +89,7 @@ API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("buffer
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "Buffer_ID", "buffer_id");
 api_param(arena, call, "Batch_Edit*", "batch");
+api_param(arena, call, "u32", "multi_cursor_index");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("buffer_seek_string"), string_u8_litexpr("String_Match"), string_u8_litexpr(""));
@@ -106,7 +107,7 @@ api_param(arena, call, "Character_Predicate*", "predicate");
 api_param(arena, call, "i64", "cursor_pos");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("load_project_paths"), string_u8_litexpr("void"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("load_project_list_file_func"), string_u8_litexpr("void"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 }
 {
@@ -390,14 +391,20 @@ api_param(arena, call, "View_ID", "view_id");
 api_param(arena, call, "Access_Flag", "access");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_cursor_pos"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_cursor"), string_u8_litexpr("i64"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_mark_pos"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_mark"), string_u8_litexpr("i64"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_multi_mark"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "u32", "multi_cursor_index");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_selection_begin"), string_u8_litexpr("i64"), string_u8_litexpr(""));
@@ -410,7 +417,7 @@ api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_modal_state"), string_u8_litexpr("Modal_State_ID"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_modal_state"), string_u8_litexpr("Modal_State"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
@@ -418,12 +425,14 @@ api_param(arena, call, "View_ID", "view_id");
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_preferred_x"), string_u8_litexpr("f32"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "u32", "multi_cursor_index");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_preferred_x"), string_u8_litexpr("b32"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 api_param(arena, call, "f32", "x");
+api_param(arena, call, "u32", "multi_cursor_index");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_screen_rect"), string_u8_litexpr("Rect_f32"), string_u8_litexpr(""));
@@ -583,6 +592,7 @@ api_param(arena, call, "View_ID", "view_id");
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_record_mark"), string_u8_litexpr("void"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "u32", "multi_cursor_index");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_mark"), string_u8_litexpr("b32"), string_u8_litexpr(""));
@@ -591,19 +601,130 @@ api_param(arena, call, "View_ID", "view_id");
 api_param(arena, call, "Buffer_Seek", "seek");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_is_selecting"), string_u8_litexpr("b32*"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_mark_record"), string_u8_litexpr("b32"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view");
+api_param(arena, call, "Buffer_Seek", "seek");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_multi_mark"), string_u8_litexpr("b32"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "Buffer_Seek", "seek");
+api_param(arena, call, "u32", "multi_cursor_index");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_line_selection_mode"), string_u8_litexpr("b32"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_yanked_entire_line"), string_u8_litexpr("b32*"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_line_selection_mode"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "b32", "value");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_multi_cursor_mode"), string_u8_litexpr("Multi_Cursor_Mode"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_is_cutting"), string_u8_litexpr("b32*"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_multi_cursor_mode"), string_u8_litexpr("void"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "Multi_Cursor_Mode", "mode");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_multi_cursor_count"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_multi_cursor"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "u32", "multi_cursor_index");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_first_or_current_multi_cursor"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_top_most_multi_cursor"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_bottom_most_multi_cursor"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_most_recent_multi_cursor"), string_u8_litexpr("i64"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_multi_cursor"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "u32", "multi_cursor_index");
+api_param(arena, call, "Buffer_Seek", "seek");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_multi_cursor_preferred_x"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "u32", "multi_cursor_index");
+api_param(arena, call, "Buffer_Seek", "seek");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_add_multi_cursor"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "i64", "cursor_pos");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_remove_most_recent_multi_cursor"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_clear_multi_cursors"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_correct_multi_cursors"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "u32", "at_multi_cursor_index");
+api_param(arena, call, "i64", "at_old_bottom_most_pos");
+api_param(arena, call, "i64", "adjust_size");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_yanked_entire_line"), string_u8_litexpr("b32"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_yanked_entire_line"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "b32", "value");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_vim_cutting_mode"), string_u8_litexpr("b32"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_vim_cutting_mode"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "View_ID", "view_id");
+api_param(arena, call, "b32", "value");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_selection_begin"), string_u8_litexpr("void"), string_u8_litexpr(""));
@@ -621,15 +742,25 @@ api_param(arena, call, "i64", "line_num");
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_set_modal_state"), string_u8_litexpr("b32"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
-api_param(arena, call, "Modal_State_ID", "modal_state");
+api_param(arena, call, "Modal_State", "modal_state");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_is_global_modal_state_ptr"), string_u8_litexpr("b32*"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_global_modal_state"), string_u8_litexpr("Modal_State"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_global_modal_state_ptr"), string_u8_litexpr("Modal_State_ID*"), string_u8_litexpr(""));
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_set_global_modal_state"), string_u8_litexpr("void"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "Modal_State", "state");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_is_global_modal"), string_u8_litexpr("b32"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+}
+{
+API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_set_is_global_modal"), string_u8_litexpr("void"), string_u8_litexpr(""));
+api_param(arena, call, "Application_Links*", "app");
+api_param(arena, call, "b32", "value");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_set_maps"), string_u8_litexpr("void"), string_u8_litexpr(""));

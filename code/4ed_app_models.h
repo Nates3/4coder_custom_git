@@ -55,8 +55,8 @@ struct Models
   Arena project_list_arena;
   Project_List project_list;
   
-  b32 is_global_modal_state;
-  Modal_State_ID global_modal_state;
+  b32 is_global_modal;
+  Modal_State global_modal_state;
   i64 command_mapid;
   i64 insert_mapid;
   

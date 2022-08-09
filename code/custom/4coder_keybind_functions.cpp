@@ -154,7 +154,7 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(interactive_open_or_new, KeyCode_R, KeyCode_Control);
   Bind(interactive_switch_buffer, KeyCode_G, KeyCode_Control);
   Bind(change_active_panel, KeyCode_J, KeyCode_Alt);
-  Bind(build_in_build_panel, KeyCode_M, KeyCode_Alt);
+  Bind(build_in_build_panel, KeyCode_Z, KeyCode_Alt);
   Bind(toggle_fullscreen, KeyCode_F11);
   Bind(exit_4coder, KeyCode_F4, KeyCode_Alt);
   Bind(load_project, KeyCode_L, KeyCode_Control, KeyCode_Shift);
@@ -219,6 +219,8 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(jump_to_last_point, KeyCode_I);
   Bind(query_replace, KeyCode_O);
   Bind(replace_in_range, KeyCode_O, KeyCode_Control);
+	
+	Bind(cycle_multi_cursor_mode, KeyCode_M);
   
   Bind(delete_range, KeyCode_E);
   Bind(delete_alpha_numeric_identifier, KeyCode_Period);
@@ -252,8 +254,8 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
   Bind(move_right_alpha_numeric_or_camel_boundary, KeyCode_N, KeyCode_Alt);
   Bind(move_left_alpha_numeric_or_camel_boundary, KeyCode_H, KeyCode_Alt);
   
-  Bind(seek_end_of_textual_line, KeyCode_N, KeyCode_Shift);
-  Bind(seek_beginning_of_textual_line, KeyCode_H, KeyCode_Shift);
+  Bind(seek_beginning_of_line, KeyCode_H, KeyCode_Shift);
+  Bind(seek_end_of_line, KeyCode_N, KeyCode_Shift);
   
   Bind(jump_from_brace_to_brace, KeyCode_Y);
 }

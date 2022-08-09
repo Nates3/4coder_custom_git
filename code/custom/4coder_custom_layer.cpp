@@ -39,11 +39,10 @@ set_margin_color(u32 color_u32)
 internal void
 modal_state_set_margin_color(Application_Links *app, View_ID view)
 {
-  Modal_State_ID modal_state;
-  
-  if(*app_get_is_global_modal_state_ptr(app))
+  Modal_State modal_state;
+  if(app_get_is_global_modal(app))
   {
-    modal_state = *app_get_global_modal_state_ptr(app);
+    modal_state = app_get_global_modal_state(app);
   }
   else
   {
@@ -64,13 +63,6 @@ modal_state_set_margin_color(Application_Links *app, View_ID view)
   }
 }
 
-internal b32 
-view_set_mark_record(Application_Links *app, View_ID view, Buffer_Seek seek)
-{
-  b32 result = view_set_mark(app, view, seek);
-  view_record_mark(app, view);
-  return(result);
-}
 
 #include "4coder_keybind_functions.cpp"
 #include "4coder_custom_signatures.cpp"
@@ -99,15 +91,15 @@ void custom_layer_init(Application_Links *app)
   SelectMap(global_mapid);
   BindCore(custom_startup, CoreCode_Startup);
   BindCore(default_try_exit, CoreCode_TryExit);
-  cakez_bind_shared_keys(m, map);
+  nates_bind_shared_keys(m, map);
   
   SelectMap(command_mapid);
   ParentMap(global_mapid);
-  cakez_bind_command_keys(m, map);
+  nates_bind_command_keys(m, map);
   
   SelectMap(insert_mapid);
   ParentMap(global_mapid);
-  cakez_bind_text_input(m, map);
+  nates_bind_text_input(m, map);
   
   // NOTE(nates): You have to bind the "global_map, file_map, and code_map for some reason"
   SelectMap(file_mapid);

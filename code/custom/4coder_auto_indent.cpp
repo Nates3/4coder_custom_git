@@ -57,7 +57,7 @@ internal void
 set_line_indents(Application_Links *app, Arena *arena, Buffer_ID buffer, Range_i64 lines, i64 *indentations, Indent_Flag flags, i32 tab_width){
 	Batch_Edit *batch = make_batch_from_indentations(app, arena, buffer, lines, indentations, flags, tab_width);
 	if (batch != 0){
-		buffer_batch_edit(app, buffer, batch);
+		buffer_batch_edit(app, buffer, batch, 0);
 	}
 }
 
@@ -431,7 +431,7 @@ CUSTOM_DOC("Auto-indents the line on which the cursor sits.")
 {
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-	i64 pos = view_get_cursor_pos(app, view);
+	i64 pos = view_get_cursor(app, view);
 	auto_indent_buffer(app, buffer, Ii64(pos));
 	move_past_lead_whitespace(app, view, buffer);
 }
@@ -476,19 +476,20 @@ CUSTOM_DOC("Inserts text and auto-indents the line on which the cursor sits if a
 				pos = get_view_range(app, view);
 			}
 			else{
-				pos.min = pos.max = view_get_cursor_pos(app, view);
+				pos.min = pos.max = view_get_cursor(app, view);
 			}
 			
 			write_text_input(app);
 			
-			i64 end_pos = view_get_cursor_pos(app, view);
+			i64 end_pos = view_get_cursor(app, view);
 			pos.min = Min(pos.min, end_pos);
 			pos.max = Max(pos.max, end_pos);
 			
 			auto_indent_buffer(app, buffer, pos, 0);
 			move_past_lead_whitespace(app, view, buffer);
 		}
-		else{
+		else
+		{
 			write_text_input(app);
 		}
 	}

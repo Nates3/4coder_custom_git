@@ -456,7 +456,7 @@ CUSTOM_DOC("Iteratively tries completing the word to the left of the cursor with
     if (first_completion || !initialized){
       ProfileBlock(app, "word complete state init");
       initialized = false;
-      i64 pos = view_get_cursor_pos(app, view);
+      i64 pos = view_get_cursor(app, view);
       Range_i64 needle_range = get_word_complete_needle_range(app, buffer, pos);
       if (range_size(needle_range) > 0){
         initialized = true;
@@ -465,7 +465,8 @@ CUSTOM_DOC("Iteratively tries completing the word to the left of the cursor with
       }
     }
     
-    if (initialized){
+    if (initialized)
+		{
       ProfileBlock(app, "word complete apply");
       
       word_complete_iter_next(it);
@@ -538,7 +539,7 @@ word_complete_menu_render(Application_Links *app, Frame_Info frame_info, View_ID
     
     Buffer_Scroll scroll = view_get_buffer_scroll(app, view);
     Buffer_Point buffer_point = scroll.position;
-    i64 pos = view_get_cursor_pos(app, view);
+    i64 pos = view_get_cursor(app, view);
     Vec2_f32 cursor_p = view_relative_xy_of_pos(app, view, buffer_point.line_number, pos);
     cursor_p -= buffer_point.pixel_shift;
     cursor_p += region.p0;
@@ -563,7 +564,7 @@ get_word_complete_from_user_drop_down(Application_Links *app)
   
   Word_Complete_Iterator *it = word_complete_get_shared_iter(app);
   
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
   Range_i64 range = get_word_complete_needle_range(app, buffer, pos);
   if (range_size(range) != 0){
@@ -594,7 +595,7 @@ get_word_complete_from_user_drop_down(Application_Links *app)
         {
           menu_f1_index = 0;
           write_text_input(app);
-          pos = view_get_cursor_pos(app, view);
+          pos = view_get_cursor(app, view);
           range = get_word_complete_needle_range(app, buffer, pos);
           if (range_size(range) == 0)
           {
@@ -686,7 +687,7 @@ get_word_complete_from_user_drop_down(Application_Links *app)
             {
               menu_f1_index = 0;
               backspace_char(app);
-              pos = view_get_cursor_pos(app, view);
+              pos = view_get_cursor(app, view);
               range = get_word_complete_needle_range(app, buffer, pos);
               if (range_size(range) == 0)
               {
