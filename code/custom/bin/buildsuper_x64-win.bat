@@ -28,7 +28,7 @@ if "%target%" == "" set target=%custom_root%\4coder_default_bindings.cpp
 
 set debug=/Zi
 set release=/O2 /Zi
-set mode=%debug%
+set mode=%release%
 if "%2" == "release" (set mode=%release%)
 
 set binname=%3
