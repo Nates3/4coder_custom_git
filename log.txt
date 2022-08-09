@@ -1,6 +1,10 @@
 /////////////////////////////
 date-> 8/8/22
 
+(nates): Made it so when multi_cursor_mode != Multi_Cursor_Disabled, the cursor is always
+         a different color so you don't get confused whether or not you're in multi cursor mode
+(nates): fixed crashing bug because of not checking View * when getting multi cursors
+(nates): fixed bug with not handling memory when reloading file paths
 (nates): odin language files and goto errors are supported
 (nates): load_project_list_file command signature added
 (nates): made lots of changes to commands to support multi cursor

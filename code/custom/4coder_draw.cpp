@@ -1060,18 +1060,11 @@ draw_original_4coder_style_multi_cursor_mark_highlight(Application_Links *app, V
     {
 			Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view_id);
 			
-			Managed_ID cursor_id = defcolor_multi_cursor;
+			Managed_ID cursor_id = defcolor_multi_cursors;
 			Managed_ID mark_id = defcolor_multi_mark;
 			if(multi_cursor_index == 0)
 			{
-				if(multi_cursor_mode == Multi_Cursor_Place_Cursors)
-				{
-					cursor_id = defcolor_cursor_place_multi_cursors;
-				}
-				else
-				{
-					cursor_id = defcolor_cursor;
-				}
+				cursor_id = defcolor_main_multi_cursor;
 				mark_id = defcolor_mark;
 			}
 			
@@ -1096,7 +1089,7 @@ draw_original_4coder_style_multi_cursor_mark_highlight(Application_Links *app, V
     }
     else
     {
-			Managed_ID cursor_id = defcolor_multi_cursor;
+			Managed_ID cursor_id = defcolor_multi_cursors;
 			Managed_ID mark_id = defcolor_multi_mark;
 			if(multi_cursor_index == 0)
 			{

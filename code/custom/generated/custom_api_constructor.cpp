@@ -697,14 +697,6 @@ api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_correct_multi_cursors"), string_u8_litexpr("void"), string_u8_litexpr(""));
-api_param(arena, call, "Application_Links*", "app");
-api_param(arena, call, "View_ID", "view_id");
-api_param(arena, call, "u32", "at_multi_cursor_index");
-api_param(arena, call, "i64", "at_old_bottom_most_pos");
-api_param(arena, call, "i64", "adjust_size");
-}
-{
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_get_yanked_entire_line"), string_u8_litexpr("b32"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
 api_param(arena, call, "View_ID", "view_id");

@@ -11,24 +11,32 @@
 CUSTOM_COMMAND_SIG(cycle_multi_cursor_mode)
 CUSTOM_DOC("set the multi cursor mode")
 {
-	View_ID active_view = get_active_view(app, Access_ReadVisible);
-	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, active_view);
+	View_ID view = get_active_view(app, Access_ReadVisible);
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
 	switch(multi_cursor_mode)
 	{
 		case Multi_Cursor_Disabled:
 		{
-			view_set_multi_cursor_mode(app, active_view, Multi_Cursor_Place_Cursors);
+			view_set_multi_cursor_mode(app, view, Multi_Cursor_Place_Cursors);
 		} break;
 		
 		case Multi_Cursor_Place_Cursors:
 		{
-			view_set_multi_cursor_mode(app, active_view, Multi_Cursor_Enabled);
+			i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+			if(multi_cursor_count > 1)
+			{
+				view_set_multi_cursor_mode(app, view, Multi_Cursor_Enabled);
+			}
+			else
+			{
+				view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
+			}
 		} break;
 		
 		case Multi_Cursor_Enabled:
 		{
-			view_set_multi_cursor_mode(app, active_view, Multi_Cursor_Disabled);
-			view_clear_multi_cursors(app, active_view);
+			view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
+			view_clear_multi_cursors(app, view);
 		} break;
 		
 		InvalidDefaultCase;

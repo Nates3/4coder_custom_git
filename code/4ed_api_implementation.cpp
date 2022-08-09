@@ -429,6 +429,15 @@ load_project_list_file_func(Application_Links *app)
   u64 string_cap = 512;
   
   Models *models = (Models *)app->cmd_context;
+	models->project_list.first = models->project_list.last = 0;
+	models->project_list.count = 0;
+	if(models->project_list_string_node_memory.temp_memory_arena.arena)
+	{
+		end_temp(models->project_list_string_node_memory);
+	}
+	models->project_list_string_node_memory = begin_temp(&models->project_list_arena);
+	
+	
   Scratch_Block scratch(app);
   Arena *scratch_arena = scratch.arena;
   u8 *start = push_array(scratch_arena, u8, string_cap);
@@ -466,7 +475,7 @@ load_project_list_file_func(Application_Links *app)
       u8 value = contents.str[str_index];
       if(value == '\n' || index == contents.size)
       {
-        u64 line_size = (u64)(index - line_start);
+        u64 line_size = (index == contents.size) ? (u64)(index - line_start) : (u64)(index - line_start - 1);
         if(line_size)
         {
           String_Const_u8 string = {contents.str + line_start, line_size};
@@ -2217,7 +2226,11 @@ view_get_most_recent_multi_cursor(Application_Links *app, View_ID view_id)
 {
 	Models *models = (Models *)app->cmd_context;
 	View *view = imp_get_view(models, view_id);
-	i64 result = view_get_multi_cursor(app, view_id, (u32)(view->cursor_count - 1));
+	i64 result = 0;
+	if(api_check_view(view))
+	{
+		result = view_get_multi_cursor(app, view_id, (u32)(view->cursor_count - 1));
+	}
 	return(result);
 }
 
@@ -2296,31 +2309,11 @@ view_clear_multi_cursors(Application_Links *app, View_ID view_id)
 {
 	Models *models = (Models *)app->cmd_context;
 	View *view = imp_get_view(models, view_id);
-	view->cursor_count = 1;
-}
-
-api(custom) function void
-view_correct_multi_cursors(Application_Links *app, View_ID view_id, 
-													 u32 at_multi_cursor_index, i64 at_old_bottom_most_pos, 
-													 i64 adjust_size)
-{
-	Models *models = (Models *)app->cmd_context;
-	View *view = imp_get_view(models, view_id);
-	
-	i64 multi_cursor_count = view->cursor_count;
-	for(u32 multi_cursor_index = 0;
-			multi_cursor_index < multi_cursor_count;
-			++multi_cursor_index)
+	if(api_check_view(view))
 	{
-		i64 current_pos = view->edit_pos_.cursors[multi_cursor_index];
-		if(at_multi_cursor_index != multi_cursor_index &&
-			 current_pos > at_old_bottom_most_pos)
-		{
-			view->edit_pos_.cursors[multi_cursor_index] += adjust_size;
-		}
+		view->cursor_count = 1;
 	}
 }
-
 
 api(custom) function b32
 view_get_yanked_entire_line(Application_Links *app, View_ID view_id)

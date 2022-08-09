@@ -16,7 +16,7 @@ global b32 global_compilation_view_expanded = false;
 #define INSERT_MODE_MARGIN_COLOR 0xff00ff00
 #define COMMAND_MODE_MARGIN_COLOR 0xffff0000
 
-//#define CAKEZ 1
+#define CAKEZ 1
 #if defined(CAKEZ)
 #define LISTER_MOVE_UP_KEY KeyCode_K
 #define LISTER_MOVE_DOWN_KEY KeyCode_J

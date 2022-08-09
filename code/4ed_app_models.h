@@ -53,6 +53,7 @@ struct Models
 {
   String_Const_u8 exe_directory;
   Arena project_list_arena;
+	Temp_Memory project_list_string_node_memory;
   Project_List project_list;
   
   b32 is_global_modal;

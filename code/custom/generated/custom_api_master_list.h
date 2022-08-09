@@ -115,7 +115,6 @@ api(custom) function void view_set_multi_cursor_preferred_x(Application_Links* a
 api(custom) function void view_add_multi_cursor(Application_Links* app, View_ID view_id, i64 cursor_pos);
 api(custom) function void view_remove_most_recent_multi_cursor(Application_Links* app, View_ID view_id);
 api(custom) function void view_clear_multi_cursors(Application_Links* app, View_ID view_id);
-api(custom) function void view_correct_multi_cursors(Application_Links* app, View_ID view_id, u32 at_multi_cursor_index, i64 at_old_bottom_most_pos, i64 adjust_size);
 api(custom) function b32 view_get_yanked_entire_line(Application_Links* app, View_ID view_id);
 api(custom) function void view_set_yanked_entire_line(Application_Links* app, View_ID view_id, b32 value);
 api(custom) function b32 view_get_vim_cutting_mode(Application_Links* app, View_ID view_id);
