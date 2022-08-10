@@ -446,7 +446,7 @@ CUSTOM_DOC("Auto-indents the range between the cursor and the mark.")
 	move_past_lead_whitespace(app, view, buffer);
 }
 
-CUSTOM_COMMAND_SIG(write_text_and_auto_indent)
+CUSTOM_MULTICURSOR_COMMAND_SIG(write_text_and_auto_indent)
 CUSTOM_DOC("Inserts text and auto-indents the line on which the cursor sits if any of the text contains 'layout punctuation' such as ;:{}()[]# and new lines.")
 {
 	ProfileScope(app, "write and auto indent");

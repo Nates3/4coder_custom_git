@@ -133,12 +133,12 @@ get_start_of_line_at_cursor(Application_Links *app, View_ID view, Buffer_ID buff
 }
 
 function i64
-get_start_of_line_at_multi_cursor(Application_Links *app, View_ID view, Buffer_ID buffer,
-																	u32 multi_cursor_index)
+get_start_of_line_at_multi_cursor_for_comments(Application_Links *app, View_ID view, Buffer_ID buffer,
+																							 u32 multi_cursor_index)
 {
 	i64 pos = view_get_multi_cursor(app, view, multi_cursor_index);
-	i64 line = get_line_number_from_pos(app, buffer, pos);
-	return(get_pos_past_lead_whitespace_from_line_number(app, buffer, line));
+  i64 line = get_line_number_from_pos(app, buffer, pos);
+  return(get_pos_past_lead_whitespace_from_line_number(app, buffer, line));
 }
 
 function b32
@@ -178,7 +178,7 @@ CUSTOM_DOC("Insert '//' at the beginning of the line after leading whitespace.")
 				multi_cursor_index < multi_cursor_count;
 				++multi_cursor_index)
 		{
-			i64 start_of_line = get_start_of_line_at_multi_cursor(app, view, buffer, multi_cursor_index);
+			i64 start_of_line = get_start_of_line_at_multi_cursor_for_comments(app, view, buffer, multi_cursor_index);
 			b32 alread_has_comment = c_line_comment_starts_at_position(app, buffer, start_of_line);
 			if (!alread_has_comment)
 			{
@@ -212,7 +212,7 @@ CUSTOM_DOC("If present, delete '//' at the beginning of the line after leading w
 				multi_cursor_index < multi_cursor_count;
 				++multi_cursor_index)
 		{
-			i64 pos = get_start_of_line_at_multi_cursor(app, view, buffer, multi_cursor_index);
+			i64 pos = get_start_of_line_at_multi_cursor_for_comments(app, view, buffer, multi_cursor_index);
 			b32 alread_has_comment = c_line_comment_starts_at_position(app, buffer, pos);
 			if (alread_has_comment)
 			{

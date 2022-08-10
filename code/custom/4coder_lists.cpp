@@ -515,7 +515,7 @@ do_4coder_close_user_check(Application_Links *app, View_ID view){
 
 ////////////////////////////////
 
-CUSTOM_UI_COMMAND_SIG(interactive_switch_buffer)
+CUSTOM_COMMAND_SIG(interactive_switch_buffer)
 CUSTOM_DOC("Interactively switch to an open buffer.")
 {
   Buffer_ID buffer = get_buffer_from_user(app, "Switch:");
@@ -771,7 +771,7 @@ CUSTOM_DOC("Interactively opens a file.")
 
 ////////////////////////////////
 
-CUSTOM_UI_COMMAND_SIG(command_lister)
+CUSTOM_UI_MULTICURSOR_COMMAND_SIG(command_lister)
 CUSTOM_DOC("Opens an interactive list of all registered commands.")
 {
   View_ID view = get_this_ctx_view(app, Access_Always);
@@ -795,7 +795,7 @@ CUSTOM_DOC("Opens an interactive list of all registered commands.")
 
 ////////////////////////////////
 
-CUSTOM_UI_COMMAND_SIG(theme_lister)
+CUSTOM_UI_MULTICURSOR_COMMAND_SIG(theme_lister)
 CUSTOM_DOC("Opens an interactive list of all registered themes.")
 {
   Color_Table *color_table = get_color_table_from_user(app);

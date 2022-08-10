@@ -9,6 +9,18 @@
 
 typedef void Custom_Command_Function(struct Application_Links *app);
 
+enum Custom_Command_Function_Type
+{
+	Custom_Command_Function_Default,
+	Custom_Command_Function_Multi_Cursor,
+};
+
+struct Custom_Command_Function_Info
+{
+	Custom_Command_Function_Type type;
+	Custom_Command_Function *func;
+};
+
 typedef u32 Key_Code;
 typedef u32 Mouse_Code;
 typedef u32 Core_Code;
@@ -92,7 +104,7 @@ struct Input_Event{
 				};
 			};
 		} core;
-		Custom_Command_Function *custom_func;
+		Custom_Command_Function *custom;
 	};
 };
 

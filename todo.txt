@@ -2,8 +2,6 @@
 /////////////////////////////
 ------------BAD BUGS-------------
 
-Not Empty :(
-
 [ ] - Bug: Comment blocks aren't auto indented correctly, when you enable virtual whitespace they look          fine but if you open the file in an external program like visual studio or remedy, all the stuff
       in between each end of the comment block will have no indentation and will start at the left
       most pixel
@@ -13,28 +11,26 @@ Not Empty :(
 
 [ ] - Bug: System clipboard copying from outside of 4coder has a rare case of not working
 
-[ ] - Possible Bug: Sometimes while in "Command Mode" they keybinds change to "Insert Mode",
-      switching Views back and fourth fixed this issue. But it shouldn't happen in the 
-      first place.
+[ ] - Possible Bug: Sometimes while in "Command Mode" they keybinds change to "Insert Mode"
+
+[ ] - Bug: 4coder crashed when "list_all_substring_locations" /         
+      "list_all_substring_locations_case_insensitive" was executed
 
 /////////////////////////////
 ---------- TODOS -------------
 
-[ ] - IMPORTANT: Multi cursor mode has most of the move / edit features supported,
-      but there's nothing stopping the user from executing commands
-      that aren't meant to be used _while_ multi cursor is enabled. The fix for this
-      is to flag commands so that 4ed knows to disable multi cursor once the command is executed.
-      maybe flag commands with CUSTOM_COMMAND_SIG_MULTI_CURSOR(); and in 4ed.exe loop through those
-      separately
+[ ] - Save multi cursor positions maybe so undo / redo work by setting cursors correctly
 
-[ ] - Backspace / Delete alpha numeric boundary shouldn't skip over deleting new lines
+[ ] - Create command for backspace / delete alpha numeric boundary where it doesn't skip over lines 
+      when deleting stuff
 
 [ ] - When in selection Mode, paste or "vim_paste" should copy the selection into the clipboard
       delete the selection and paste what is currently in the clipboard over the selection.
 
-[ ] - When opening a project, 4coder did save the open buffers and where the cursor was
+[ ] - When saving && there is a project.4coder, save all cursor locations and the opened buffers
+      and assign the correct open buffers to the ones that were in the view last
 
-[ ] - Fix goto_end_of_file being slow
+[ ] - goto_end_of_file is slow, investigate to see if it can be optimized
 
 [ ] - Listing code indexs isn't sorted
 
@@ -51,10 +47,6 @@ Not Empty :(
 	[ ] - Add CodeIndexNote_Global_Variable type
 	[ ] - Add CodeIndexNote_Operator_Type for syntax hilighting *+-=\%#!~&
 
-[ ] - CodeIndexNote_Comment only highlights the TODO / NOTE
-
-[ ] - Add functionality for jump_to_definition to note the function params for overloaded functions
-
 [ ] - Implement render text that's above / on line ScopeBegin 
 			at the matching ScopeClose
 			i.e.
@@ -65,6 +57,16 @@ Not Empty :(
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+
+[x] - IMPORTANT: Multi cursor mode has most of the move / edit features supported,
+      but there's nothing stopping the user from executing commands
+      that aren't meant to be used _while_ multi cursor is enabled. The fix for this
+      is to flag commands so that 4ed knows to disable multi cursor once the command is executed.
+      maybe flag commands with CUSTOM_COMMAND_SIG_MULTI_CURSOR();
+
+[x] - CodeIndexNote_Comment only highlights the TODO / NOTE
+
+[x] - Add functionality for jump_to_definition to note the function params for overloaded functions
 
 [x] - Cutting line when using vim_cut doesn't work
 

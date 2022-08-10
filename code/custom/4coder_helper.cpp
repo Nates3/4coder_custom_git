@@ -1346,7 +1346,8 @@ get_indent_info_range(Application_Links *app, Buffer_ID buffer, Range_i64 range,
 }
 
 function Indent_Info
-get_indent_info_line_number_and_start(Application_Links *app, Buffer_ID buffer, i64 line_number, i64 line_start, i32 tab_width){
+get_indent_info_line_number_and_start(Application_Links *app, Buffer_ID buffer, i64 line_number, i64 line_start, i32 tab_width)
+{
   i64 end = get_line_side_pos(app, buffer, line_number, Side_Max);
   return(get_indent_info_range(app, buffer, Ii64(line_start, end), tab_width));
 }
@@ -1635,7 +1636,8 @@ query_user_general(Application_Links *app, Query_Bar *bar, b32 force_number, Str
       if (binding.custom != 0){
         Command_Metadata *metadata = get_command_metadata(binding.custom);
         if (metadata != 0){
-          if (metadata->is_ui){
+          if (metadata->is_ui)
+					{
             view_enqueue_command_function(app, view, binding.custom);
             break;
           }
@@ -2357,25 +2359,25 @@ seek_pos_of_visual_line(Application_Links *app, Side side)
 	}
 }
 
-CUSTOM_COMMAND_SIG(seek_beginning_of_textual_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(seek_beginning_of_textual_line)
 CUSTOM_DOC("Seeks the cursor to the beginning of the line across all text.")
 {
   seek_pos_of_textual_line(app, Side_Min);
 }
 
-CUSTOM_COMMAND_SIG(seek_end_of_textual_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(seek_end_of_textual_line)
 CUSTOM_DOC("Seeks the cursor to the end of the line across all text.")
 {
   seek_pos_of_textual_line(app, Side_Max);
 }
 
-CUSTOM_COMMAND_SIG(seek_beginning_of_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(seek_beginning_of_line)
 CUSTOM_DOC("Seeks the cursor to the beginning of the visual line.")
 {
   seek_pos_of_visual_line(app, Side_Min);
 }
 
-CUSTOM_COMMAND_SIG(seek_end_of_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(seek_end_of_line)
 CUSTOM_DOC("Seeks the cursor to the end of the visual line.")
 {
   seek_pos_of_visual_line(app, Side_Max);

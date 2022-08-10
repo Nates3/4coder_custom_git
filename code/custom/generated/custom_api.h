@@ -99,7 +99,7 @@
 #define custom_view_record_mark_sig() void custom_view_record_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index)
 #define custom_view_set_mark_sig() b32 custom_view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek)
 #define custom_view_set_mark_record_sig() b32 custom_view_set_mark_record(Application_Links* app, View_ID view, Buffer_Seek seek)
-#define custom_view_set_multi_mark_sig() b32 custom_view_set_multi_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek, u32 multi_cursor_index)
+#define custom_view_set_multi_mark_sig() b32 custom_view_set_multi_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek)
 #define custom_view_get_line_selection_mode_sig() b32 custom_view_get_line_selection_mode(Application_Links* app, View_ID view_id)
 #define custom_view_set_line_selection_mode_sig() void custom_view_set_line_selection_mode(Application_Links* app, View_ID view_id, b32 value)
 #define custom_view_get_multi_cursor_mode_sig() Multi_Cursor_Mode custom_view_get_multi_cursor_mode(Application_Links* app, View_ID view_id)
@@ -318,7 +318,7 @@ typedef Mark_History* custom_view_get_mark_history_type(Application_Links* app, 
 typedef void custom_view_record_mark_type(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
 typedef b32 custom_view_set_mark_type(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 typedef b32 custom_view_set_mark_record_type(Application_Links* app, View_ID view, Buffer_Seek seek);
-typedef b32 custom_view_set_multi_mark_type(Application_Links* app, View_ID view_id, Buffer_Seek seek, u32 multi_cursor_index);
+typedef b32 custom_view_set_multi_mark_type(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek);
 typedef b32 custom_view_get_line_selection_mode_type(Application_Links* app, View_ID view_id);
 typedef void custom_view_set_line_selection_mode_type(Application_Links* app, View_ID view_id, b32 value);
 typedef Multi_Cursor_Mode custom_view_get_multi_cursor_mode_type(Application_Links* app, View_ID view_id);
@@ -759,7 +759,7 @@ internal Mark_History* view_get_mark_history(Application_Links* app, View_ID vie
 internal void view_record_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
 internal b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 internal b32 view_set_mark_record(Application_Links* app, View_ID view, Buffer_Seek seek);
-internal b32 view_set_multi_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek, u32 multi_cursor_index);
+internal b32 view_set_multi_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek);
 internal b32 view_get_line_selection_mode(Application_Links* app, View_ID view_id);
 internal void view_set_line_selection_mode(Application_Links* app, View_ID view_id, b32 value);
 internal Multi_Cursor_Mode view_get_multi_cursor_mode(Application_Links* app, View_ID view_id);

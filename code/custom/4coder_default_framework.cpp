@@ -357,13 +357,13 @@ change_active_panel_send_command(Application_Links *app, Custom_Command_Function
   }
 }
 
-CUSTOM_COMMAND_SIG(change_active_panel)
+CUSTOM_MULTICURSOR_COMMAND_SIG(change_active_panel)
 CUSTOM_DOC("Change the currently active panel, moving to the panel with the next highest view_id.")
 {
   change_active_panel_send_command(app, 0);
 }
 
-CUSTOM_COMMAND_SIG(change_active_panel_backwards)
+CUSTOM_MULTICURSOR_COMMAND_SIG(change_active_panel_backwards)
 CUSTOM_DOC("Change the currently active panel, moving to the panel with the next lowest view_id.")
 {
   View_ID view = get_active_view(app, Access_Always);

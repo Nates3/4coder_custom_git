@@ -2149,8 +2149,7 @@ view_set_mark_record(Application_Links *app, View_ID view, Buffer_Seek seek)
 }
 
 api(custom) function b32
-view_set_multi_mark(Application_Links *app, View_ID view_id, Buffer_Seek seek,
-										u32 multi_cursor_index)
+view_set_multi_mark(Application_Links *app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek)
 {
 	Models *models = (Models *)app->cmd_context;
 	View *view = imp_get_view(models, view_id);
@@ -2225,6 +2224,10 @@ view_set_multi_cursor_mode(Application_Links *app, View_ID view_id, Multi_Cursor
 	if(api_check_view(view))
 	{
 		view->multi_cursor_mode = mode;
+		if(mode == Multi_Cursor_Disabled)
+		{
+			view_clear_multi_cursors(app, view_id);
+		}
 	}
 }
 

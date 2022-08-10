@@ -757,7 +757,8 @@ co_send_event(Thread_Context *tctx, Models *models, View *view, Input_Event *eve
     begin_handling_input(models, &in.user_input);
     view->co = co_run(tctx, models, view->co, &in, &view->co_out);
     view_check_co_exited(models, view);
-    if (!(event->kind == InputEventKind_Core && event->core.code == CoreCode_Animate)){
+    if (!(event->kind == InputEventKind_Core && event->core.code == CoreCode_Animate))
+		{
       models->animate_next_frame = true;
     }
     event_was_handled = !models->current_input_unhandled;

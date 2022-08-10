@@ -8,7 +8,7 @@
 // NOTE(nates): All these CUSTOM_COMMAND_SIGS's are just functions
 // you can call them if you want to!
 
-CUSTOM_COMMAND_SIG(cycle_multi_cursor_mode)
+CUSTOM_MULTICURSOR_COMMAND_SIG(cycle_multi_cursor_mode)
 CUSTOM_DOC("set the multi cursor mode")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -36,7 +36,6 @@ CUSTOM_DOC("set the multi cursor mode")
 		case Multi_Cursor_Enabled:
 		{
 			view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
-			view_clear_multi_cursors(app, view);
 		} break;
 		
 		InvalidDefaultCase;
@@ -50,7 +49,7 @@ CUSTOM_DOC("loads project list file and parses for full paths to projet.4coder f
 }
 
 
-CUSTOM_COMMAND_SIG(delete_to_end_of_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(delete_to_end_of_line)
 CUSTOM_DOC("Delete's from the cursor to the end of the line")
 {
   View_ID view = get_active_view(app, 0);
@@ -90,7 +89,7 @@ CUSTOM_DOC("Delete's from the cursor to the end of the line")
 	}
 }
 
-CUSTOM_COMMAND_SIG(delete_to_start_of_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(delete_to_start_of_line)
 CUSTOM_DOC("Delete's from the start of line to the cursor position")
 {
   View_ID view = get_active_view(app, 0);
@@ -130,19 +129,43 @@ CUSTOM_DOC("Delete's from the start of line to the cursor position")
 	}
 }
 
-CUSTOM_COMMAND_SIG(delete_alpha_numeric_identifier)
+CUSTOM_MULTICURSOR_COMMAND_SIG(delete_alpha_numeric_identifier)
 CUSTOM_DOC("deletes alpha numeric identifier at cursor position")
 {
 	Scratch_Block scratch(app);
 	
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-	i64 cursor_pos = view_get_cursor(app, view);
-	Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
-																													cursor_pos);
-	if(range.min != -1)
+	
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+	if(multi_cursor_mode == Multi_Cursor_Disabled)
 	{
-		buffer_replace_range(app, buffer, range, string_u8_empty);
+		i64 cursor_pos = view_get_cursor(app, view);
+		Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
+																														cursor_pos);
+		if(range.min != -1)
+		{
+			buffer_replace_range(app, buffer, range, string_u8_empty);
+		}
+	}
+	else if(multi_cursor_mode == Multi_Cursor_Enabled)
+	{
+		History_Group history_group = history_group_begin(app, buffer);
+		
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			i64 multi_cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
+			Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
+																															multi_cursor_pos);
+			if(range.min != -1)
+			{
+				buffer_replace_range(app, buffer, range, string_u8_empty);
+			}
+		}
+		history_group_end(history_group);
 	}
 }
 
@@ -162,7 +185,7 @@ CUSTOM_DOC("Copies characters between the seek left result for a alpha numeric a
 	}
 }
 
-CUSTOM_COMMAND_SIG(change_to_command_mode)
+CUSTOM_MULTICURSOR_COMMAND_SIG(change_to_command_mode)
 CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
 {
 	View_ID view = get_active_view(app, 0);
@@ -208,7 +231,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
 	}
 }
 
-CUSTOM_COMMAND_SIG(change_to_command_mode_dont_move)
+CUSTOM_MULTICURSOR_COMMAND_SIG(change_to_command_mode_dont_move)
 CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap, but doesn't move the cursor")
 {
 	View_ID view = get_active_view(app, 0);
@@ -242,7 +265,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap, but doesn't mov
 	}
 }
 
-CUSTOM_COMMAND_SIG(change_to_insert_mode_front)
+CUSTOM_MULTICURSOR_COMMAND_SIG(change_to_insert_mode_front)
 CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
 	View_ID view = get_active_view(app, 0);
@@ -278,7 +301,7 @@ CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 	}
 }
 
-CUSTOM_COMMAND_SIG(change_to_insert_mode_after)
+CUSTOM_MULTICURSOR_COMMAND_SIG(change_to_insert_mode_after)
 CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
 	View_ID view = get_active_view(app, 0);
@@ -565,7 +588,6 @@ CUSTOM_DOC("cancel context modes")
 	view_set_vim_cutting_mode(app, view, false);
 	view_set_line_selection_mode(app, view, false);
 	view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
-	view_clear_multi_cursors(app, view);
 }
 
 CUSTOM_COMMAND_SIG(insert_return)

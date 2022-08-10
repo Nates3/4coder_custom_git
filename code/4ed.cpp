@@ -558,13 +558,15 @@ App_Step_Sig(app_step)
     // NOTE(allen): first handle any events coming from the view command
     // function queue
     Model_View_Command_Function cmd_func = models_pop_view_command_function(models);
-    if (cmd_func.custom_func != 0){
+    if (cmd_func.custom_func != 0)
+		{
       View *view = imp_get_view(models, cmd_func.view_id);
-      if (view != 0){
+      if (view != 0)
+			{
         input_node_next = input_node;
         Input_Event cmd_func_event = {};
         cmd_func_event.kind = InputEventKind_CustomFunction;
-        cmd_func_event.custom_func = cmd_func.custom_func;
+        cmd_func_event.custom = cmd_func.custom_func;
         co_send_event(tctx, models, view, &cmd_func_event);
         continue;
       }
@@ -578,7 +580,7 @@ App_Step_Sig(app_step)
       simulated_input = &virtual_event;
     }
     else{
-      if (input_node == 0){
+			if (input_node == 0){
         break;
       }
       input_node_next = input_node->next;

@@ -121,6 +121,23 @@ CUSTOM_DOC("Input consumption loop for default view behavior")
       leave_current_input_unhandled(app);
       continue;
     }
+		else
+		{
+			if(HasFlag(event_properties, EventPropertyGroup_AnyUserInput) || 
+				 HasFlag(event_properties, EventProperty_CustomFunction))
+			{
+				Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+				if(multi_cursor_mode == Multi_Cursor_Place_Cursors || multi_cursor_mode == Multi_Cursor_Enabled)
+				{
+					Command_Metadata *data = get_command_metadata(map_result.command);
+					if(!data->is_multi_cursor_supported)
+					{
+						view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
+					}
+				}
+			}
+		}
+		
     
     // NOTE(allen): Run the command and pre/post command stuff
     default_pre_command(app, scope);

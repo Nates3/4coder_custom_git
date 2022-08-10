@@ -129,7 +129,7 @@ write_text_multi_cursor(Application_Links *app, String_Const_u8 insert)
 }
 
 
-CUSTOM_COMMAND_SIG(write_text_input)
+CUSTOM_MULTICURSOR_COMMAND_SIG(write_text_input)
 CUSTOM_DOC("Inserts whatever text was used to trigger this command.")
 {
   User_Input in = get_current_input(app);
@@ -137,19 +137,19 @@ CUSTOM_DOC("Inserts whatever text was used to trigger this command.")
   write_text_multi_cursor(app, insert);
 }
 
-CUSTOM_COMMAND_SIG(write_space)
+CUSTOM_MULTICURSOR_COMMAND_SIG(write_space)
 CUSTOM_DOC("Inserts a space.")
 {
   write_text_multi_cursor(app, string_u8_litexpr(" "));
 }
 
-CUSTOM_COMMAND_SIG(write_underscore)
+CUSTOM_MULTICURSOR_COMMAND_SIG(write_underscore)
 CUSTOM_DOC("Inserts an underscore.")
 {
   write_text_multi_cursor(app, string_u8_litexpr("_"));
 }
 
-CUSTOM_COMMAND_SIG(delete_char)
+CUSTOM_MULTICURSOR_COMMAND_SIG(delete_char)
 CUSTOM_DOC("Deletes the character to the right of the cursor.")
 {
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -196,7 +196,7 @@ CUSTOM_DOC("Deletes the character to the right of the cursor.")
   }
 }
 
-CUSTOM_COMMAND_SIG(backspace_char)
+CUSTOM_MULTICURSOR_COMMAND_SIG(backspace_char)
 CUSTOM_DOC("Deletes the character to the left of the cursor.")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -249,7 +249,7 @@ CUSTOM_DOC("Deletes the character to the left of the cursor.")
   }
 }
 
-CUSTOM_COMMAND_SIG(set_mark)
+CUSTOM_MULTICURSOR_COMMAND_SIG(set_mark)
 CUSTOM_DOC("Sets the mark to the current position of the cursor.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
@@ -270,7 +270,7 @@ CUSTOM_DOC("Sets the mark to the current position of the cursor.")
 				++multi_cursor_index)
 		{
 			i64 pos = view_get_multi_cursor(app, view, multi_cursor_index);
-			view_set_multi_mark(app, view, seek_pos(pos), multi_cursor_index);
+			view_set_multi_mark(app, view, multi_cursor_index, seek_pos(pos));
 			if(multi_cursor_index == 0)
 			{
 				view_record_mark(app, view, multi_cursor_index);
@@ -293,9 +293,22 @@ CUSTOM_DOC("Swaps the position of the cursor and the mark.")
 		view_set_cursor_and_preferred_x(app, view, seek_pos(mark));
 		view_set_mark_record(app, view, seek_pos(cursor));
 	}
+	else if(multi_cursor_mode == Multi_Cursor_Enabled)
+	{
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			i64 multi_cursor = view_get_multi_cursor(app, view, multi_cursor_index);
+			i64 multi_mark = view_get_multi_mark(app, view, multi_cursor_index);
+			view_set_multi_cursor_preferred_x(app, view, multi_cursor_index, seek_pos(multi_mark));
+			view_set_multi_mark(app, view, multi_cursor_index, seek_pos(multi_cursor));
+		}
+	}
 }
 
-CUSTOM_COMMAND_SIG(delete_range)
+CUSTOM_MULTICURSOR_COMMAND_SIG(delete_range)
 CUSTOM_DOC("Deletes the text in the range between the cursor and the mark.")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -389,7 +402,7 @@ current_view_boundary_delete(Application_Links *app, Scan_Direction direction, B
 	}
 }
 
-CUSTOM_COMMAND_SIG(backspace_alpha_numeric_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(backspace_alpha_numeric_boundary)
 CUSTOM_DOC("Delete characters between the cursor position and the first alphanumeric boundary to the left.")
 {
   Scratch_Block scratch(app);
@@ -397,7 +410,7 @@ CUSTOM_DOC("Delete characters between the cursor position and the first alphanum
                                push_boundary_list(scratch, boundary_alpha_numeric_unicode));
 }
 
-CUSTOM_COMMAND_SIG(delete_alpha_numeric_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(delete_alpha_numeric_boundary)
 CUSTOM_DOC("Delete characters between the cursor position and the first alphanumeric boundary to the right.")
 {
   Scratch_Block scratch(app);
@@ -436,7 +449,7 @@ current_view_snipe_delete(Application_Links *app, Scan_Direction direction, Boun
 	}
 }
 
-CUSTOM_COMMAND_SIG(snipe_backward_whitespace_or_token_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(snipe_backward_whitespace_or_token_boundary)
 CUSTOM_DOC("Delete a single, whole token on or to the left of the cursor and post it to the clipboard.")
 {
   Scratch_Block scratch(app);
@@ -444,7 +457,7 @@ CUSTOM_DOC("Delete a single, whole token on or to the left of the cursor and pos
                             push_boundary_list(scratch, boundary_token, boundary_non_whitespace));
 }
 
-CUSTOM_COMMAND_SIG(snipe_forward_whitespace_or_token_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(snipe_forward_whitespace_or_token_boundary)
 CUSTOM_DOC("Delete a single, whole token on or to the right of the cursor and post it to the clipboard.")
 {
   Scratch_Block scratch(app);
@@ -454,7 +467,7 @@ CUSTOM_DOC("Delete a single, whole token on or to the right of the cursor and po
 
 ////////////////////////////////
 
-CUSTOM_COMMAND_SIG(center_view)
+CUSTOM_MULTICURSOR_COMMAND_SIG(center_view)
 CUSTOM_DOC("Centers the view vertically on the line on which the cursor sits.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
@@ -469,7 +482,7 @@ CUSTOM_DOC("Centers the view vertically on the line on which the cursor sits.")
   no_mark_snap_to_cursor(app, view);
 }
 
-CUSTOM_COMMAND_SIG(left_adjust_view)
+CUSTOM_MULTICURSOR_COMMAND_SIG(left_adjust_view)
 CUSTOM_DOC("Sets the left size of the view near the x position of the cursor.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
@@ -634,7 +647,7 @@ get_page_jump(Application_Links *app, View_ID view){
   return(rect_height(region)*.9f);
 }
 
-CUSTOM_COMMAND_SIG(move_up)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_up)
 CUSTOM_DOC("Moves the cursor up one line.")
 {
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -693,7 +706,7 @@ CUSTOM_DOC("Moves the cursor up one line.")
 	}
 }
 
-CUSTOM_COMMAND_SIG(move_down)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_down)
 CUSTOM_DOC("Moves the cursor down one line.")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -864,7 +877,7 @@ CUSTOM_DOC("Seeks the cursor down to the next blank line and places it at the en
   seek_blank_line(app, Scan_Forward, PositionWithinLine_End);
 }
 
-CUSTOM_COMMAND_SIG(move_left)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_left)
 CUSTOM_DOC("Moves the cursor one character to the left.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
@@ -884,8 +897,11 @@ CUSTOM_DOC("Moves the cursor one character to the left.")
 				++multi_cursor_index)
 		{
 			i64 pos = view_get_multi_cursor(app, view, multi_cursor_index);
-			u8 prev_char = buffer_get_char(app, buffer, pos - 1);
-			if(pos > 0 && prev_char != '\n')
+			i64 line_num = get_line_number_from_pos(app, buffer, pos);
+			i64 line_start = get_line_start_pos_from_pos(app, buffer, pos);
+			Indent_Info info = get_indent_info_line_number_and_start(app, buffer, line_num, line_start, (i32)def_get_config_u64(app, vars_save_string_lit("indent_width")));
+			
+			if(pos > 0 && pos > info.first_char_pos)
 			{
 				view_set_multi_cursor_by_character_delta(app, view, multi_cursor_index, -1);
 			}
@@ -893,7 +909,7 @@ CUSTOM_DOC("Moves the cursor one character to the left.")
 	}
 }
 
-CUSTOM_COMMAND_SIG(move_right)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_right)
 CUSTOM_DOC("Moves the cursor one character to the right.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
@@ -913,8 +929,9 @@ CUSTOM_DOC("Moves the cursor one character to the right.")
 				++multi_cursor_index)
 		{
 			i64 pos = view_get_multi_cursor(app, view, multi_cursor_index);
-			u8 current_char = buffer_get_char(app, buffer, pos);
-			if(pos < buffer_size && current_char != '\n' && current_char != '\r')
+			i64 end_of_line = get_line_end_pos_from_pos(app, buffer, pos);
+			
+			if(pos < buffer_size && pos < end_of_line)
 			{
 				view_set_multi_cursor_by_character_delta(app, view, multi_cursor_index, 1);
 			}
@@ -956,7 +973,7 @@ current_view_scan_move(Application_Links *app, Scan_Direction direction, Boundar
 	}
 }
 
-CUSTOM_COMMAND_SIG(move_right_whitespace_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_right_whitespace_boundary)
 CUSTOM_DOC("Seek right for the next boundary between whitespace and non-whitespace.")
 {
   Scratch_Block scratch(app);
@@ -964,7 +981,7 @@ CUSTOM_DOC("Seek right for the next boundary between whitespace and non-whitespa
                          push_boundary_list(scratch, boundary_non_whitespace));
 }
 
-CUSTOM_COMMAND_SIG(move_left_whitespace_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_left_whitespace_boundary)
 CUSTOM_DOC("Seek left for the next boundary between whitespace and non-whitespace.")
 {
   Scratch_Block scratch(app);
@@ -972,56 +989,56 @@ CUSTOM_DOC("Seek left for the next boundary between whitespace and non-whitespac
                          push_boundary_list(scratch, boundary_non_whitespace));
 }
 
-CUSTOM_COMMAND_SIG(move_right_token_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_right_token_boundary)
 CUSTOM_DOC("Seek right for the next end of a token.")
 {
   Scratch_Block scratch(app);
   current_view_scan_move(app, Scan_Forward, push_boundary_list(scratch, boundary_token));
 }
 
-CUSTOM_COMMAND_SIG(move_left_token_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_left_token_boundary)
 CUSTOM_DOC("Seek left for the next beginning of a token.")
 {
   Scratch_Block scratch(app);
   current_view_scan_move(app, Scan_Backward, push_boundary_list(scratch, boundary_token));
 }
 
-CUSTOM_COMMAND_SIG(move_right_whitespace_or_token_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_right_whitespace_or_token_boundary)
 CUSTOM_DOC("Seek right for the next end of a token or boundary between whitespace and non-whitespace.")
 {
   Scratch_Block scratch(app);
   current_view_scan_move(app, Scan_Forward, push_boundary_list(scratch, boundary_token, boundary_non_whitespace));
 }
 
-CUSTOM_COMMAND_SIG(move_left_whitespace_or_token_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_left_whitespace_or_token_boundary)
 CUSTOM_DOC("Seek left for the next end of a token or boundary between whitespace and non-whitespace.")
 {
   Scratch_Block scratch(app);
   current_view_scan_move(app, Scan_Backward, push_boundary_list(scratch, boundary_token, boundary_non_whitespace));
 }
 
-CUSTOM_COMMAND_SIG(move_right_alpha_numeric_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_right_alpha_numeric_boundary)
 CUSTOM_DOC("Seek right for boundary between alphanumeric characters and non-alphanumeric characters.")
 {
   Scratch_Block scratch(app);
   current_view_scan_move(app, Scan_Forward, push_boundary_list(scratch, boundary_alpha_numeric));
 }
 
-CUSTOM_COMMAND_SIG(move_left_alpha_numeric_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_left_alpha_numeric_boundary)
 CUSTOM_DOC("Seek left for boundary between alphanumeric characters and non-alphanumeric characters.")
 {
   Scratch_Block scratch(app);
   current_view_scan_move(app, Scan_Backward, push_boundary_list(scratch, boundary_alpha_numeric));
 }
 
-CUSTOM_COMMAND_SIG(move_right_alpha_numeric_or_camel_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_right_alpha_numeric_or_camel_boundary)
 CUSTOM_DOC("Seek right for boundary between alphanumeric characters or camel case word and non-alphanumeric characters.")
 {
   Scratch_Block scratch(app);
   current_view_scan_move(app, Scan_Forward, push_boundary_list(scratch, boundary_alpha_numeric_camel));
 }
 
-CUSTOM_COMMAND_SIG(move_left_alpha_numeric_or_camel_boundary)
+CUSTOM_MULTICURSOR_COMMAND_SIG(move_left_alpha_numeric_or_camel_boundary)
 CUSTOM_DOC("Seek left for boundary between alphanumeric characters or camel case word and non-alphanumeric characters.")
 {
   Scratch_Block scratch(app);
@@ -1043,7 +1060,7 @@ CUSTOM_DOC("Puts the cursor at the top of the file, and the mark at the bottom o
 
 ////////////////////////////////
 
-CUSTOM_COMMAND_SIG(to_uppercase)
+CUSTOM_MULTICURSOR_COMMAND_SIG(to_uppercase)
 CUSTOM_DOC("Converts all ascii text in the range between the cursor and the mark to uppercase.")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -1081,7 +1098,7 @@ CUSTOM_DOC("Converts all ascii text in the range between the cursor and the mark
 	}
 }
 
-CUSTOM_COMMAND_SIG(to_lowercase)
+CUSTOM_MULTICURSOR_COMMAND_SIG(to_lowercase)
 CUSTOM_DOC("Converts all ascii text in the range between the cursor and the mark to lowercase.")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -1223,35 +1240,35 @@ CUSTOM_DOC("Closes the currently active panel if it is not the only panel open."
 
 ////////////////////////////////
 
-CUSTOM_COMMAND_SIG(show_scrollbar)
+CUSTOM_MULTICURSOR_COMMAND_SIG(show_scrollbar)
 CUSTOM_DOC("Sets the current view to show it's scrollbar.")
 {
   View_ID view = get_active_view(app, Access_Always);
   view_set_setting(app, view, ViewSetting_ShowScrollbar, true);
 }
 
-CUSTOM_COMMAND_SIG(hide_scrollbar)
+CUSTOM_MULTICURSOR_COMMAND_SIG(hide_scrollbar)
 CUSTOM_DOC("Sets the current view to hide it's scrollbar.")
 {
   View_ID view = get_active_view(app, Access_Always);
   view_set_setting(app, view, ViewSetting_ShowScrollbar, false);
 }
 
-CUSTOM_COMMAND_SIG(show_filebar)
+CUSTOM_MULTICURSOR_COMMAND_SIG(show_filebar)
 CUSTOM_DOC("Sets the current view to show it's filebar.")
 {
   View_ID view = get_active_view(app, Access_Always);
   view_set_setting(app, view, ViewSetting_ShowFileBar, true);
 }
 
-CUSTOM_COMMAND_SIG(hide_filebar)
+CUSTOM_MULTICURSOR_COMMAND_SIG(hide_filebar)
 CUSTOM_DOC("Sets the current view to hide it's filebar.")
 {
   View_ID view = get_active_view(app, Access_Always);
   view_set_setting(app, view, ViewSetting_ShowFileBar, false);
 }
 
-CUSTOM_COMMAND_SIG(toggle_filebar)
+CUSTOM_MULTICURSOR_COMMAND_SIG(toggle_filebar)
 CUSTOM_DOC("Toggles the visibility status of the current view's filebar.")
 {
   View_ID view = get_active_view(app, Access_Always);
@@ -1260,13 +1277,13 @@ CUSTOM_DOC("Toggles the visibility status of the current view's filebar.")
   view_set_setting(app, view, ViewSetting_ShowFileBar, !value);
 }
 
-CUSTOM_COMMAND_SIG(toggle_fps_meter)
+CUSTOM_MULTICURSOR_COMMAND_SIG(toggle_fps_meter)
 CUSTOM_DOC("Toggles the visibility of the FPS performance meter")
 {
   show_fps_hud = !show_fps_hud;
 }
 
-CUSTOM_COMMAND_SIG(set_face_size)
+CUSTOM_MULTICURSOR_COMMAND_SIG(set_face_size)
 CUSTOM_DOC("Set face size of the face used by the current buffer.")
 {
   View_ID view = get_active_view(app, Access_Always);
@@ -1286,7 +1303,7 @@ CUSTOM_DOC("Set face size of the face used by the current buffer.")
   }
 }
 
-CUSTOM_COMMAND_SIG(increase_face_size)
+CUSTOM_MULTICURSOR_COMMAND_SIG(increase_face_size)
 CUSTOM_DOC("Increase the size of the face used by the current buffer.")
 {
   View_ID view = get_active_view(app, Access_Always);
@@ -1297,7 +1314,7 @@ CUSTOM_DOC("Increase the size of the face used by the current buffer.")
   try_modify_face(app, face_id, &description);
 }
 
-CUSTOM_COMMAND_SIG(decrease_face_size)
+CUSTOM_MULTICURSOR_COMMAND_SIG(decrease_face_size)
 CUSTOM_DOC("Decrease the size of the face used by the current buffer.")
 {
   View_ID view = get_active_view(app, Access_Always);
@@ -1308,7 +1325,7 @@ CUSTOM_DOC("Decrease the size of the face used by the current buffer.")
   try_modify_face(app, face_id, &description);
 }
 
-CUSTOM_COMMAND_SIG(set_face_size_this_buffer)
+CUSTOM_MULTICURSOR_COMMAND_SIG(set_face_size_this_buffer)
 CUSTOM_DOC("Set face size of the face used by the current buffer; if any other buffers are using the same face a new face is created so that only this buffer is effected")
 {
   View_ID view = get_active_view(app, Access_Always);
@@ -1339,7 +1356,7 @@ CUSTOM_DOC("Set face size of the face used by the current buffer; if any other b
   set_face_size(app);
 }
 
-CUSTOM_COMMAND_SIG(mouse_wheel_change_face_size)
+CUSTOM_MULTICURSOR_COMMAND_SIG(mouse_wheel_change_face_size)
 CUSTOM_DOC("Reads the state of the mouse wheel and uses it to either increase or decrease the face size.")
 {
   local_persist u64 next_resize_time = 0;
@@ -1356,7 +1373,7 @@ CUSTOM_DOC("Reads the state of the mouse wheel and uses it to either increase or
   }
 }
 
-CUSTOM_COMMAND_SIG(toggle_show_whitespace)
+CUSTOM_MULTICURSOR_COMMAND_SIG(toggle_show_whitespace)
 CUSTOM_DOC("Toggles the current buffer's whitespace visibility status.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
@@ -1365,7 +1382,7 @@ CUSTOM_DOC("Toggles the current buffer's whitespace visibility status.")
   view_set_setting(app, view, ViewSetting_ShowWhitespace, !show_whitespace);
 }
 
-CUSTOM_COMMAND_SIG(toggle_line_numbers)
+CUSTOM_MULTICURSOR_COMMAND_SIG(toggle_line_numbers)
 CUSTOM_DOC("Toggles the left margin line numbers.")
 {
   String_ID key = vars_save_string_lit("show_line_number_margins");
@@ -1373,7 +1390,7 @@ CUSTOM_DOC("Toggles the left margin line numbers.")
   def_set_config_b32(key, !val);
 }
 
-CUSTOM_COMMAND_SIG(toggle_line_wrap)
+CUSTOM_MULTICURSOR_COMMAND_SIG(toggle_line_wrap)
 CUSTOM_DOC("Toggles the line wrap setting on this buffer.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
@@ -1386,7 +1403,7 @@ CUSTOM_DOC("Toggles the line wrap setting on this buffer.")
   }
 }
 
-CUSTOM_COMMAND_SIG(exit_4coder)
+CUSTOM_MULTICURSOR_COMMAND_SIG(exit_4coder)
 CUSTOM_DOC("Attempts to close 4coder.")
 {
   send_exit_signal(app);
@@ -1979,7 +1996,7 @@ CUSTOM_DOC("Deletes the file of the current buffer if 4coder has the appropriate
   }
 }
 
-CUSTOM_COMMAND_SIG(save_to_query)
+CUSTOM_MULTICURSOR_COMMAND_SIG(save_to_query)
 CUSTOM_DOC("Queries the user for a file name and saves the contents of the current buffer, altering the buffer's name too.")
 {
   View_ID view = get_active_view(app, Access_Always);
@@ -2013,7 +2030,7 @@ CUSTOM_DOC("Queries the user for a file name and saves the contents of the curre
   }
 }
 
-CUSTOM_COMMAND_SIG(rename_file_query)
+CUSTOM_MULTICURSOR_COMMAND_SIG(rename_file_query)
 CUSTOM_DOC("Queries the user for a new name and renames the file of the current buffer, altering the buffer's name too.")
 {
   View_ID view = get_active_view(app, Access_Always);
@@ -2049,7 +2066,7 @@ CUSTOM_DOC("Queries the user for a new name and renames the file of the current 
   }
 }
 
-CUSTOM_COMMAND_SIG(make_directory_query)
+CUSTOM_MULTICURSOR_COMMAND_SIG(make_directory_query)
 CUSTOM_DOC("Queries the user for a name and creates a new directory with the given name.")
 {
   Scratch_Block scratch(app);
@@ -2109,7 +2126,7 @@ CUSTOM_DOC("Create a copy of the line on which the cursor sits.")
   buffer_replace_range(app, buffer, Ii64(pos), s);
 }
 
-CUSTOM_COMMAND_SIG(delete_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(delete_line)
 CUSTOM_DOC("Delete the line the on which the cursor sits.")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -2316,7 +2333,7 @@ CUSTOM_DOC("Kills the current buffer.")
   try_buffer_kill(app, buffer, view, 0);
 }
 
-CUSTOM_COMMAND_SIG(save)
+CUSTOM_MULTICURSOR_COMMAND_SIG(save)
 CUSTOM_DOC("Saves the current buffer.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
@@ -2416,7 +2433,7 @@ undo__flush_fades(Application_Links *app, Buffer_ID buffer){
   }
 }
 
-CUSTOM_COMMAND_SIG(undo)
+CUSTOM_MULTICURSOR_COMMAND_SIG(undo)
 CUSTOM_DOC("Advances backwards through the undo history of the current buffer.")
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -2424,7 +2441,6 @@ CUSTOM_DOC("Advances backwards through the undo history of the current buffer.")
   undo__flush_fades(app, buffer);
   
 	view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
-	view_clear_multi_cursors(app, view);
 	
   History_Record_Index current = buffer_history_get_current_state_index(app, buffer);
   if (current > 0){
@@ -2480,7 +2496,6 @@ CUSTOM_DOC("Advances forwards through the undo history of the current buffer.")
   undo__flush_fades(app, buffer);
 	
 	view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
-	view_clear_multi_cursors(app, view);
   
   History_Record_Index current = buffer_history_get_current_state_index(app, buffer);
   History_Record_Index max_index = buffer_history_get_max_record_index(app, buffer);

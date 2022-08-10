@@ -620,18 +620,22 @@ struct Record_Info{
   };
 };
 
-#if defined(CUSTOM_COMMAND_SIG) || defined(CUSTOM_UI_COMMAND_SIG) || defined(CUSTOM_DOC) || defined(CUSTOM_COMMAND)
+#if defined(CUSTOM_COMMAND_SIG) || defined (CUSTOM_MULTICURSOR_COMMAND_SIG) || defined(CUSTOM_UI_COMMAND_SIG) || defined(CUSTOM_DOC) || defined(CUSTOM_COMMAND)
 #error Please do not define CUSTOM_COMMAND_SIG, CUSTOM_DOC, CUSTOM_UI_COMMAND_SIG, or CUSTOM_COMMAND
 #endif
 
 #if !defined(META_PASS)
 #define CUSTOM_COMMAND_SIG(name) void name(struct Application_Links *app)
 #define CUSTOM_UI_COMMAND_SIG(name) void name(struct Application_Links *app)
+#define CUSTOM_MULTICURSOR_COMMAND_SIG(name) void name(struct Application_Links *app)
+#define CUSTOM_UI_MULTICURSOR_COMMAND_SIG(name) void name(struct Application_Links *app)
 #define CUSTOM_DOC(str)
 #define CUSTOM_ID(group, name) global Managed_ID name;
 #else
 #define CUSTOM_COMMAND_SIG(name) CUSTOM_COMMAND(name, __FILE__, __LINE__, Normal)
 #define CUSTOM_UI_COMMAND_SIG(name) CUSTOM_COMMAND(name, __FILE__, __LINE__, UI)
+#define CUSTOM_MULTICURSOR_COMMAND_SIG(name) CUSTOM_COMMAND(name, __FILE__, __LINE__, MULTICURSOR)
+#define CUSTOM_UI_MULTICURSOR_COMMAND_SIG(name) CUSTOM_COMMAND(name, __FILE__, __LINE__, UI_MULTICURSOR)
 #define CUSTOM_DOC(str) CUSTOM_DOC(str)
 #define CUSTOM_ID(group, name) CUSTOM_ID(group, name)
 #endif

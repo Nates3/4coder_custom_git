@@ -99,7 +99,7 @@ api(custom) function Mark_History* view_get_mark_history(Application_Links* app,
 api(custom) function void view_record_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index);
 api(custom) function b32 view_set_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek);
 api(custom) function b32 view_set_mark_record(Application_Links* app, View_ID view, Buffer_Seek seek);
-api(custom) function b32 view_set_multi_mark(Application_Links* app, View_ID view_id, Buffer_Seek seek, u32 multi_cursor_index);
+api(custom) function b32 view_set_multi_mark(Application_Links* app, View_ID view_id, u32 multi_cursor_index, Buffer_Seek seek);
 api(custom) function b32 view_get_line_selection_mode(Application_Links* app, View_ID view_id);
 api(custom) function void view_set_line_selection_mode(Application_Links* app, View_ID view_id, b32 value);
 api(custom) function Multi_Cursor_Mode view_get_multi_cursor_mode(Application_Links* app, View_ID view_id);

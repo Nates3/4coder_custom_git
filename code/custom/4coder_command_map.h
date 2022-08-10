@@ -21,9 +21,11 @@ struct Command_Trigger_List{
   Command_Trigger *last;
 };
 
-struct Command_Binding{
-  union{
-    Custom_Command_Function *custom;
+struct Command_Binding
+{
+  union
+	{
+		Custom_Command_Function *custom;
     char *name;
   };
   
