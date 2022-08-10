@@ -123,8 +123,9 @@ CUSTOM_DOC("Input consumption loop for default view behavior")
     }
 		else
 		{
-			if(HasFlag(event_properties, EventPropertyGroup_AnyUserInput) || 
-				 HasFlag(event_properties, EventProperty_CustomFunction))
+			if((HasFlag(event_properties, EventPropertyGroup_AnyUserInput) || 
+					HasFlag(event_properties, EventProperty_CustomFunction)) &&
+				 !HasFlag(event_properties, EventProperty_MouseMove))
 			{
 				Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
 				if(multi_cursor_mode == Multi_Cursor_Place_Cursors || multi_cursor_mode == Multi_Cursor_Enabled)

@@ -929,9 +929,9 @@ CUSTOM_DOC("Moves the cursor one character to the right.")
 				++multi_cursor_index)
 		{
 			i64 pos = view_get_multi_cursor(app, view, multi_cursor_index);
-			i64 end_of_line = get_line_end_pos_from_pos(app, buffer, pos);
+			u8 current_char = buffer_get_char(app, buffer, pos);
 			
-			if(pos < buffer_size && pos < end_of_line)
+			if(pos < buffer_size && current_char != '\r' && current_char != '\n')
 			{
 				view_set_multi_cursor_by_character_delta(app, view, multi_cursor_index, 1);
 			}

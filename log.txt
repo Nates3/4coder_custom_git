@@ -1,6 +1,7 @@
 //////////////////////////////
 date-> 8/9/22
 
+(nates): fixed bug with multicursor being disabled when moving mouse
 (nates): fixed bug with moving left / right causing multi cursors to change lines up/down
 (nates): Created CUSTOM_MULTICURSOR_COMMAND_SIGs and CUSTOM_UI_MULTICURSOR_COMMAND_SIGs 
          so that functions that don't support multcursor automatically disable multicursor before they 
