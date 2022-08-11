@@ -1,3 +1,12 @@
+/////////////////////////////
+date-> 8/10/22
+
+(nates): fixed bug with delete_to_start_of_line using the wrong range
+(nates): fixed a bug with move up / down not setting the buffer scroll while in Multi_Cursor_Enabled mode
+(nates): Fixed bug with multicursors where the cursors weren't being corrected 
+         when using seek to end of line
+
+
 //////////////////////////////
 date-> 8/9/22
 

@@ -100,11 +100,11 @@ CUSTOM_DOC("Delete's from the start of line to the cursor position")
 	{
 		i64 cursor_pos = view_get_cursor(app, view);
 		i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
-		i64 line_end = get_line_start_pos(app, buffer, cursor_line);
+		i64 line_start = get_line_start_pos(app, buffer, cursor_line);
 		
 		Range_i64 range = {};
-		range.start = cursor_pos;
-		range.end = line_end;
+		range.start = line_start;
+		range.end = cursor_pos;
 		buffer_replace_range(app, buffer, range, string_u8_empty);
 	}
 	else if(multi_cursor_mode == Multi_Cursor_Enabled)
@@ -118,11 +118,11 @@ CUSTOM_DOC("Delete's from the start of line to the cursor position")
 		{
 			i64 cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
 			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
-			i64 line_end = get_line_start_pos(app, buffer, cursor_line);
+			i64 line_start = get_line_start_pos(app, buffer, cursor_line);
 			
 			Range_i64 range = {};
-			range.start = cursor_pos;
-			range.end = line_end;
+			range.start = line_start;
+			range.end = cursor_pos;
 			buffer_replace_range(app, buffer, range, string_u8_empty);
 		}
 		history_group_end(history_group);

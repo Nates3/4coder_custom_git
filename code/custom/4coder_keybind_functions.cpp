@@ -134,7 +134,7 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(swap_panels, KeyCode_A, KeyCode_Alt);
   Bind(word_complete, KeyCode_P, KeyCode_Control);
   Bind(word_complete_drop_down, KeyCode_P, KeyCode_Alt);
-  Bind(center_view, KeyCode_V, KeyCode_Control);
+  Bind(center_view, KeyCode_Period, KeyCode_Alt);
   Bind(left_adjust_view, KeyCode_V, KeyCode_Alt);
   Bind(save, KeyCode_S, KeyCode_Control);
   Bind(save_all_dirty_buffers, KeyCode_S, KeyCode_Control, KeyCode_Shift);
@@ -166,7 +166,7 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(jump_to_definition_sorted, KeyCode_Quote, KeyCode_Control, KeyCode_Shift);
   Bind(goto_next_jump, KeyCode_B, KeyCode_Alt);
   Bind(goto_prev_jump, KeyCode_B, KeyCode_Alt, KeyCode_Shift);
-  
+	
   Bind(move_left, KeyCode_Left);
   Bind(move_right, KeyCode_Right);
   Bind(move_up, KeyCode_Up);
@@ -180,10 +180,14 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(move_right_alpha_numeric_or_camel_boundary, KeyCode_Right, KeyCode_Alt);
   Bind(move_left_alpha_numeric_or_camel_boundary, KeyCode_Left, KeyCode_Alt);
   
-  Bind(seek_end_of_textual_line, KeyCode_Right, KeyCode_Shift);
-  Bind(seek_beginning_of_textual_line, KeyCode_Left, KeyCode_Shift);
+  Bind(seek_end_of_line, KeyCode_Right, KeyCode_Shift);
+  Bind(seek_beginning_of_line, KeyCode_Left, KeyCode_Shift);
   Bind(move_line_up, KeyCode_PageUp, KeyCode_Alt);
   Bind(move_line_down, KeyCode_PageDown, KeyCode_Alt);
+	
+  Bind(keyboard_macro_start_recording, KeyCode_Minus, KeyCode_Control);
+  Bind(keyboard_macro_finish_recording, KeyCode_Minus, KeyCode_Control, KeyCode_Shift);
+  Bind(keyboard_macro_replay, KeyCode_Minus, KeyCode_Alt);
   
   Bind(project_fkey_command, KeyCode_F1);
   Bind(project_fkey_command, KeyCode_F2);
@@ -209,50 +213,31 @@ nates_bind_command_keys(Mapping *m, Command_Map *map)
 	Bind(toggle_compilation_expand, KeyCode_Tick);
   Bind(cut, KeyCode_Q);
   Bind(copy, KeyCode_J);
-	Bind(copy_alpha_numeric_identifier, KeyCode_P);
   Bind(paste, KeyCode_K);
   Bind(set_mark, KeyCode_Space);
   Bind(goto_next_mark, KeyCode_Equal);
   Bind(goto_prev_mark, KeyCode_Minus);
   Bind(list_all_substring_locations_case_insensitive, KeyCode_Comma);
-  Bind(goto_jump_at_cursor, KeyCode_Quote);
+  Bind(goto_jump_at_cursor, KeyCode_D);
   Bind(jump_to_last_point, KeyCode_I);
   Bind(query_replace, KeyCode_O);
   Bind(replace_in_range, KeyCode_O, KeyCode_Control);
 	
-	Bind(cycle_multi_cursor_mode, KeyCode_M);
+	Bind(cycle_multi_cursor_mode, KeyCode_Quote);
   
   Bind(delete_range, KeyCode_E);
-  Bind(delete_alpha_numeric_identifier, KeyCode_Period);
+	Bind(delete_range, KeyCode_E, KeyCode_Control);
+	Bind(copy_alpha_numeric_identifier, KeyCode_Period);
+  Bind(delete_alpha_numeric_identifier, KeyCode_E);
   Bind(delete_to_end_of_line, KeyCode_U);
   Bind(delete_to_start_of_line, KeyCode_U, KeyCode_Control);
   Bind(delete_line, KeyCode_E, KeyCode_Alt);
   Bind(select_lines, KeyCode_J, KeyCode_Shift);
-  Bind(search, KeyCode_G);
+  Bind(search, KeyCode_P);
   Bind(undo, KeyCode_Semicolon);
   Bind(redo, KeyCode_Semicolon, KeyCode_Shift);
   Bind(change_to_insert_mode_front, KeyCode_A);
   BindTextInput(insert_return);
-  
-  Bind(keyboard_macro_start_recording, KeyCode_Minus, KeyCode_Control);
-  Bind(keyboard_macro_finish_recording, KeyCode_Minus, KeyCode_Control, KeyCode_Shift);
-  Bind(keyboard_macro_replay, KeyCode_Minus, KeyCode_Alt);
-  
-  Bind(move_up, KeyCode_C);
-  Bind(move_down, KeyCode_T);
-  Bind(move_left, KeyCode_H);
-  Bind(move_right, KeyCode_N);
-  
-  Bind(move_up_10, KeyCode_C, KeyCode_Alt);
-  Bind(move_down_10, KeyCode_T, KeyCode_Alt);
-  
-  Bind(page_up, KeyCode_C, KeyCode_Control, KeyCode_Alt);
-  Bind(page_down, KeyCode_T, KeyCode_Control, KeyCode_Alt);
-  
-  Bind(move_right_alpha_numeric_boundary, KeyCode_N, KeyCode_Control);
-  Bind(move_left_alpha_numeric_boundary, KeyCode_H, KeyCode_Control);
-  Bind(move_right_alpha_numeric_or_camel_boundary, KeyCode_N, KeyCode_Alt);
-  Bind(move_left_alpha_numeric_or_camel_boundary, KeyCode_H, KeyCode_Alt);
   
   Bind(seek_beginning_of_line, KeyCode_H, KeyCode_Shift);
   Bind(seek_end_of_line, KeyCode_N, KeyCode_Shift);

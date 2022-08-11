@@ -21,6 +21,7 @@
 
 [ ] - Save multi cursor positions maybe so undo / redo work by setting cursors correctly
 
+
 [ ] - Create command for backspace / delete alpha numeric boundary where it doesn't skip over lines 
       when deleting stuff
 
@@ -29,6 +30,8 @@
 
 [ ] - When saving && there is a project.4coder, save all cursor locations and the opened buffers
       and assign the correct open buffers to the ones that were in the view last
+
+[ ] - Loading a project is now laggy for some reason, investigate for optimization / bug fix
 
 [ ] - goto_end_of_file is slow, investigate to see if it can be optimized
 

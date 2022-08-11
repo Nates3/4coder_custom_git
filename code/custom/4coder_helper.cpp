@@ -273,22 +273,6 @@ view_set_multi_cursor_by_character_delta(Application_Links *app, View_ID view,
 	return(new_pos);
 }
 
-function i64
-view_correct_cursor(Application_Links *app, View_ID view){
-  i64 pos = view_get_cursor(app, view);
-  i64 new_pos = view_set_pos_by_character_delta(app, view, pos, 0);
-  view_set_cursor_no_set_mark_rel_index(app, view, seek_pos(new_pos));
-  return(new_pos);
-}
-
-function i64
-view_correct_mark(Application_Links *app, View_ID view){
-  i64 pos = view_get_mark(app, view);
-  i64 new_pos = view_set_pos_by_character_delta(app, view, pos, 0);
-  view_set_mark(app, view, seek_pos(new_pos));
-  return(new_pos);
-}
-
 function Vec2_f32
 buffer_point_difference(Application_Links *app, Buffer_ID buffer, f32 width, Face_ID face_id,
                         Buffer_Point a, Buffer_Point b){
@@ -2301,11 +2285,11 @@ function void
 seek_pos_of_textual_line(Application_Links *app, Side side)
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
+	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
 	
 	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
 	if(multi_cursor_mode == Multi_Cursor_Disabled)
 	{
-		Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
 		i64 pos = view_get_cursor(app, view);
 		i64 new_pos = get_line_side_pos_from_pos(app, buffer, pos, side);
 		view_set_cursor_and_preferred_x(app, view, seek_pos(new_pos));
@@ -2318,7 +2302,6 @@ seek_pos_of_textual_line(Application_Links *app, Side side)
 				multi_cursor_index < multi_cursor_count;
 				++multi_cursor_index)
 		{
-			Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
 			i64 pos = view_get_multi_cursor(app, view, multi_cursor_index);
 			i64 new_pos = get_line_side_pos_from_pos(app, buffer, pos, side);
 			view_set_multi_cursor_preferred_x(app, view, multi_cursor_index, seek_pos(new_pos));

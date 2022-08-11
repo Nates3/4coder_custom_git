@@ -700,7 +700,14 @@ CUSTOM_DOC("Moves the cursor up one line.")
 					multi_cursor_index < multi_cursor_count;
 					++multi_cursor_index)
 			{
-				move_vertical_lines_multi_cursor(app, -1, multi_cursor_index);
+				if(multi_cursor_index == 0)
+				{
+					move_vertical_lines(app, -1);
+				}
+				else
+				{
+					move_vertical_lines_multi_cursor(app, -1, multi_cursor_index);
+				}
 			}
 		}
 	}
@@ -762,7 +769,14 @@ CUSTOM_DOC("Moves the cursor down one line.")
 					multi_cursor_index < multi_cursor_count;
 					++multi_cursor_index)
 			{
-				move_vertical_lines_multi_cursor(app, 1, multi_cursor_index);
+				if(multi_cursor_index == 0)
+				{
+					move_vertical_lines(app, 1);
+				}
+				else
+				{
+					move_vertical_lines_multi_cursor(app, 1, multi_cursor_index);
+				}
 			}
 		}
 	}

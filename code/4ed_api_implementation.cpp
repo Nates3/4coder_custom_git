@@ -2044,7 +2044,6 @@ view_set_cursor_no_set_mark_rel_index(Application_Links *app, View_ID view_id, B
   return(result);
 }
 
-
 api(custom) function b32
 view_set_buffer_scroll(Application_Links *app, View_ID view_id, Buffer_Scroll scroll,
                        Set_Buffer_Scroll_Rule rule)
@@ -3930,13 +3929,16 @@ text_layout_character_on_screen(Application_Links *app, Text_Layout_ID layout_id
   Models *models = (Models*)app->cmd_context;
   Rect_f32 result = {};
   Text_Layout *layout = text_layout_get(&models->text_layouts, layout_id);
-  if (layout != 0 && range_contains_inclusive(layout->visible_range, pos)){
+  if (layout != 0 && range_contains_inclusive(layout->visible_range, pos))
+	{
     Editing_File *file = imp_get_file(models, layout->buffer_id);
-    if (api_check_buffer(file)){
+    if (api_check_buffer(file))
+		{
       Gap_Buffer *buffer = &file->state.buffer;
       i64 line_number = buffer_get_line_index(buffer, pos) + 1;
       
-      if (range_contains_inclusive(layout->visible_line_number_range, line_number)){
+      if (range_contains_inclusive(layout->visible_line_number_range, line_number))
+			{
         Rect_f32 rect = layout->rect;
         f32 width = rect_width(rect);
         Face *face = file_get_face(models, file);
