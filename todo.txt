@@ -19,8 +19,7 @@
 /////////////////////////////
 ---------- TODOS -------------
 
-[ ] - Save multi cursor positions maybe so undo / redo work by setting cursors correctly
-
+[ ] - Have 4coder listers sort by name
 
 [ ] - Create command for backspace / delete alpha numeric boundary where it doesn't skip over lines 
       when deleting stuff
@@ -35,9 +34,9 @@
 
 [ ] - goto_end_of_file is slow, investigate to see if it can be optimized
 
-[ ] - Listing code indexs isn't sorted
-
 [ ] - Jump to cursor sets buffer scroll wrong in compilation view only sometimes
+
+[ ] - Save multi cursor positions maybe so undo / redo work by setting cursors correctly
 
 [ ] - Jump to definition sorts function code index notes without considering the stuff in parenthesis
 

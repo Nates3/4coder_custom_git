@@ -171,8 +171,8 @@ nates_bind_shared_keys(Mapping *m, Command_Map *map)
   Bind(move_right, KeyCode_Right);
   Bind(move_up, KeyCode_Up);
   Bind(move_down, KeyCode_Down);
-  
-  Bind(move_up_10, KeyCode_Up, KeyCode_Alt);
+	
+	Bind(move_up_10, KeyCode_Up, KeyCode_Alt);
   Bind(move_down_10, KeyCode_Down, KeyCode_Alt);
   
   Bind(move_right_alpha_numeric_boundary, KeyCode_Right, KeyCode_Control);

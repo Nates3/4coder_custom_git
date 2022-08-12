@@ -1,3 +1,8 @@
+//////////////////////////////
+date->8/12/22
+
+(nates): fixed a bug with enum parsing failing due to assgigning enum data type in c++
+
 /////////////////////////////
 date-> 8/10/22
 
