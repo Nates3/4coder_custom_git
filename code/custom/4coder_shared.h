@@ -13,23 +13,34 @@ struct Mark_History
   i32 mark_count;
 };
 
-enum Modal_State_ID
+#define VIEW_MULTI_CURSOR_MAXIMUM_COUNT 128
+
+enum Modal_State
 {
+	Modal_State_Null,
   Modal_State_Insert,
   Modal_State_Command
 };
 
-struct String_Node
+enum Multi_Cursor_Mode
 {
-  String_Node *prev;
-  String_Node *next;
-  String_Const_u8 contents;
+	Multi_Cursor_Disabled,
+	Multi_Cursor_Place_Cursors,
+	Multi_Cursor_Enabled,
+};
+
+struct Project_List_Node
+{
+	Project_List_Node *prev;
+	Project_List_Node *next;
+	String_Const_u8 full_path;
+	String_Const_u8 name;
 };
 
 struct Project_List
 {
-  String_Node *first;
-  String_Node *last;
+	Project_List_Node *first;
+	Project_List_Node *last;
   u32 count;
 };
 

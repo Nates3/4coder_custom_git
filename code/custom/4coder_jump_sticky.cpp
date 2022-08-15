@@ -38,6 +38,7 @@ binary_search(i64 *array, i32 stride, i32 count, i64 x){
   return(i);
 }
 
+
 internal Sticky_Jump_Array
 parse_buffer_to_jump_array(Application_Links *app, Arena *arena, Buffer_ID buffer){
   Sticky_Jump_Node *jump_first = 0;;
@@ -55,7 +56,16 @@ parse_buffer_to_jump_array(Application_Links *app, Arena *arena, Buffer_ID buffe
       Temp_Memory_Block line_auto_closer(arena);
       if (is_valid_line(app, buffer, line)){
         String_Const_u8 line_str = push_buffer_line(app, arena, buffer, line);
-        Parsed_Jump parsed_jump = parse_jump_location(line_str);
+				Parsed_Jump parsed_jump = {};
+				if(string_has_substr(line_str, SCu8(".odin")))
+				{
+					parsed_jump = parse_jump_location_odin(line_str);
+				}
+				else
+				{
+					parsed_jump = parse_jump_location(line_str);
+				}
+				
         if (parsed_jump.success){
           Buffer_ID jump_buffer = {};
           if (open_file(app, &jump_buffer, parsed_jump.location.file, false, true)){
@@ -101,7 +111,6 @@ parse_buffer_to_jump_array(Application_Links *app, Arena *arena, Buffer_ID buffe
   return(result);
 }
 
-
 internal Sticky_Jump_Array
 parse_buffer_to_jump_array_not_slow(Application_Links *app, Arena *arena, Buffer_ID buffer)
 {
@@ -113,7 +122,7 @@ parse_buffer_to_jump_array_not_slow(Application_Links *app, Arena *arena, Buffer
   i32 assert_count = 1;
   i32 view_count = app_get_view_count(app);
   
-  i64 cursor_pos = view_get_cursor_pos(app, view);
+  i64 cursor_pos = view_get_cursor(app, view);
   i64 view_line_number = get_line_number_from_pos(app, buffer, cursor_pos);
   i64 max_buffer_line = buffer_get_line_count(app, buffer);
   i64 min_line = clamp_bot(view_line_number - 10, 0);
@@ -528,7 +537,7 @@ CUSTOM_DOC("If the cursor is found to be on a jump location, parses the jump loc
   Marker_List *list = make_list_for_buffer(app, heap, buffer);
   
   
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   Buffer_Cursor cursor = buffer_compute_cursor(app, buffer, seek_pos(pos));
   
   i32 list_index = get_index_exact_from_list(app, list, cursor.line);
@@ -557,7 +566,7 @@ CUSTOM_DOC("If the cursor is found to be on a jump location, parses the jump loc
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
   Marker_List *list = make_list_for_buffer(app, heap, buffer);
   
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   Buffer_Cursor cursor = buffer_compute_cursor(app, buffer, seek_pos(pos));
   
   i32 list_index = get_index_exact_from_list(app, list, cursor.line);
@@ -629,7 +638,7 @@ get_locked_jump_state(Application_Links *app, Heap *heap){
     Buffer_ID buffer = view_get_buffer(app, result.view, Access_Always);
     result.list = get_or_make_list_for_buffer(app, heap, buffer);
     
-    i64 cursor_position = view_get_cursor_pos(app, result.view);
+    i64 cursor_position = view_get_cursor(app, result.view);
     Buffer_Cursor cursor = buffer_compute_cursor(app, buffer, seek_pos(cursor_position));
     result.list_index = get_index_nearest_from_list(app, result.list, cursor.line);
   }
@@ -643,7 +652,7 @@ CUSTOM_DOC("If a buffer containing jump locations has been locked in, goes to th
   
   Locked_Jump_State jump_state = get_locked_jump_state(app, heap);
   if (jump_state.view != 0){
-    i64 cursor_position = view_get_cursor_pos(app, jump_state.view);
+    i64 cursor_position = view_get_cursor(app, jump_state.view);
     Buffer_Cursor cursor = view_compute_cursor(app, jump_state.view, seek_pos(cursor_position));
     i64 line = get_line_from_list(app, jump_state.list, jump_state.list_index);
     if (line <= cursor.line){
@@ -673,7 +682,7 @@ CUSTOM_DOC("If a buffer containing jump locations has been locked in, goes to th
   
   Locked_Jump_State jump_state = get_locked_jump_state(app, heap);
   if (jump_state.view != 0){
-    i64 cursor_position = view_get_cursor_pos(app, jump_state.view);
+    i64 cursor_position = view_get_cursor(app, jump_state.view);
     Buffer_Cursor cursor = view_compute_cursor(app, jump_state.view, seek_pos(cursor_position));
     i64 line = get_line_from_list(app, jump_state.list, jump_state.list_index);
     if (line <= cursor.line){

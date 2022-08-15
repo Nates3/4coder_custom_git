@@ -57,8 +57,9 @@ struct View_Context_Node{
   void *delta_rule_memory;
 };
 
-struct View{
-  Modal_State_ID modal_state;
+struct View
+{
+  Modal_State modal_state;
   
   View *next;
   View *prev;
@@ -68,16 +69,17 @@ struct View{
   Editing_File *file;
   Lifetime_Object *lifetime_object;
   
-  File_Edit_Positions edit_pos_;
-  i64 mark;
+	i64 cursor_count;
+  File_Edit_Position edit_pos_;
+  i64 marks[VIEW_MULTI_CURSOR_MAXIMUM_COUNT];
+	f32 preferred_x[VIEW_MULTI_CURSOR_MAXIMUM_COUNT];
   
-  b32 is_selecting;
-  b32 yanked_entire_line;
-  b32 is_cutting;
+	Multi_Cursor_Mode multi_cursor_mode;
+	b32 line_selection_mode;
+  b32 vim_cutting_mode;
   i64 selection_begin;
   i64 selection_end;
   
-  f32 preferred_x;
   Vec2_f32 cursor_margin;
   Vec2_f32 cursor_push_in_multiplier;
   

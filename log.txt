@@ -1,3 +1,47 @@
+/////////////////////////////
+date->8/15/22
+
+(nates): Added wrapping for search
+
+//////////////////////////////
+date->8/12/22
+
+(nates): fixed a bug with enum parsing failing due to assgigning enum data type in c++
+
+/////////////////////////////
+date-> 8/10/22
+
+(nates): fixed bug with delete_to_start_of_line using the wrong range
+(nates): fixed a bug with move up / down not setting the buffer scroll while in Multi_Cursor_Enabled mode
+(nates): Fixed bug with multicursors where the cursors weren't being corrected 
+         when using seek to end of line
+
+
+//////////////////////////////
+date-> 8/9/22
+
+(nates): fixed bug with multicursor being disabled when moving mouse
+(nates): fixed bug with moving left / right causing multi cursors to change lines up/down
+(nates): Created CUSTOM_MULTICURSOR_COMMAND_SIGs and CUSTOM_UI_MULTICURSOR_COMMAND_SIGs 
+         so that functions that don't support multcursor automatically disable multicursor before they 
+         get executed
+
+/////////////////////////////
+date-> 8/8/22
+
+(nates): project_list_file parsing reworked to use token parsing (now supports '/' at end of path)
+(nates): fixed some bugs with loading the project_list_file
+(nates): Fixed vim yank line to be persistant across the app and not just the current view
+(nates): Made it so when multi_cursor_mode != Multi_Cursor_Disabled, the cursor is always
+         a different color so you don't get confused whether or not you're in multi cursor mode
+(nates): fixed crashing bug because of not checking View * when getting multi cursors
+(nates): fixed bug with not handling memory when reloading file paths
+(nates): odin language files and goto errors are supported
+(nates): load_project_list_file command signature added
+(nates): made lots of changes to commands to support multi cursor
+(nates): Added concept of having multiple cursors
+
+
 //////////////////////////////
 date->7/30/22
 

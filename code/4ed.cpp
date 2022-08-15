@@ -340,7 +340,8 @@ App_Init_Sig(app_init)
   }
 }
 
-App_Step_Sig(app_step){
+App_Step_Sig(app_step)
+{
   Models *models = (Models*)base_ptr;
   
   Mutex_Lock file_order_lock(models->working_set.mutex);
@@ -355,7 +356,8 @@ App_Step_Sig(app_step){
   models->input = input;
   
   // NOTE(allen): OS clipboard event handling
-  if (input->clipboard.str != 0){
+  if (input->clipboard.str != 0)
+	{
     co_send_core_event(tctx, models, CoreCode_NewClipboardContents, input->clipboard);
   }
   
@@ -366,7 +368,8 @@ App_Step_Sig(app_step){
   
   // NOTE(allen): update child processes
   f32 dt = input->dt;
-  if (dt > 0){
+  if (dt > 0)
+	{
     Temp_Memory_Block temp(scratch);
     
     Child_Process_Container *child_processes = &models->child_processes;
@@ -550,17 +553,20 @@ App_Step_Sig(app_step){
   // NOTE(allen): consume event stream
   Input_Event_Node *input_node = input_list.first;
   Input_Event_Node *input_node_next = 0;
-  for (;; input_node = input_node_next){
+  for (;; input_node = input_node_next)
+	{
     // NOTE(allen): first handle any events coming from the view command
     // function queue
     Model_View_Command_Function cmd_func = models_pop_view_command_function(models);
-    if (cmd_func.custom_func != 0){
+    if (cmd_func.custom_func != 0)
+		{
       View *view = imp_get_view(models, cmd_func.view_id);
-      if (view != 0){
+      if (view != 0)
+			{
         input_node_next = input_node;
         Input_Event cmd_func_event = {};
         cmd_func_event.kind = InputEventKind_CustomFunction;
-        cmd_func_event.custom_func = cmd_func.custom_func;
+        cmd_func_event.custom = cmd_func.custom_func;
         co_send_event(tctx, models, view, &cmd_func_event);
         continue;
       }
@@ -574,7 +580,7 @@ App_Step_Sig(app_step){
       simulated_input = &virtual_event;
     }
     else{
-      if (input_node == 0){
+			if (input_node == 0){
         break;
       }
       input_node_next = input_node->next;
@@ -601,7 +607,8 @@ App_Step_Sig(app_step){
     View *view = active_panel->view;
     Assert(view != 0);
     
-    switch (models->state){
+    switch (models->state)
+		{
       case APP_STATE_EDIT:
       {
         typedef i32 Event_Consume_Rule;
@@ -674,10 +681,10 @@ App_Step_Sig(app_step){
               }
               
               i64 mapid = 0;
-              Modal_State_ID modal_state;
-              if(*app_get_is_global_modal_state_ptr(app))
+              Modal_State modal_state;
+              if(app_get_is_global_modal(app))
               {
-                modal_state = *app_get_global_modal_state_ptr(app);
+                modal_state = app_get_global_modal_state(app);
               }
               else
               {
@@ -783,7 +790,7 @@ App_Step_Sig(app_step){
          panel != 0;
          panel = layout_get_next_open_panel(layout, panel)){
       View *view = panel->view;
-      File_Edit_Positions edit_pos = view_get_edit_pos(view);
+      File_Edit_Position edit_pos = view_get_edit_pos(view);
       edit_pos.scroll.position = view_normalize_buffer_point(tctx, models, view, edit_pos.scroll.target);
       block_zero_struct(&edit_pos.scroll.target);
       view_set_edit_pos(view, edit_pos);
@@ -939,7 +946,8 @@ App_Step_Sig(app_step){
   return(app_result);
 }
 
-extern "C" App_Get_Functions_Sig(app_get_functions){
+extern "C" App_Get_Functions_Sig(app_get_functions)
+{
   App_Functions result = {};
   
   result.load_vtables = app_load_vtables;

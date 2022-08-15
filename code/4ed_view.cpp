@@ -127,13 +127,13 @@ live_set_free_view(Lifetime_Allocator *lifetime_allocator, Live_Views *live_set,
 
 ////////////////////////////////
 
-internal File_Edit_Positions
+internal File_Edit_Position
 view_get_edit_pos(View *view){
   return(view->edit_pos_);
 }
 
 internal void
-view_set_edit_pos(View *view, File_Edit_Positions edit_pos){
+view_set_edit_pos(View *view, File_Edit_Position edit_pos){
   edit_pos.scroll.position.line_number = clamp_bot(1, edit_pos.scroll.position.line_number);
   edit_pos.scroll.target.line_number = clamp_bot(1, edit_pos.scroll.target.line_number);
   view->edit_pos_ = edit_pos;
@@ -330,7 +330,8 @@ view_compute_cursor(View *view, Buffer_Seek seek){
 ////////////////////////////////
 
 internal b32
-view_move_view_to_cursor(Thread_Context *tctx, Models *models, View *view, Buffer_Scroll *scroll){
+view_move_view_to_cursor(Thread_Context *tctx, Models *models, View *view, Buffer_Scroll *scroll)
+{
   Editing_File *file = view->file;
   Face *face = file_get_face(models, file);
   Rect_f32 rect = view_get_buffer_rect(tctx, models, view);
@@ -338,10 +339,10 @@ view_move_view_to_cursor(Thread_Context *tctx, Models *models, View *view, Buffe
   
   Layout_Function *layout_func = file_get_layout_func(file);
   
-  File_Edit_Positions edit_pos = view_get_edit_pos(view);
+  File_Edit_Position edit_pos = view_get_edit_pos(view);
   Vec2_f32 p = file_relative_xy_of_pos(tctx, models, file,
                                        layout_func, view_dim.x, face,
-                                       scroll->target.line_number, edit_pos.cursor_pos);
+                                       scroll->target.line_number, edit_pos.cursors[0]);
   p -= scroll->target.pixel_shift;
   
   f32 line_height = face->metrics.line_height;
@@ -423,7 +424,7 @@ view_move_cursor_to_view(Thread_Context *tctx, Models *models, View *view, Buffe
 internal void
 view_set_cursor(Thread_Context *tctx, Models *models, View *view, i64 pos)
 {
-  File_Edit_Positions edit_pos = view_get_edit_pos(view);
+  File_Edit_Position edit_pos = view_get_edit_pos(view);
   file_edit_positions_set_cursor(&edit_pos, pos);
   view_set_edit_pos(view, edit_pos);
   Buffer_Scroll scroll = edit_pos.scroll;
@@ -436,10 +437,10 @@ view_set_cursor(Thread_Context *tctx, Models *models, View *view, i64 pos)
 internal void
 view_set_scroll(Thread_Context *tctx, Models *models, View *view, Buffer_Scroll scroll)
 {
-  File_Edit_Positions edit_pos = view_get_edit_pos(view);
+  File_Edit_Position edit_pos = view_get_edit_pos(view);
   file_edit_positions_set_scroll(&edit_pos, scroll);
   view_set_edit_pos(view, edit_pos);
-  if (view_move_cursor_to_view(tctx, models, view, edit_pos.scroll, &edit_pos.cursor_pos, view->preferred_x))
+  if (view_move_cursor_to_view(tctx, models, view, edit_pos.scroll, &edit_pos.cursors[0], view->preferred_x[0]))
   {
     view_set_edit_pos(view, edit_pos);
   }
@@ -447,11 +448,11 @@ view_set_scroll(Thread_Context *tctx, Models *models, View *view, Buffer_Scroll 
 
 internal void
 view_set_cursor_and_scroll(Thread_Context *tctx, Models *models, View *view, i64 pos, Buffer_Scroll scroll){
-  File_Edit_Positions edit_pos = view_get_edit_pos(view);
+  File_Edit_Position edit_pos = view_get_edit_pos(view);
   file_edit_positions_set_cursor(&edit_pos, pos);
   Buffer_Cursor cursor = view_compute_cursor(view, seek_pos(pos));
   Vec2_f32 p = view_relative_xy_of_pos(tctx, models, view, cursor.line, pos);
-  view->preferred_x = p.x;
+  view->preferred_x[0] = p.x;
   file_edit_positions_set_scroll(&edit_pos, scroll);
   edit_pos.last_set_type = EditPos_None;
   view_set_edit_pos(view, edit_pos);
@@ -460,7 +461,8 @@ view_set_cursor_and_scroll(Thread_Context *tctx, Models *models, View *view, i64
 ////////////////////////////////
 
 internal void
-view_set_file(Thread_Context *tctx, Models *models, View *view, Editing_File *file){
+view_set_file(Thread_Context *tctx, Models *models, View *view, Editing_File *file)
+{
   Assert(file != 0);
   
   Editing_File *old_file = view->file;
@@ -481,12 +483,12 @@ view_set_file(Thread_Context *tctx, Models *models, View *view, Editing_File *fi
   
   view->file = file;
   
-  File_Edit_Positions edit_pos = file_edit_positions_pop(file);
+  File_Edit_Position edit_pos = file_edit_positions_pop(file);
   view_set_edit_pos(view, edit_pos);
-  view->mark = edit_pos.cursor_pos;
-  Buffer_Cursor cursor = view_compute_cursor(view, seek_pos(edit_pos.cursor_pos));
-  Vec2_f32 p = view_relative_xy_of_pos(tctx, models, view, cursor.line, edit_pos.cursor_pos);
-  view->preferred_x = p.x;
+  view->marks[0] = edit_pos.cursors[0];
+  Buffer_Cursor cursor = view_compute_cursor(view, seek_pos(edit_pos.cursors[0]));
+  Vec2_f32 p = view_relative_xy_of_pos(tctx, models, view, cursor.line, edit_pos.cursors[0]);
+  view->preferred_x[0] = p.x;
   
   models->layout.panel_state_dirty = true;
   
@@ -519,10 +521,10 @@ view_set_file(Thread_Context *tctx, Models *models, View *view, Editing_File *fi
     }
     
     i64 mapid = 0;
-    Modal_State_ID modal_state;
-    if(*app_get_is_global_modal_state_ptr(&app))
+    Modal_State modal_state;
+    if(app_get_is_global_modal(&app))
     {
-      modal_state = *app_get_global_modal_state_ptr(&app);
+			modal_state = app_get_global_modal_state(&app);
     }
     else
     {
@@ -653,7 +655,10 @@ view_event_context_base__inner(Coroutine *coroutine){
 
 function void
 view_init(Thread_Context *tctx, Models *models, View *view, Editing_File *initial_buffer,
-          Custom_Command_Function *event_context_base){
+          Custom_Command_Function *event_context_base)
+{
+	view->modal_state = Modal_State_Command;
+	view->cursor_count = 1;
   view_set_file(tctx, models, view, initial_buffer);
   
   view->node_arena = make_arena_system();
@@ -737,7 +742,8 @@ co_full_abort(Thread_Context *tctx, Models *models, View *view){
 }
 
 function b32
-co_send_event(Thread_Context *tctx, Models *models, View *view, Input_Event *event){
+co_send_event(Thread_Context *tctx, Models *models, View *view, Input_Event *event)
+{
   b32 event_was_handled = false;
   
   Coroutine *co = view->co;
@@ -751,7 +757,8 @@ co_send_event(Thread_Context *tctx, Models *models, View *view, Input_Event *eve
     begin_handling_input(models, &in.user_input);
     view->co = co_run(tctx, models, view->co, &in, &view->co_out);
     view_check_co_exited(models, view);
-    if (!(event->kind == InputEventKind_Core && event->core.code == CoreCode_Animate)){
+    if (!(event->kind == InputEventKind_Core && event->core.code == CoreCode_Animate))
+		{
       models->animate_next_frame = true;
     }
     event_was_handled = !models->current_input_unhandled;
@@ -859,8 +866,8 @@ adjust_views_looking_at_file_to_new_cursor(Thread_Context *tctx, Models *models,
        panel = layout_get_next_open_panel(layout, panel)){
     View *view = panel->view;
     if (view->file == file){
-      File_Edit_Positions edit_pos = view_get_edit_pos(view);
-      view_set_cursor(tctx, models, view, edit_pos.cursor_pos);
+      File_Edit_Position edit_pos = view_get_edit_pos(view);
+      view_set_cursor(tctx, models, view, edit_pos.cursors[0]);
     }
   }
 }

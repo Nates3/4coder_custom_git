@@ -3194,7 +3194,8 @@ linalloc_end_temp(Temp_Memory_Arena temp){
   Cursor_Node *cursor_node = temp.arena->cursor_node;
   for (Cursor_Node *prev = 0;
        cursor_node != temp.cursor_node && cursor_node != 0;
-       cursor_node = prev){
+       cursor_node = prev)
+	{
     prev = cursor_node->prev;
     base_free(allocator, cursor_node);
   }
@@ -3209,6 +3210,7 @@ linalloc_end_temp(Temp_Memory_Arena temp){
     }
   }
 }
+
 function void
 linalloc_clear(Arena *arena){
   Temp_Memory_Arena temp = {arena, 0, 0};
@@ -3228,6 +3230,7 @@ linalloc_wrap_write(String_Const_u8 data, u64 size, void *src){
   block_copy(data.str, src, clamp_top(data.size, size));
   return(data.str);
 }
+
 #define push_array(a,T,c) ((T*)linalloc_wrap_unintialized(linalloc_push((a), sizeof(T)*(c), file_name_line_number_lit_u8)))
 #define push_array_zero(a,T,c) ((T*)linalloc_wrap_zero(linalloc_push((a), sizeof(T)*(c), file_name_line_number_lit_u8)))
 #define push_array_write(a,T,c,s) ((T*)linalloc_wrap_write(linalloc_push((a), sizeof(T)*(c), file_name_line_number_lit_u8), sizeof(T)*(c), (s)))

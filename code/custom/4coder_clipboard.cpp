@@ -126,14 +126,11 @@ CUSTOM_DOC("Copy the text in the range from the cursor to the mark onto the clip
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
   Range_i64 range = {};
   
-  b32 *is_selecting = view_get_is_selecting(app, view);
-  b32 *yanked_entire_line = view_get_yanked_entire_line(app, view);
-  if (is_selecting && *is_selecting)
+	b32 line_selection_mode = view_get_line_selection_mode(app, view);
+  b32 yanked_entire_line = app_get_yanked_entire_line(app);
+  if(line_selection_mode)
   {
-    if (yanked_entire_line)
-    {
-      *yanked_entire_line = true;
-    }
+		app_set_yanked_entire_line(app, true);
     
     i64 min_line = view_get_selection_begin(app, view);
     i64 max_line = view_get_selection_end(app, view);
@@ -148,15 +145,11 @@ CUSTOM_DOC("Copy the text in the range from the cursor to the mark onto the clip
     Range_i64 line_range = {min_line, max_line};
     range = get_pos_range_from_line_range(app, buffer, line_range);
     
-    *is_selecting = false;
+		view_set_line_selection_mode(app, view, false);
   }
   else
   {
-    if (yanked_entire_line)
-    {
-      *yanked_entire_line = false;
-    }
-    
+		app_set_yanked_entire_line(app, false);
     range = get_view_range(app, view);
   }
   
@@ -169,9 +162,9 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
   Range_i64 range = {};
   
-  b32 *is_selecting = view_get_is_selecting(app, view);
+	b32 line_selection_mode = view_get_line_selection_mode(app, view);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-  if (is_selecting && *is_selecting)
+  if(line_selection_mode)
   {
     i64 min_line = view_get_selection_begin(app, view);
     i64 max_line = view_get_selection_end(app, view);
@@ -186,7 +179,7 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
     Range_i64 line_range = {min_line, max_line};
     range = get_pos_range_from_line_range(app, buffer, line_range);
     
-    *is_selecting = false;
+		view_set_line_selection_mode(app, view, false);
     
     if (clipboard_post_buffer_range(app, 0, buffer, range))
     {
@@ -232,13 +225,35 @@ CUSTOM_DOC("At the cursor, insert the text at the top of the clipboard.")
       {
         Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
         
-        i64 pos = view_get_cursor_pos(app, view);
-        buffer_replace_range(app, buffer, Ii64(pos), string);
-        view_set_mark_record(app, view, seek_pos(pos));
-        view_set_cursor_and_preferred_x(app, view, seek_pos(pos + (i32)string.size));
-        
-        ARGB_Color argb = fcolor_resolve(fcolor_id(defcolor_paste));
-        buffer_post_fade(app, buffer, 0.667f, Ii64_size(pos, string.size), argb);
+				Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+				if(multi_cursor_mode == Multi_Cursor_Disabled)
+				{
+					i64 pos = view_get_cursor(app, view);
+					buffer_replace_range(app, buffer, Ii64(pos), string);
+					view_set_mark_record(app, view, seek_pos(pos));
+					view_set_cursor_and_preferred_x(app, view, seek_pos(pos + (i32)string.size));
+					
+					ARGB_Color argb = fcolor_resolve(fcolor_id(defcolor_paste));
+					buffer_post_fade(app, buffer, 0.667f, Ii64_size(pos, string.size), argb);
+				}
+				else if(multi_cursor_mode == Multi_Cursor_Enabled)
+				{
+					History_Group history_group = history_group_begin(app, view);
+					
+					i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
+					for(u32 multi_cursor_index = 0;
+							multi_cursor_index < multi_cursor_count;
+							++multi_cursor_index)
+					{
+						i64 pos = view_get_multi_cursor(app, view, multi_cursor_index);
+						buffer_replace_range(app, buffer, Ii64(pos), string);
+						view_set_multi_cursor_preferred_x(app, view, multi_cursor_index, seek_pos(pos + (i32)string.size));
+						
+						ARGB_Color argb = fcolor_resolve(fcolor_id(defcolor_paste));
+						buffer_post_fade(app, buffer, 0.667f, Ii64_size(pos, string.size), argb);
+					}
+					history_group_end(history_group);
+				}
       }
     }
   }
@@ -277,6 +292,7 @@ CUSTOM_DOC("If the previous command was paste or paste_next, replaces the paste 
         Range_i64 range = get_view_range(app, view);
         i64 pos = range.min;
         
+				
         buffer_replace_range(app, buffer, range, string);
         view_set_cursor_and_preferred_x(app, view, seek_pos(pos + string.size));
         
@@ -422,7 +438,7 @@ function void
 multi_paste_interactive_up_down(Application_Links *app, i32 paste_count, i32 clip_count)
 {
   View_ID view = get_active_view(app, Access_ReadWriteVisible);
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   b32 old_to_new = true;
   Range_i64 range = multi_paste_range(app, view, Ii64(pos), paste_count, old_to_new);
   

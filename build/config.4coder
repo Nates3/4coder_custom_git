@@ -8,6 +8,7 @@ mapping = "";
 // MODE
 // "4coder"       - The default 4coder mode that has been around since the beginning of time (2015)
 // "notepad-like" - Single "thin" cursor and highlight ranges like in notepad, sublime, notepad++, etc
+// IMPORTANT NOTE(nates): notepad-like is disabled because it doesn't fully implement multi cursor
 mode = "4coder";
 bind_by_physical_key = false;
 
@@ -42,7 +43,7 @@ mark_thickness = 2;
 lister_roundness = 0;
 
 // Code Wrapping
-treat_as_code = ".cpp.c.hpp.h.cc.cs.java.rs.glsl.m.mm";
+treat_as_code = ".cpp.c.hpp.h.cc.cs.java.rs.glsl.m.mm.odin";
 enable_virtual_whitespace = true;
 virtual_whitespace_regular_indent = 2;
 enable_code_wrapping = false;

@@ -29,7 +29,7 @@ CUSTOM_DOC("Finds the scope enclosed by '{' '}' surrounding the cursor and puts 
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   Range_i64 range = {};
   if (find_surrounding_nest(app, buffer, pos, FindNest_Scope, &range)){
     select_scope(app, view, range);
@@ -69,7 +69,7 @@ CUSTOM_DOC("Selects the top-most scope that surrounds the cursor.")
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   Surrounding_Range range = get_surrounding_range(app, buffer, pos);
   if(range.found)
   {
@@ -82,7 +82,7 @@ CUSTOM_DOC("Finds the first scope started by '{' after the cursor and puts the c
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   select_next_scope_after_pos(app, view, buffer, pos);
 }
 
@@ -91,8 +91,8 @@ CUSTOM_DOC("If a scope is selected, find first scope that starts after the selec
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-  i64 cursor_pos = view_get_cursor_pos(app, view);
-  i64 mark_pos = view_get_mark_pos(app, view);
+  i64 cursor_pos = view_get_cursor(app, view);
+  i64 mark_pos = view_get_mark(app, view);
   Range_i64 range = Ii64(cursor_pos, mark_pos);
   if (range_is_scope_selection(app, buffer, range)){
     select_next_scope_after_pos(app, view, buffer, range.max);
@@ -107,7 +107,7 @@ CUSTOM_DOC("Finds the first scope started by '{' before the cursor and puts the 
 {
   View_ID view = get_active_view(app, Access_ReadVisible);
   Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
-  i64 pos = view_get_cursor_pos(app, view);
+  i64 pos = view_get_cursor(app, view);
   Find_Nest_Flag flags = FindNest_Scope;
   Range_i64 range = {};
   if (find_nest_side(app, buffer, pos - 1,
@@ -158,7 +158,7 @@ CUSTOM_DOC("Deletes the braces surrounding the currently selected scope.  Leaves
     batch_last.edit.text = SCu8();
     batch_last.edit.range = Ii64((i32)(range.max - 1), (i32)(range.max - 1 + bot_len));
     
-    buffer_batch_edit(app, buffer, &batch_first);
+    buffer_batch_edit(app, buffer, &batch_first, 0);
   }
 }
 

@@ -18,10 +18,12 @@ enum{
   EditPos_CursorSet,
   EditPos_ScrollSet
 };
-struct File_Edit_Positions{
+
+struct File_Edit_Position
+{
   Edit_Pos_Set_Type last_set_type;
   Buffer_Scroll scroll;
-  i64 cursor_pos;
+  i64 cursors[VIEW_MULTI_CURSOR_MAXIMUM_COUNT];
 };
 
 struct Editing_File_Settings{
@@ -58,8 +60,8 @@ struct Editing_File_State
   Dirty_State dirty;
   File_Save_State save_state;
   
-  File_Edit_Positions edit_pos_most_recent;
-  File_Edit_Positions edit_pos_stack[16];
+  File_Edit_Position edit_pos_most_recent;
+  File_Edit_Position edit_pos_stack[16];
   i32 edit_pos_stack_top;
   
   Child_Process_ID attached_child_process;
@@ -74,7 +76,8 @@ struct Editing_File_Name{
 };
 
 struct Editing_File{
-  union{
+  union
+	{
     Editing_File *next;
     Node main_chain_node;
   };

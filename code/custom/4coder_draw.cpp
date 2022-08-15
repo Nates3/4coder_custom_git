@@ -18,22 +18,22 @@ get_item_margin_color(i32 level, i32 sub_id)
   FColor margin = fcolor_zero();
   switch (level)
   {
-  default:
-  case UIHighlight_None:
-  {
-    margin = fcolor_id(defcolor_list_item, sub_id);
-  }
-  break;
-  case UIHighlight_Hover:
-  {
-    margin = fcolor_id(defcolor_list_item_hover, sub_id);
-  }
-  break;
-  case UIHighlight_Active:
-  {
-    margin = fcolor_id(defcolor_list_item_active, sub_id);
-  }
-  break;
+		default:
+		case UIHighlight_None:
+		{
+			margin = fcolor_id(defcolor_list_item, sub_id);
+		}
+		break;
+		case UIHighlight_Hover:
+		{
+			margin = fcolor_id(defcolor_list_item_hover, sub_id);
+		}
+		break;
+		case UIHighlight_Active:
+		{
+			margin = fcolor_id(defcolor_list_item_active, sub_id);
+		}
+		break;
   }
   return (margin);
 }
@@ -48,22 +48,22 @@ get_panel_margin_color(i32 level)
   FColor margin = fcolor_zero();
   switch (level)
   {
-  default:
-  case UIHighlight_None:
-  {
-    margin = fcolor_id(defcolor_margin);
-  }
-  break;
-  case UIHighlight_Hover:
-  {
-    margin = fcolor_id(defcolor_margin_hover);
-  }
-  break;
-  case UIHighlight_Active:
-  {
-    margin = fcolor_id(defcolor_margin_active);
-  }
-  break;
+		default:
+		case UIHighlight_None:
+		{
+			margin = fcolor_id(defcolor_margin);
+		}
+		break;
+		case UIHighlight_Hover:
+		{
+			margin = fcolor_id(defcolor_margin_hover);
+		}
+		break;
+		case UIHighlight_Active:
+		{
+			margin = fcolor_id(defcolor_margin_active);
+		}
+		break;
   }
   return (margin);
 }
@@ -147,7 +147,7 @@ draw_character_block(Application_Links *app, Text_Layout_ID layout, Range_i64 ra
         {
           joinable = true;
         }
-
+				
         if (!joinable)
         {
           draw_rectangle(app, Rf32(x, y), roundness, color);
@@ -319,7 +319,7 @@ draw_background_and_margin(Application_Links *app, View_ID view, ARGB_Color marg
   {
     draw_margin(app, view_rect, inner, margin);
   }
-
+	
   return (inner);
 }
 
@@ -373,44 +373,44 @@ function void
 draw_file_bar(Application_Links *app, View_ID view_id, Buffer_ID buffer, Face_ID face_id, Rect_f32 bar)
 {
   Scratch_Block scratch(app);
-
+	
   draw_rectangle_fcolor(app, bar, 0.f, fcolor_id(defcolor_bar));
-
+	
   FColor base_color = fcolor_id(defcolor_base);
   FColor pop2_color = fcolor_id(defcolor_pop2);
-
-  i64 cursor_position = view_get_cursor_pos(app, view_id);
+	
+  i64 cursor_position = view_get_cursor(app, view_id);
   Buffer_Cursor cursor = view_compute_cursor(app, view_id, seek_pos(cursor_position));
-
+	
   Fancy_Line list = {};
   String_Const_u8 unique_name = push_buffer_unique_name(app, scratch, buffer);
   push_fancy_string(scratch, &list, base_color, unique_name);
   push_fancy_stringf(scratch, &list, base_color, " - Row: %3.lld Col: %3.lld -", cursor.line, cursor.col);
-
+	
   Managed_Scope scope = buffer_get_managed_scope(app, buffer);
   Line_Ending_Kind *eol_setting = scope_attachment(app, scope, buffer_eol_setting,
                                                    Line_Ending_Kind);
   switch (*eol_setting)
   {
-  case LineEndingKind_Binary:
-  {
-    push_fancy_string(scratch, &list, base_color, string_u8_litexpr(" bin"));
+		case LineEndingKind_Binary:
+		{
+			push_fancy_string(scratch, &list, base_color, string_u8_litexpr(" bin"));
+		}
+		break;
+		
+		case LineEndingKind_LF:
+		{
+			push_fancy_string(scratch, &list, base_color, string_u8_litexpr(" lf"));
+		}
+		break;
+		
+		case LineEndingKind_CRLF:
+		{
+			push_fancy_string(scratch, &list, base_color, string_u8_litexpr(" crlf"));
+		}
+		break;
   }
-  break;
-
-  case LineEndingKind_LF:
-  {
-    push_fancy_string(scratch, &list, base_color, string_u8_litexpr(" lf"));
-  }
-  break;
-
-  case LineEndingKind_CRLF:
-  {
-    push_fancy_string(scratch, &list, base_color, string_u8_litexpr(" crlf"));
-  }
-  break;
-  }
-
+	
   u8 space[3];
   {
     Dirty_State dirty = buffer_get_dirty_state(app, buffer);
@@ -429,7 +429,7 @@ draw_file_bar(Application_Links *app, View_ID view_id, Buffer_ID buffer, Face_ID
     }
     push_fancy_string(scratch, &list, pop2_color, str.string);
   }
-
+	
   Vec2_f32 p = bar.p0 + V2f32(2.f, 2.f);
   draw_fancy_line(app, face_id, fcolor_zero(), &list, p);
 }
@@ -449,17 +449,17 @@ function void
 draw_line_number_margin(Application_Links *app, View_ID view_id, Buffer_ID buffer, Face_ID face_id, Text_Layout_ID text_layout_id, Rect_f32 margin)
 {
   ProfileScope(app, "draw line number margin");
-
+	
   Scratch_Block scratch(app);
   FColor line_color = fcolor_id(defcolor_line_numbers_text);
-
+	
   Rect_f32 prev_clip = draw_set_clip(app, margin);
   draw_rectangle_fcolor(app, margin, 0.f, fcolor_id(defcolor_line_numbers_back));
-
+	
   Range_i64 visible_range = text_layout_get_visible_range(app, text_layout_id);
   i64 line_count = buffer_get_line_count(app, buffer);
   i64 line_count_digit_count = digit_count_from_integer(line_count, 10);
-
+	
   Fancy_String fstring = {};
   u8 *digit_buffer = push_array(scratch, u8, line_count_digit_count);
   String_Const_u8 digit_string = SCu8(digit_buffer, line_count_digit_count);
@@ -467,13 +467,13 @@ draw_line_number_margin(Application_Links *app, View_ID view_id, Buffer_ID buffe
   {
     digit_buffer[i] = ' ';
   }
-
+	
   Buffer_Cursor cursor = view_compute_cursor(app, view_id, seek_pos(visible_range.first));
   i64 line_number = cursor.line;
-
+	
   Buffer_Cursor cursor_opl = view_compute_cursor(app, view_id, seek_pos(visible_range.one_past_last));
   i64 one_past_last_line_number = cursor_opl.line + 1;
-
+	
   u8 *small_digit = digit_buffer + line_count_digit_count - 1;
   {
     u8 *ptr = small_digit;
@@ -490,16 +490,16 @@ draw_line_number_margin(Application_Links *app, View_ID view_id, Buffer_ID buffe
       }
     }
   }
-
+	
   for (; line_number < one_past_last_line_number &&
-         line_number < line_count;)
+			 line_number < line_count;)
   {
     Range_f32 line_y = text_layout_line_on_screen(app, text_layout_id, line_number);
     Vec2_f32 p = V2f32(margin.x0, line_y.min);
-
+		
     fill_fancy_string(&fstring, 0, line_color, 0, 0, digit_string);
     draw_fancy_string(app, face_id, fcolor_zero(), &fstring, p);
-
+		
     line_number += 1;
     {
       u8 *ptr = small_digit;
@@ -526,7 +526,7 @@ draw_line_number_margin(Application_Links *app, View_ID view_id, Buffer_ID buffe
       }
     }
   }
-
+	
   draw_set_clip(app, prev_clip);
 }
 
@@ -535,23 +535,23 @@ draw_fps_hud(Application_Links *app, Frame_Info frame_info, Face_ID face_id, Rec
 {
   Face_Metrics face_metrics = get_face_metrics(app, face_id);
   f32 line_height = face_metrics.line_height;
-
+	
   local_persist f32 history_literal_dt[fps_history_depth] = {};
   local_persist f32 history_animation_dt[fps_history_depth] = {};
   local_persist i32 history_frame_index[fps_history_depth] = {};
-
+	
   i32 wrapped_index = frame_info.index % fps_history_depth;
   history_literal_dt[wrapped_index] = frame_info.literal_dt;
   history_animation_dt[wrapped_index] = frame_info.animation_dt;
   history_frame_index[wrapped_index] = frame_info.index;
-
+	
   draw_rectangle_fcolor(app, rect, 0.f, f_black);
   draw_rectangle_outline_fcolor(app, rect, 0.f, 1.f, f_white);
-
+	
   Vec2_f32 p = rect.p0;
-
+	
   Scratch_Block scratch(app);
-
+	
   Range_i32 ranges[2] = {};
   ranges[0].first = wrapped_index;
   ranges[0].one_past_last = -1;
@@ -566,13 +566,13 @@ draw_fps_hud(Application_Links *app, Frame_Info frame_info, Face_ID face_id, Rec
       dts[0] = history_literal_dt[j];
       dts[1] = history_animation_dt[j];
       i32 frame_index = history_frame_index[j];
-
+			
       Fancy_Line list = {};
       push_fancy_stringf(scratch, &list, f_pink, "FPS: ");
       push_fancy_stringf(scratch, &list, f_green, "[");
       push_fancy_stringf(scratch, &list, f_white, "%5d", frame_index);
       push_fancy_stringf(scratch, &list, f_green, "]: ");
-
+			
       for (i32 k = 0; k < 2; k += 1)
       {
         f32 dt = dts[k];
@@ -586,7 +586,7 @@ draw_fps_hud(Application_Links *app, Frame_Info frame_info, Face_ID face_id, Rec
         }
         push_fancy_stringf(scratch, &list, f_green, " | ");
       }
-
+			
       draw_fancy_line(app, face_id, fcolor_zero(), &list, p);
     }
   }
@@ -598,60 +598,60 @@ get_token_color_cpp(Token token)
   Managed_ID color = defcolor_text_default;
   switch (token.kind)
   {
-  case TokenBaseKind_Preprocessor:
-  {
-    color = defcolor_preproc;
-  }
-  break;
-  case TokenBaseKind_Keyword:
-  {
-    color = defcolor_keyword;
-  }
-  break;
-  case TokenBaseKind_Comment:
-  {
-    color = defcolor_comment;
-  }
-  break;
-  case TokenBaseKind_LiteralString:
-  {
-    color = defcolor_str_constant;
-  }
-  break;
-  case TokenBaseKind_LiteralInteger:
-  {
-    color = defcolor_int_constant;
-  }
-  break;
-  case TokenBaseKind_LiteralFloat:
-  {
-    color = defcolor_float_constant;
-  }
-  break;
+		case TokenBaseKind_Preprocessor:
+		{
+			color = defcolor_preproc;
+		}
+		break;
+		case TokenBaseKind_Keyword:
+		{
+			color = defcolor_keyword;
+		}
+		break;
+		case TokenBaseKind_Comment:
+		{
+			color = defcolor_comment;
+		}
+		break;
+		case TokenBaseKind_LiteralString:
+		{
+			color = defcolor_str_constant;
+		}
+		break;
+		case TokenBaseKind_LiteralInteger:
+		{
+			color = defcolor_int_constant;
+		}
+		break;
+		case TokenBaseKind_LiteralFloat:
+		{
+			color = defcolor_float_constant;
+		}
+		break;
   }
   // specifics override generals
   switch (token.sub_kind)
   {
-  case TokenCppKind_LiteralTrue:
-  case TokenCppKind_LiteralFalse:
-  {
-    color = defcolor_bool_constant;
-  }
-  break;
-  case TokenCppKind_LiteralCharacter:
-  case TokenCppKind_LiteralCharacterWide:
-  case TokenCppKind_LiteralCharacterUTF8:
-  case TokenCppKind_LiteralCharacterUTF16:
-  case TokenCppKind_LiteralCharacterUTF32:
-  {
-    color = defcolor_char_constant;
-  }
-  break;
-  case TokenCppKind_PPIncludeFile:
-  {
-    color = defcolor_include;
-  }
-  break;
+		case TokenCppKind_LiteralTrue:
+		case TokenCppKind_LiteralFalse:
+		{
+			color = defcolor_bool_constant;
+		}
+		break;
+		case TokenCppKind_LiteralCharacter:
+		case TokenCppKind_LiteralCharacterWide:
+		case TokenCppKind_LiteralCharacterUTF8:
+		case TokenCppKind_LiteralCharacterUTF16:
+		case TokenCppKind_LiteralCharacterUTF32:
+		{
+			color = defcolor_char_constant;
+		}
+		break;
+		case TokenCppKind_PPIncludeFile:
+		{
+			color = defcolor_include;
+		}
+		break;
   }
   FColor result = fcolor_id(color);
   return (result);
@@ -821,7 +821,7 @@ draw_enclosures(Application_Links *app, Text_Layout_ID text_layout_id, Buffer_ID
 {
   Scratch_Block scratch(app);
   Range_i64_Array ranges = get_enclosure_ranges(app, scratch, buffer, pos, flags);
-
+	
   i32 color_index = 0;
   for (i32 i = ranges.count - 1; i >= 0; i -= 1)
   {
@@ -942,7 +942,7 @@ draw_jump_highlights(Application_Links *app, Buffer_ID buffer, Text_Layout_ID te
     scopes[1] = buffer_get_managed_scope(app, buffer);
     Managed_Scope comp_scope = get_managed_scope_with_multiple_dependencies(app, scopes, ArrayCount(scopes));
     Managed_Object *markers_object = scope_attachment(app, comp_scope, sticky_jump_marker_handle, Managed_Object);
-
+		
     i32 count = managed_object_get_item_count(app, *markers_object);
     Marker *markers = push_array(scratch, Marker, count);
     managed_object_load_data(app, *markers_object, 0, count, markers);
@@ -1006,9 +1006,9 @@ draw_original_4coder_style_cursor_mark_highlight(Application_Links *app, View_ID
   if (!has_highlight_range)
   {
     i32 cursor_sub_id = default_cursor_sub_id();
-
-    i64 cursor_pos = view_get_cursor_pos(app, view_id);
-    i64 mark_pos = view_get_mark_pos(app, view_id);
+		
+    i64 cursor_pos = view_get_cursor(app, view_id);
+    i64 mark_pos = view_get_mark(app, view_id);
     if (is_active_view)
     {
       if (view_get_modal_state(app, view_id) == Modal_State_Insert)
@@ -1034,10 +1034,76 @@ draw_original_4coder_style_cursor_mark_highlight(Application_Links *app, View_ID
       draw_character_wire_frame(app, text_layout_id, mark_pos,
                                 roundness, outline_thickness,
                                 fcolor_id(defcolor_mark));
-
+			
       draw_character_wire_frame(app, text_layout_id, cursor_pos,
                                 roundness, outline_thickness,
                                 fcolor_id(defcolor_cursor, cursor_sub_id));
+    }
+  }
+}
+
+function void
+draw_original_4coder_style_multi_cursor_mark_highlight(Application_Links *app, View_ID view_id, b32 is_active_view,
+																											 Buffer_ID buffer, Text_Layout_ID text_layout_id,
+																											 u32 multi_cursor_index,
+																											 f32 roundness, f32 outline_thickness)
+{
+  b32 has_highlight_range = draw_highlight_range(app, view_id, buffer, text_layout_id, roundness);
+  if (!has_highlight_range)
+  {
+    i32 cursor_sub_id = default_cursor_sub_id();
+		
+    i64 cursor_pos = view_get_multi_cursor(app, view_id, multi_cursor_index);
+    i64 mark_pos = view_get_multi_mark(app, view_id, multi_cursor_index);
+		
+    if (is_active_view)
+    {
+			Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view_id);
+			
+			Managed_ID cursor_id = defcolor_multi_cursors;
+			Managed_ID mark_id = defcolor_multi_mark;
+			if(multi_cursor_index == 0)
+			{
+				cursor_id = defcolor_main_multi_cursor;
+				mark_id = defcolor_mark;
+			}
+			
+			
+      if (view_get_modal_state(app, view_id) == Modal_State_Insert)
+      {
+        ARGB_Color color = fcolor_resolve(fcolor_id(cursor_id, cursor_sub_id));
+        Rect_f32 rect = text_layout_character_on_screen(app, text_layout_id, cursor_pos);
+        rect.x1 = rect.x0 + 2.0f;
+        draw_rectangle_outline(app, rect, roundness, outline_thickness, color);
+      }
+      else
+      {
+        draw_character_block(app, text_layout_id, cursor_pos, roundness,
+                             fcolor_id(cursor_id, cursor_sub_id));
+      }
+      // paint_text_color_pos(app, text_layout_id, cursor_pos,
+      //                      fcolor_id(defcolor_at_cursor));
+      draw_character_wire_frame(app, text_layout_id, mark_pos,
+                                roundness, outline_thickness,
+                                fcolor_id(mark_id));
+    }
+    else
+    {
+			Managed_ID cursor_id = defcolor_multi_cursors;
+			Managed_ID mark_id = defcolor_multi_mark;
+			if(multi_cursor_index == 0)
+			{
+				cursor_id = defcolor_cursor;
+				mark_id = defcolor_mark;
+			}
+			
+      draw_character_wire_frame(app, text_layout_id, mark_pos,
+                                roundness, outline_thickness,
+                                fcolor_id(mark_id));
+			
+      draw_character_wire_frame(app, text_layout_id, cursor_pos,
+                                roundness, outline_thickness,
+                                fcolor_id(cursor_id, cursor_sub_id));
     }
   }
 }
@@ -1051,8 +1117,30 @@ draw_notepad_style_cursor_highlight(Application_Links *app, View_ID view_id,
   if (!has_highlight_range)
   {
     i32 cursor_sub_id = default_cursor_sub_id();
-    i64 cursor_pos = view_get_cursor_pos(app, view_id);
-    i64 mark_pos = view_get_mark_pos(app, view_id);
+    i64 cursor_pos = view_get_cursor(app, view_id);
+    i64 mark_pos = view_get_mark(app, view_id);
+    if (cursor_pos != mark_pos)
+    {
+      Range_i64 range = Ii64(cursor_pos, mark_pos);
+      draw_character_block(app, text_layout_id, range, roundness, fcolor_id(defcolor_highlight));
+      paint_text_color_fcolor(app, text_layout_id, range, fcolor_id(defcolor_at_highlight));
+    }
+    draw_character_i_bar(app, text_layout_id, cursor_pos, fcolor_id(defcolor_cursor, cursor_sub_id));
+  }
+}
+
+function void
+draw_notepad_style_cursor_highlight(Application_Links *app, View_ID view_id,
+                                    Buffer_ID buffer, Text_Layout_ID text_layout_id,
+																		u32 multi_cursor_index,
+                                    f32 roundness)
+{
+  b32 has_highlight_range = draw_highlight_range(app, view_id, buffer, text_layout_id, roundness);
+  if (!has_highlight_range)
+  {
+    i32 cursor_sub_id = default_cursor_sub_id();
+    i64 cursor_pos = view_get_multi_cursor(app, view_id, multi_cursor_index);
+    i64 mark_pos = view_get_mark(app, view_id);
     if (cursor_pos != mark_pos)
     {
       Range_i64 range = Ii64(cursor_pos, mark_pos);
@@ -1144,18 +1232,18 @@ draw_button(Application_Links *app, Rect_f32 rect, Vec2_f32 mouse_p, Face_ID fac
   {
     hovered = true;
   }
-
+	
   UI_Highlight_Level highlight = hovered ? UIHighlight_Active : UIHighlight_None;
   draw_rectangle_fcolor(app, rect, 3.f, get_item_margin_color(highlight));
   rect = rect_inner(rect, 3.f);
   draw_rectangle_fcolor(app, rect, 3.f, get_item_margin_color(highlight, 1));
-
+	
   Scratch_Block scratch(app);
   Fancy_String *fancy = push_fancy_string(scratch, 0, face, fcolor_id(defcolor_text_default), text);
   Vec2_f32 dim = get_fancy_string_dim(app, 0, fancy);
   Vec2_f32 p = (rect.p0 + rect.p1 - dim) * 0.5f;
   draw_fancy_string(app, fancy, p);
-
+	
   return (hovered);
 }
 

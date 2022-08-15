@@ -121,6 +121,24 @@ CUSTOM_DOC("Input consumption loop for default view behavior")
       leave_current_input_unhandled(app);
       continue;
     }
+		else
+		{
+			if((HasFlag(event_properties, EventPropertyGroup_AnyUserInput) || 
+					HasFlag(event_properties, EventProperty_CustomFunction)) &&
+				 !HasFlag(event_properties, EventProperty_MouseMove))
+			{
+				Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
+				if(multi_cursor_mode == Multi_Cursor_Place_Cursors || multi_cursor_mode == Multi_Cursor_Enabled)
+				{
+					Command_Metadata *data = get_command_metadata(map_result.command);
+					if(!data->is_multi_cursor_supported)
+					{
+						view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
+					}
+				}
+			}
+		}
+		
     
     // NOTE(allen): Run the command and pre/post command stuff
     default_pre_command(app, scope);
@@ -513,8 +531,34 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
     paint_text_color_fcolor(app, text_layout_id, visible_range, fcolor_id(defcolor_text_default));
   }
   
-  i64 cursor_pos = view_correct_cursor(app, view_id);
-  view_correct_mark(app, view_id);
+	i64 cursor_pos = 0;
+	// NOTE(nates): Correct multi cursors / marks
+	{
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view_id);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			// Cursors
+			{
+				i64 pos = view_get_multi_cursor(app, view_id, multi_cursor_index);
+				i64 new_pos = view_set_pos_by_character_delta(app, view_id, pos, 0);
+				if(multi_cursor_index == 0)
+				{
+					cursor_pos = new_pos;
+				}
+				view_set_multi_cursor(app, view_id, multi_cursor_index, seek_pos(new_pos));
+			}
+			
+			// Marks
+			{
+				i64 mark_pos = view_get_multi_mark(app, view_id, multi_cursor_index);
+				i64 mark_new_pos = view_set_pos_by_character_delta(app, view_id, mark_pos, 0);
+				view_set_multi_mark(app, view_id, multi_cursor_index, seek_pos(mark_new_pos));
+			}
+		}
+	}
+	
   
   // NOTE(allen): Scope highlight
   b32 use_scope_highlight = def_get_config_b32(vars_save_string_lit("use_scope_highlight"));
@@ -580,20 +624,48 @@ default_render_buffer(Application_Links *app, View_ID view_id, Face_ID face_id,
     }
   }
   
-  // NOTE(allen): Cursor
-  switch (fcoder_mode)
-  {
-    case FCoderMode_Original:
-    {
-      draw_original_4coder_style_cursor_mark_highlight(app, view_id, is_active_view, buffer, text_layout_id, cursor_roundness, mark_thickness);
-    }
-    break;
-    case FCoderMode_NotepadLike:
-    {
-      draw_notepad_style_cursor_highlight(app, view_id, buffer, text_layout_id, cursor_roundness);
-    }
-    break;
-  }
+	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view_id);
+	if(multi_cursor_mode == Multi_Cursor_Disabled)
+	{
+		// NOTE(allen): Cursor
+		switch (fcoder_mode)
+		{
+			case FCoderMode_Original:
+			{
+				draw_original_4coder_style_cursor_mark_highlight(app, view_id, is_active_view, buffer, text_layout_id, cursor_roundness, mark_thickness);
+			}
+			break;
+			case FCoderMode_NotepadLike:
+			{
+				draw_notepad_style_cursor_highlight(app, view_id, buffer, text_layout_id, cursor_roundness);
+			}
+			break;
+		}
+	}
+	else if(multi_cursor_mode == Multi_Cursor_Place_Cursors ||
+					multi_cursor_mode == Multi_Cursor_Enabled)
+	{
+		i64 multi_cursor_count = view_get_multi_cursor_count(app, view_id);
+		for(u32 multi_cursor_index = 0;
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
+		{
+			switch(fcoder_mode)
+			{
+				case FCoderMode_Original:
+				{
+					draw_original_4coder_style_multi_cursor_mark_highlight(app, view_id, is_active_view, buffer, text_layout_id, 
+																																 multi_cursor_index, cursor_roundness, mark_thickness);
+				} break;
+				case FCoderMode_NotepadLike:
+				{
+					Assert(!"Notepad mode doesn't support multi cursor yet");
+					draw_notepad_style_cursor_highlight(app, view_id, buffer, text_layout_id, 
+																							multi_cursor_index, cursor_roundness);
+				} break;
+			}
+		}
+	}
   
   // NOTE(allen): Fade ranges
   paint_fade_ranges(app, text_layout_id, buffer);
@@ -703,8 +775,8 @@ default_render_caller(Application_Links *app, Frame_Info frame_info, View_ID vie
   // NOTE(allen): draw the buffer
   default_render_buffer(app, view_id, face_id, buffer, text_layout_id, region);
   
-  b32 *is_selecting = view_get_is_selecting(app, view_id);
-  if (is_selecting && *is_selecting)
+	b32 line_selection_mode = view_get_line_selection_mode(app, view_id);
+  if(line_selection_mode)
   {
     i64 start_line_number = view_get_selection_begin(app, view_id);
     i64 end_line_number = view_get_selection_end(app, view_id);
@@ -727,11 +799,11 @@ default_render_caller(Application_Links *app, Frame_Info frame_info, View_ID vie
     }
   }
   
-  b32 *is_cutting = view_get_is_cutting(app, view_id);
-  if (is_cutting && *is_cutting)
+  b32 vim_cutting_mode = view_get_vim_cutting_mode(app, view_id);
+  if (vim_cutting_mode)
   {
     FColor color = fcolor_argb(V4f32(1.0f, 0.0f, 0.0f, 0.2f));
-    i64 cursor_pos = view_get_cursor_pos(app, view_id);
+    i64 cursor_pos = view_get_cursor(app, view_id);
     i64 cursor_line_number = get_line_number_from_pos(app, buffer, cursor_pos);
     draw_line_highlight(app, text_layout_id, cursor_line_number, color); // fcolor_id(defcolor_highlight_cursor_line));
   }
@@ -1040,7 +1112,8 @@ BUFFER_HOOK_SIG(default_begin_buffer)
             string_match(ext, string_u8_litexpr("h")) ||
             string_match(ext, string_u8_litexpr("c")) ||
             string_match(ext, string_u8_litexpr("hpp")) ||
-            string_match(ext, string_u8_litexpr("cc")))
+            string_match(ext, string_u8_litexpr("cc")) ||
+						string_match(ext, string_u8_litexpr("odin")))
         {
           treat_as_code = true;
         }

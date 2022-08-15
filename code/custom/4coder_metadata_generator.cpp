@@ -57,6 +57,8 @@ enum{
   MetaCommandEntryKind_ERROR,
   MetaCommandEntryKind_Normal,
   MetaCommandEntryKind_UI,
+	MetaCommandEntryKind_MultiCursor,
+	MetaCommandEntryKind_UI_MultiCursor,
 };
 
 struct Meta_Command_Entry{
@@ -534,12 +536,23 @@ extract_string(Reader *reader, String_Const_u8 *str_out){
 function Meta_Command_Entry_Kind
 parse_command_kind(String_Const_u8 kind){
   Meta_Command_Entry_Kind result = MetaCommandEntryKind_ERROR;
-  if (string_match(kind, string_u8_litexpr("Normal"))){
+  if (string_match(kind, string_u8_litexpr("Normal")))
+	{
     result = MetaCommandEntryKind_Normal;
   }
-  else if (string_match(kind, string_u8_litexpr("UI"))){
+  else if (string_match(kind, string_u8_litexpr("UI")))
+	{
     result = MetaCommandEntryKind_UI;
   }
+	else if(string_match(kind, string_u8_litexpr("MULTICURSOR")))
+	{
+		result = MetaCommandEntryKind_MultiCursor;
+	}
+	else if(string_match(kind, string_u8_litexpr("UI_MULTICURSOR")))
+	{
+		result = MetaCommandEntryKind_UI_MultiCursor;
+	}
+	
   return(result);
 }
 
@@ -564,7 +577,7 @@ parse_documented_command(Arena *arena, Meta_Command_Entry_Arrays *arrays, Reader
   if (!extract_identifier(reader, &name)){
     return(false);
   }
-  
+	
   if (!require_comma(reader)){
     return(false);
   }
@@ -584,11 +597,11 @@ parse_documented_command(Arena *arena, Meta_Command_Entry_Arrays *arrays, Reader
   if (!require_comma(reader)){
     return(false);
   }
-  
+	
   if (!extract_identifier(reader, &kind)){
     return(false);
   }
-  
+	
   if (!require_close_parenthese(reader)){
     return(false);
   }
@@ -883,6 +896,7 @@ main(int argc, char **argv){
             "struct Command_Metadata{\n"
             "PROC_LINKS(Custom_Command_Function, void) *proc;\n"
             "b32 is_ui;\n"
+						"b32 is_multi_cursor_supported;\n"
             "char *name;\n"
             "i32 name_len;\n"
             "char *description;\n"
@@ -906,15 +920,30 @@ main(int argc, char **argv){
                                                  StringFill_NullTerminate);
       
       char *is_ui = "false";
-      if (entry->kind == MetaCommandEntryKind_UI){
+			char *is_multi_cursor_supported = "false";
+      if (entry->kind == MetaCommandEntryKind_UI)
+			{
         is_ui = "true";
       }
-      
+			
+			if(entry->kind == MetaCommandEntryKind_MultiCursor)
+			{
+				is_multi_cursor_supported = "true";
+			}
+			
+			if(entry->kind == MetaCommandEntryKind_UI_MultiCursor)
+			{
+				is_ui = "true";
+				is_multi_cursor_supported = "true";
+			}
+			
+			
       fprintf(cmd_out,
-              "{ PROC_LINKS(%.*s, 0), %s, \"%.*s\", %d, "
+              "{ PROC_LINKS(%.*s, 0), %s, %s, \"%.*s\", %d, "
               "\"%.*s\", %d, \"%s\", %d, %" FMTi64 " },\n",
               string_expand(entry->name),
               is_ui,
+							is_multi_cursor_supported,
               string_expand(entry->name),
               (i32)entry->name.size,
               string_expand(entry->docstring.doc),

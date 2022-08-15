@@ -60,6 +60,33 @@ check_is_note(String_Const_u8 line, u64 colon_pos){
 }
 
 function Parsed_Jump
+parse_jump_location_odin(String_Const_u8 contents)
+{
+	Parsed_Jump jump = {};
+	if(string_has_substr(contents, SCu8("(")) &&
+		 string_has_substr(contents, SCu8(":")) &&
+		 string_has_substr(contents, SCu8(")")))
+	{
+		jump.success = true;
+		u64 left_paren_pos = string_find_first(contents, '(');
+		String_Const_u8 file = SCu8(contents.str, left_paren_pos);
+		jump.location.file = file;
+		
+		contents = string_skip(contents, left_paren_pos + 1);
+		u64 colon_pos = string_find_first(contents, ':');
+		String_Const_u8 line_num_str = SCu8(contents.str, colon_pos);
+		jump.location.line = (i32)string_to_integer(line_num_str, 10);
+		
+		contents = string_skip(contents, colon_pos + 1);
+		u64 right_paren_pos = string_find_first(contents, ')');
+		String_Const_u8 column_num_str = SCu8(contents.str, right_paren_pos);
+		jump.location.column = (i32)string_to_integer(column_num_str, 10);
+	}
+	
+	return(jump);
+}
+
+function Parsed_Jump
 parse_jump_location(String_Const_u8 line){
   Parsed_Jump jump = {};
   jump.sub_jump_indented = (string_get_character(line, 0) == ' ');
@@ -330,7 +357,7 @@ convert_name_based_to_id_based(Application_Links *app, Name_Line_Column_Location
 
 static Parsed_Jump
 seek_next_jump_in_view(Application_Links *app, Arena *arena, View_ID view, i32 skip_sub_errors, Scan_Direction direction, i64 *line_out){
-  i64 cursor_position = view_get_cursor_pos(app, view);
+  i64 cursor_position = view_get_cursor(app, view);
   Buffer_Cursor cursor = view_compute_cursor(app, view, seek_pos(cursor_position));
   i64 line = cursor.line;
   Buffer_ID buffer = view_get_buffer(app, view, Access_Always);

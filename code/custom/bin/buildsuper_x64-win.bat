@@ -24,7 +24,7 @@ cd %location%
 if NOT "%Platform%" == "X64" IF NOT "%Platform%" == "x64" (call "%custom_bin%\setup_cl_x64.bat")
 
 set target=%1
-if "%target%" == "" set target=%custom_root%\4coder_default_bindings.cpp
+if "%target%" == "" set target=%custom_root%\4coder_custom_layer.cpp
 
 set debug=/Zi
 set release=/O2 /Zi

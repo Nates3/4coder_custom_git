@@ -53,12 +53,14 @@ struct Models
 {
   String_Const_u8 exe_directory;
   Arena project_list_arena;
+	Temp_Memory project_list_string_node_memory;
   Project_List project_list;
   
-  b32 is_global_modal_state;
-  Modal_State_ID global_modal_state;
+  b32 is_global_modal;
+  Modal_State global_modal_state;
   i64 command_mapid;
   i64 insert_mapid;
+	b32 app_yanked_entire_line;
   
   Arena arena_;
   Arena *arena;

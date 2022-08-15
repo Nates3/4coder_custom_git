@@ -626,56 +626,69 @@ cpp_parse_type_enum(Code_Index_File *index, Generic_Parse_State *state, Code_Ind
     return;
   }
   
+	b32 statement_close = false;
   Token *token = token_it_read(&state->it);
   if((token != 0) && (token->kind == TokenBaseKind_Identifier))
   {
     generic_parse_inc(state);
     generic_parse_skip_soft_tokens(index, state);
-    Token *peek = token_it_read(&state->it);
-    if (peek != 0)
-    {
-      if(peek->kind == TokenBaseKind_ScopeOpen)
-      {
-        index_new_note(index, state, Ii64(token), CodeIndexNote_Type, parent,
-                       is_name_space);
-      }
-      else if(peek->kind == TokenBaseKind_StatementClose)
-      {
-        index_new_note(index, state, Ii64(token), CodeIndexNote_ForwardDeclaration, parent,
-                       is_name_space);
-      }
-    }
+		u32 TryPeekingCountBeforeQuiting = 5; // TODO(nates): Is this a bad thing to be programming?
+		for(;TryPeekingCountBeforeQuiting != 0; --TryPeekingCountBeforeQuiting)
+		{
+			Token *peek = token_it_read(&state->it);
+			if(peek != 0)
+			{
+				if(peek->kind == TokenBaseKind_ScopeOpen)
+				{
+					index_new_note(index, state, Ii64(token), CodeIndexNote_Type, parent,
+												 is_name_space);
+					break;
+				}
+				else if(peek->kind == TokenBaseKind_StatementClose && 
+								peek->sub_kind == TokenCppKind_Semicolon)
+				{
+					index_new_note(index, state, Ii64(token), CodeIndexNote_ForwardDeclaration, parent,
+												 is_name_space);
+					statement_close = true;
+					break;
+				}
+			}
+			generic_parse_inc(state);
+		}
   }
   
   Generic_Parse_State saver = *state;
   state = &saver;
   
-  Token *peek2 = token_it_read(&state->it);
-  if(peek2->kind == TokenBaseKind_ScopeOpen)
-  {
-    b32 found_scope_close = false;
-    while(!found_scope_close)
-    {
-      generic_parse_inc(state);
-      if(state->finished) { break; }
-      
-      Token *search = token_it_read(&state->it);
-      if(search->kind == TokenBaseKind_Identifier)
-      {
-        index_new_note(index, state, Ii64(search), CodeIndexNote_Enum, parent, is_name_space);
-        generic_parse_inc(state);
-      }
-      if(search->kind == TokenBaseKind_StatementClose)
-      {
-        generic_parse_inc(state);
-      }
-      else if(search->kind == TokenBaseKind_ScopeClose || 
-              search->kind == TokenBaseKind_EOF)
-      {
-        found_scope_close = true;
-      }
-    }
-  }
+	if(!statement_close)
+	{
+		Token *peek2 = token_it_read(&state->it);
+		if(peek2->kind == TokenBaseKind_ScopeOpen)
+		{
+			b32 found_scope_close = false;
+			while(!found_scope_close)
+			{
+				generic_parse_inc(state);
+				if(state->finished) { break; }
+				
+				Token *search = token_it_read(&state->it);
+				if(search->kind == TokenBaseKind_Identifier)
+				{
+					index_new_note(index, state, Ii64(search), CodeIndexNote_Enum, parent, is_name_space);
+					generic_parse_inc(state);
+				}
+				if(search->kind == TokenBaseKind_StatementClose)
+				{
+					generic_parse_inc(state);
+				}
+				else if(search->kind == TokenBaseKind_ScopeClose || 
+								search->kind == TokenBaseKind_EOF)
+				{
+					found_scope_close = true;
+				}
+			}
+		}
+	}
 }
 
 function void
