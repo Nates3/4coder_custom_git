@@ -1,6 +1,7 @@
 /////////////////////////////
 date->8/15/22
 
+(nates): fixed 4coder crashing due to adding more than MAX_MULTI_CURSOR_COUNT
 (nates): Added wrapping for search
 
 //////////////////////////////

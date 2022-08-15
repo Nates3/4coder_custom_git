@@ -2251,7 +2251,7 @@ view_get_multi_cursor(Application_Links *app, View_ID view_id, u32 multi_cursor_
 	Models *models = (Models *)app->cmd_context;
 	View *view = imp_get_view(models, view_id);
 	
-	if(api_check_view(view))
+	if(api_check_view(view) && multi_cursor_index < VIEW_MULTI_CURSOR_MAXIMUM_COUNT)
 	{
 		i64 multi_cursor_count = view->cursor_count;
 		Assert(multi_cursor_index < multi_cursor_count);
@@ -2337,7 +2337,7 @@ view_set_multi_cursor(Application_Links *app, View_ID view_id,
 {
 	Models *models = (Models *)app->cmd_context;
 	View *view = imp_get_view(models, view_id);
-	if(api_check_view(view))
+	if(api_check_view(view) && multi_cursor_index < VIEW_MULTI_CURSOR_MAXIMUM_COUNT)
 	{
 		Buffer_Cursor cursor = {};
 		Editing_File *file = view->file;
@@ -2345,8 +2345,9 @@ view_set_multi_cursor(Application_Links *app, View_ID view_id,
 		if(api_check_buffer(file))
 		{
 			cursor = file_compute_cursor(file, seek);
-			view->edit_pos_.cursors[multi_cursor_index] = cursor.pos;
-		}
+      
+      view->edit_pos_.cursors[multi_cursor_index] = cursor.pos;
+    }
 	}
 }
 
@@ -2361,7 +2362,7 @@ view_set_multi_cursor_preferred_x(Application_Links *app, View_ID view_id,
 		Buffer_Cursor cursor = {};
 		Editing_File *file = view->file;
 		Assert(file != 0);
-		if(api_check_buffer(file))
+		if(api_check_buffer(file) && multi_cursor_index < VIEW_MULTI_CURSOR_MAXIMUM_COUNT)
 		{
 			cursor = file_compute_cursor(file, seek);
 			view->edit_pos_.cursors[multi_cursor_index] = cursor.pos;
@@ -2383,9 +2384,12 @@ view_add_multi_cursor(Application_Links *app, View_ID view_id, i64 cursor_pos)
 		Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view_id);
 		if(multi_cursor_mode == Multi_Cursor_Place_Cursors)
 		{
-			u32 index = (u32)view->cursor_count++;
-			view_set_multi_cursor_preferred_x(app, view_id, index, seek_pos(cursor_pos));
-			view->marks[index] = cursor_pos;
+      if(view->cursor_count < VIEW_MULTI_CURSOR_MAXIMUM_COUNT)
+      {
+        u32 index = (u32)view->cursor_count++;
+        view_set_multi_cursor_preferred_x(app, view_id, index, seek_pos(cursor_pos));
+        view->marks[index] = cursor_pos;
+      }
 		}
 	}
 }

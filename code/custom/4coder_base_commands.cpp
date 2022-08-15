@@ -667,10 +667,12 @@ CUSTOM_DOC("Moves the cursor up one line.")
 			if(first_cursor >= current_cursor)
 			{
 				i64 old_pos = view_get_cursor(app, view);
-				move_vertical_lines(app, -1);
-				view_add_multi_cursor(app, view, old_pos);
-				i64 new_pos = view_get_cursor(app, view);
-				view_set_mark(app, view, seek_pos(new_pos));
+        if(multi_cursor_count < VIEW_MULTI_CURSOR_MAXIMUM_COUNT) {
+          move_vertical_lines(app, -1);
+          view_add_multi_cursor(app, view, old_pos);
+          i64 new_pos = view_get_cursor(app, view);
+          view_set_mark(app, view, seek_pos(new_pos));
+        }
 			}
 			else
 			{
@@ -734,12 +736,14 @@ CUSTOM_DOC("Moves the cursor down one line.")
 			i64 first_cursor = view_get_first_or_current_multi_cursor(app, view);
 			i64 current_cursor = view_get_cursor(app, view);
 			if(first_cursor <= current_cursor)
-			{
+      {
 				i64 old_pos = view_get_cursor(app, view);
-				move_vertical_lines(app, 1);
-				view_add_multi_cursor(app, view, old_pos);
-				i64 new_pos = view_get_cursor(app, view);
-				view_set_mark(app, view, seek_pos(new_pos));
+        if(multi_cursor_count < VIEW_MULTI_CURSOR_MAXIMUM_COUNT) {
+          move_vertical_lines(app, 1);
+          view_add_multi_cursor(app, view, old_pos);
+          i64 new_pos = view_get_cursor(app, view);
+          view_set_mark(app, view, seek_pos(new_pos));
+        }
 			}
 			else
 			{
