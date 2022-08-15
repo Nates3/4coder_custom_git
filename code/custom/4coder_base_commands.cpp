@@ -1607,19 +1607,40 @@ isearch(Application_Links *app, Scan_Direction start_scan, i64 first_pos,
         {
           i64 new_pos = 0;
           seek_string_insensitive_forward(app, buffer, pos - 1, 0, bar.string, &new_pos);
-          if (new_pos < buffer_size){
+          if (new_pos < buffer_size)
+          {
             pos = new_pos;
             match_size = bar.string.size;
           }
+          else if(new_pos == buffer_size)
+          {
+            seek_string_insensitive_forward(app, buffer, 0, 0, bar.string, &new_pos);
+            if(new_pos < buffer_size)
+            {
+              pos = new_pos;
+              match_size = bar.string.size;
+            }
+          }
+          
         }break;
         
         case Scan_Backward:
         {
           i64 new_pos = 0;
           seek_string_insensitive_backward(app, buffer, pos + 1, 0, bar.string, &new_pos);
-          if (new_pos >= 0){
+          if (new_pos >= 0)
+          {
             pos = new_pos;
             match_size = bar.string.size;
+          }
+          else if(new_pos == -1)
+          {
+            seek_string_insensitive_backward(app, buffer, buffer_size, 0, bar.string, &new_pos);
+            if(new_pos >= 0)
+            {
+              pos = new_pos;
+              match_size = bar.string.size;
+            }
           }
         }break;
       }
@@ -1631,19 +1652,40 @@ isearch(Application_Links *app, Scan_Direction start_scan, i64 first_pos,
         {
           i64 new_pos = 0;
           seek_string_insensitive_forward(app, buffer, pos, 0, bar.string, &new_pos);
-          if (new_pos < buffer_size){
+          if (new_pos < buffer_size)
+          {
             pos = new_pos;
             match_size = bar.string.size;
           }
+          else if(new_pos == buffer_size)
+          {
+            seek_string_insensitive_forward(app, buffer, 0, 0, bar.string, &new_pos);
+            if(new_pos < buffer_size)
+            {
+              pos = new_pos;
+              match_size = bar.string.size;
+            }
+          }
+          
         }break;
         
         case Scan_Backward:
         {
           i64 new_pos = 0;
           seek_string_insensitive_backward(app, buffer, pos, 0, bar.string, &new_pos);
-          if (new_pos >= 0){
+          if (new_pos >= 0)
+          {
             pos = new_pos;
             match_size = bar.string.size;
+          }
+          else if(new_pos == -1)
+          {
+            seek_string_insensitive_backward(app, buffer, buffer_size, 0, bar.string, &new_pos);
+            if(new_pos >= 0)
+            {
+              pos = new_pos;
+              match_size = bar.string.size;
+            }
           }
         }break;
       }
