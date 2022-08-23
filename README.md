@@ -22,8 +22,8 @@ and for user defined "custom_layer_init" function stuff you follow
 [Customisation Layer 4coder](https://4coder.handmade.network/forums/articles/t/7319-customization_layer_-_getting_started__4coder_4.1_)
                              the function should be in `code\custom\4coder_default_bindings.cpp`
                              
-# 4coder source
-                             https://github.com/Dion-Systems/4coder
+# State of the Project
+                             https://github.com/Nates3/4coder_custom_git/projects/1
                              
                              ## License
                              Copyright (c) 2022 Allen Webster
