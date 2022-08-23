@@ -1,4 +1,3 @@
-
 ///////////////////////////////////////
 // NOTE(nates): Own custom commands
 
@@ -98,7 +97,7 @@ CUSTOM_DOC("Delete's from the start of line to the cursor position")
 	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
 	if(multi_cursor_mode == Multi_Cursor_Disabled)
 	{
-		i64 cursor_pos = view_get_cursor(app, view);
+    i64 cursor_pos = view_get_cursor(app, view);
 		i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
 		i64 line_start = get_line_start_pos(app, buffer, cursor_line);
 		

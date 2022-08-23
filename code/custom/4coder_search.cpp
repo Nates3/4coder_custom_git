@@ -120,7 +120,10 @@ query_user_list_definition_needle(Application_Links *app, Arena *arena){
 
 internal void
 list_all_locations__generic(Application_Links *app, String_Const_u8_Array needle, List_All_Locations_Flag flags){
-  if (needle.count > 0){
+  if (needle.count > 0)
+  {
+    unlock_jump_buffer();
+    lock_jump_buffer(app, str8_lit("*search*"));
     View_ID target_view = get_next_view_after_active(app, Access_Always);
     String_Match_Flag must_have_flags = 0;
     String_Match_Flag must_not_have_flags = 0;
