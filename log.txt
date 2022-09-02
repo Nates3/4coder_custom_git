@@ -1,4 +1,26 @@
 /////////////////////////////////
+date->9/1/22
+
+(nates): Made a change to "print_all_matches_all_buffers" which is a function used by
+         "list_all_sublocations" and it was creating a queue of String_Match structs
+         and it would use all Buffer_ID's to create the queue and after, it 
+         would loop over the entire queue twice to remove all String_Match's that 
+         contained either the *search* buffer or a ** buffer like *messeages*.
+         When I tested "list_all_sublocations" using 4coder source, in the debugger
+         the filtering functions seemed to take a lot of time, like seconds. 
+         My most recent attempts at eyeballing of how long it takes, told me that
+         the functions were almost near instant < 100-50ms. I'm going to leave
+         my change in and keep the filtering functions commented out, I don't see
+         a good reason to loop over a queue after it was constructed to remove
+         elements when you could just build the queue without those elements in the
+         first place.
+           
+
+(nates): Made goto_next jump only parse like 20 items of the jump list by taking the
+         cursor line in the *search* buffer and parsing the previous and next 10 jumps
+         instead of parsing a jump list for the entire file.
+
+/////////////////////////////////
 date->8/23/22
 
 (nates): Added ability to use "goto_next/prev_jump" inside *search* buffer when using

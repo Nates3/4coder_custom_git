@@ -51,8 +51,8 @@ CUSTOM_DOC("loads project list file and parses for full paths to projet.4coder f
 CUSTOM_MULTICURSOR_COMMAND_SIG(delete_to_end_of_line)
 CUSTOM_DOC("Delete's from the cursor to the end of the line")
 {
-  View_ID view = get_active_view(app, 0);
-  Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
+ View_ID view = get_active_view(app, 0);
+ Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
 	
 	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
 	if(multi_cursor_mode == Multi_Cursor_Disabled)
@@ -72,8 +72,8 @@ CUSTOM_DOC("Delete's from the cursor to the end of the line")
 		
 		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 		for(u32 multi_cursor_index = 0;
-				multi_cursor_index < multi_cursor_count;
-				++multi_cursor_index)
+      multi_cursor_index < multi_cursor_count;
+      ++multi_cursor_index)
 		{
 			i64 cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
 			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
@@ -91,13 +91,13 @@ CUSTOM_DOC("Delete's from the cursor to the end of the line")
 CUSTOM_MULTICURSOR_COMMAND_SIG(delete_to_start_of_line)
 CUSTOM_DOC("Delete's from the start of line to the cursor position")
 {
-  View_ID view = get_active_view(app, 0);
-  Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
+ View_ID view = get_active_view(app, 0);
+ Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
 	
 	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
 	if(multi_cursor_mode == Multi_Cursor_Disabled)
 	{
-    i64 cursor_pos = view_get_cursor(app, view);
+  i64 cursor_pos = view_get_cursor(app, view);
 		i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
 		i64 line_start = get_line_start_pos(app, buffer, cursor_line);
 		
@@ -112,8 +112,8 @@ CUSTOM_DOC("Delete's from the start of line to the cursor position")
 		
 		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 		for(u32 multi_cursor_index = 0;
-				multi_cursor_index < multi_cursor_count;
-				++multi_cursor_index)
+      multi_cursor_index < multi_cursor_count;
+      ++multi_cursor_index)
 		{
 			i64 cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
 			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
@@ -141,7 +141,7 @@ CUSTOM_DOC("deletes alpha numeric identifier at cursor position")
 	{
 		i64 cursor_pos = view_get_cursor(app, view);
 		Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
-																														cursor_pos);
+                                                          cursor_pos);
 		if(range.min != -1)
 		{
 			buffer_replace_range(app, buffer, range, string_u8_empty);
@@ -153,12 +153,12 @@ CUSTOM_DOC("deletes alpha numeric identifier at cursor position")
 		
 		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 		for(u32 multi_cursor_index = 0;
-				multi_cursor_index < multi_cursor_count;
-				++multi_cursor_index)
+      multi_cursor_index < multi_cursor_count;
+      ++multi_cursor_index)
 		{
 			i64 multi_cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
 			Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
-																															multi_cursor_pos);
+                                                           multi_cursor_pos);
 			if(range.min != -1)
 			{
 				buffer_replace_range(app, buffer, range, string_u8_empty);
@@ -177,7 +177,7 @@ CUSTOM_DOC("Copies characters between the seek left result for a alpha numeric a
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
 	i64 cursor_pos = view_get_cursor(app, view);
 	Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
-																													cursor_pos);
+                                                         cursor_pos);
 	if(range.min != -1)
 	{
 		clipboard_post_buffer_range(app, 0, buffer, range);
@@ -358,8 +358,8 @@ CUSTOM_DOC("Jump from Brace to brace")
 	if (char_under_cursor == '{' || prev_char_under_cursor == '{')
 	{
 		if (find_nest_side(app, buffer, prev_char_under_cursor == '{' ? cursor_pos : cursor_pos + 1,
-											 FindNest_Scope | FindNest_Balanced | FindNest_EndOfToken,
-											 Scan_Forward, NestDelim_Close, &bracePos))
+                     FindNest_Scope | FindNest_Balanced | FindNest_EndOfToken,
+                     Scan_Forward, NestDelim_Close, &bracePos))
 		{
 			view_set_cursor(app, view, Buffer_Seek{buffer_seek_pos, bracePos - 1});
 		}
@@ -367,8 +367,8 @@ CUSTOM_DOC("Jump from Brace to brace")
 	else if (char_under_cursor == '}' || prev_char_under_cursor == '}')
 	{
 		if (find_nest_side(app, buffer, prev_char_under_cursor == '}' ? cursor_pos - 2 : cursor_pos - 1,
-											 FindNest_Scope | FindNest_Balanced,
-											 Scan_Backward, NestDelim_Open, &bracePos))
+                     FindNest_Scope | FindNest_Balanced,
+                     Scan_Backward, NestDelim_Open, &bracePos))
 		{
 			view_set_cursor(app, view, Buffer_Seek{buffer_seek_pos, bracePos});
 		}
@@ -376,7 +376,7 @@ CUSTOM_DOC("Jump from Brace to brace")
 	else
 	{
 		if (find_nest_side(app, buffer, cursor_pos, FindNest_Scope,
-											 Scan_Forward, NestDelim_Open, &bracePos))
+                     Scan_Forward, NestDelim_Open, &bracePos))
 		{
 			view_set_cursor(app, view, Buffer_Seek{buffer_seek_pos, bracePos});
 		}
@@ -644,7 +644,7 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 	
 	Lister_Result sort_result = run_lister(app, sort_lister);
 	if (!sort_result.canceled &&
-			sort_result.user_data)
+     sort_result.user_data)
 	{
 		Code_Index_Note_Kind users_type = *(Code_Index_Note_Kind *)sort_result.user_data;
 		
@@ -655,8 +655,8 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 		
 		code_index_lock();
 		for (Buffer_ID buffer = get_buffer_next(app, 0, Access_Always);
-				 buffer != 0;
-				 buffer = get_buffer_next(app, buffer, Access_Always))
+       buffer != 0;
+       buffer = get_buffer_next(app, buffer, Access_Always))
 		{
 			Code_Index_File *file = code_index_get_file(buffer);
 			if (file != 0)
@@ -755,8 +755,8 @@ CUSTOM_DOC("if you change the file outside a program and reload it with this com
 {
 	Scratch_Block scratch(app);
 	for (Buffer_ID buffer = get_buffer_next(app, 0, Access_ReadWriteVisible);
-			 buffer != 0;
-			 buffer = get_buffer_next(app, buffer, Access_ReadWriteVisible))
+      buffer != 0;
+      buffer = get_buffer_next(app, buffer, Access_ReadWriteVisible))
 	{
 		Dirty_State dirty = buffer_get_dirty_state(app, buffer);
 		if(dirty == DirtyState_UnloadedChanges || dirty == DirtyState_UnsavedChangesAndUnloadedChanges)
@@ -853,8 +853,8 @@ CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
 		code_index_lock();
 		Project_List_Node *node = projects.first;
 		for(u32 node_index = 0;
-				node_index < projects.count;
-				++node_index)
+      node_index < projects.count;
+      ++node_index)
 		{
 			lister_add_item(lister, node->name, SCu8(""), &node->full_path, 0);
 			node = node->next;
@@ -899,8 +899,8 @@ CUSTOM_DOC("custom startup")
 	{
 		{
 			Buffer_ID buffer = create_buffer(app, string_u8_litexpr("*compilation*"),
-																			 BufferCreate_NeverAttachToFile |
-																			 BufferCreate_AlwaysNew);
+                                    BufferCreate_NeverAttachToFile |
+                                    BufferCreate_AlwaysNew);
 			buffer_set_setting(app, buffer, BufferSetting_Unimportant, true);
 			buffer_set_setting(app, buffer, BufferSetting_ReadOnly, true);
 		}
