@@ -18,7 +18,7 @@ and change "mode" variable to "debug" or "release"
 ## Code
 Most of the custom code is in `{RootDir}/code/custom/q7/` folder  
 There is some custom code that is written in the backend half of the api implementation  
-so not all of it is in the '{RootDir}/code/custom/` folder
+so not all of it is in the `{RootDir}/code/custom/` folder
 
 
 ## Info
