@@ -10,7 +10,6 @@
 // TOP
 
 #include "4coder_base_types.h"
-#include "4coder_shared.h"
 #include "4ed_api_definition.h"
 
 #include "4coder_base_types.cpp"
@@ -30,12 +29,12 @@ get_api_group(void);
 
 int
 main(void){
-  Arena arena = make_arena_malloc();
-  API_Definition *api = define_api(&arena);
-  if (!api_definition_generate_api_includes(&arena, api, get_api_group(), 0)){
-    return(1);
-  }
-  return(0);
+ Arena arena = make_arena_malloc();
+ API_Definition *api = define_api(&arena);
+ if (!api_definition_generate_api_includes(&arena, api, get_api_group(), 0)){
+  return(1);
+ }
+ return(0);
 }
 
 // BOTTOM

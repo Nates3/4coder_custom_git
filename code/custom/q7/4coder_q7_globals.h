@@ -1,6 +1,6 @@
 /* date = July 5th 2022 11:30 pm */
-#ifndef FCODER_CUSTOM_VARIABLES_H
-#define FCODER_CUSTOM_VARIABLES_H
+#ifndef FCODER_N7_GLOBALS_H
+#define FCODER_N7_GLOBALS_H
 
 global i32 menu_f1_index;
 
@@ -13,20 +13,20 @@ String_ID insert_mapid;
 global View_ID global_compilation_view = 0;
 global b32 global_compilation_view_expanded = false;
 
-#define CAKEZ 1
+#define CAKEZ
 #if defined(CAKEZ)
 #define LISTER_MOVE_UP_KEY KeyCode_K
 #define LISTER_MOVE_DOWN_KEY KeyCode_J
-#define KEYCODE_AUTO_COMPLETE_UP KeyCode_K
-#define KEYCODE_AUTO_COMPLETE_DOWN KeyCode_J
+#define KEYCODE_WORD_COMPLETE_UP KeyCode_K
+#define KEYCODE_WORD_COMPLETE_DOWN KeyCode_J
 #define KEYCODE_SEARCH_UP KeyCode_K
 #define KEYCODE_SEARCH_DOWN KeyCode_J
 #define ENABLE_LISTER_TAB 1
 #else
 #define LISTER_MOVE_UP_KEY KeyCode_C
 #define LISTER_MOVE_DOWN_KEY KeyCode_T
-#define KEYCODE_AUTO_COMPLETE_UP KeyCode_C
-#define KEYCODE_AUTO_COMPLETE_DOWN KeyCode_T
+#define KEYCODE_WORD_COMPLETE_UP KeyCode_C
+#define KEYCODE_WORD_COMPLETE_DOWN KeyCode_T
 #define KEYCODE_SEARCH_UP KeyCode_C
 #define KEYCODE_SEARCH_DOWN KeyCode_T
 #define ENABLE_LISTER_TAB 0

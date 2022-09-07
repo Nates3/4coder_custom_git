@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 #include "4coder_base_types.h"
-#include "4coder_shared.h"
+#include "q7/4coder_q7_shared.h"
 #include "4coder_version.h"
 #include "4coder_table.h"
 #include "4coder_events.h"
@@ -35,7 +35,7 @@
 #include "generated/lexer_cpp.h"
 
 #include "4coder_variables.h"
-#include "4coder_custom_variables.h"
+#include "q7/4coder_q7_globals.h"
 #include "4coder_audio.h"
 #include "4coder_profile.h"
 #include "4coder_async_tasks.h"
@@ -66,7 +66,7 @@
 #include "4coder_profile_inspect.h"
 #include "4coder_tutorial.h"
 #include "4coder_search_list.h"
-#include "4coder_custom_functions.h"
+#include "q7/4coder_q7_functions.h"
 
 ////////////////////////////////
 

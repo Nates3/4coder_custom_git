@@ -1,11 +1,7 @@
-///////////////////////////////////////
-// NOTE(nates): Own custom commands
 
-// NOTE(nates): Look at 4coder_custom_variables.h
-//              and 4coder_custom_functions.cpp
-
-// NOTE(nates): All these CUSTOM_COMMAND_SIGS's are just functions
-// you can call them if you want to!
+// nates: Multicursor commands mean that they are aware about multi cursor mode
+// if a normal command is called in multi cursor mode, it will disable multi cursor
+// mode 
 
 CUSTOM_MULTICURSOR_COMMAND_SIG(cycle_multi_cursor_mode)
 CUSTOM_DOC("set the multi cursor mode")
