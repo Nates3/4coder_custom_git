@@ -15,44 +15,46 @@
 
 void custom_layer_init(Application_Links *app)
 {
- Thread_Context *tctx = get_thread_context(app);
- 
- // NOTE(allen): setup for default framework
- default_framework_init(app);
- 
- // NOTE(allen): default hooks and command maps
- set_all_default_hooks(app);
- mapping_init(tctx, &framework_mapping);
- 
- String_ID global_mapid = vars_save_string_lit("keys_global");
- String_ID file_mapid = vars_save_string_lit("keys_file");
- String_ID code_mapid = vars_save_string_lit("keys_code");
- 
- command_mapid = vars_save_string_lit("command_mapid_string");
- insert_mapid = vars_save_string_lit("insert_mapid_string");
- 
- MappingScope();
- SelectMapping(&framework_mapping);
- 
- SelectMap(global_mapid);
- BindCore(custom_startup, CoreCode_Startup);
- BindCore(default_try_exit, CoreCode_TryExit);
- cakez_bind_shared_keys(m, map);
- 
- SelectMap(command_mapid);
- ParentMap(global_mapid);
- cakez_bind_command_keys(m, map);
- 
- SelectMap(insert_mapid);
- ParentMap(global_mapid);
- cakez_bind_text_input(m, map);
- 
- // NOTE(nates): You have to bind the "global_map, file_map, and code_map for some reason"
- SelectMap(file_mapid);
- ParentMap(command_mapid);
- 
- SelectMap(code_mapid);
- ParentMap(command_mapid);
+	Thread_Context *tctx = get_thread_context(app);
+	
+	// NOTE(allen): setup for default framework
+	default_framework_init(app);
+	
+	// NOTE(allen): default hooks and command maps
+	set_all_default_hooks(app);
+	mapping_init(tctx, &framework_mapping);
+	
+	String_ID global_mapid = vars_save_string_lit("keys_global");
+	String_ID file_mapid = vars_save_string_lit("keys_file");
+	String_ID code_mapid = vars_save_string_lit("keys_code");
+	
+	g_normalmode_mapid = vars_save_string_lit("normalmode_mapid_string");
+	g_insertmode_mapid  = vars_save_string_lit("insertmode_mapid_string");
+	
+	MappingScope();
+	SelectMapping(&framework_mapping);
+	
+	SelectMap(global_mapid);
+	BindCore(q7_initialize, CoreCode_Startup);
+	BindCore(default_try_exit, CoreCode_TryExit);
+ cakez_bind_global_keys(m, map);
+	
+	SelectMap(g_normalmode_mapid);
+	ParentMap(global_mapid);
+ cakez_bind_normal_mode_keys(m, map);
+	
+	SelectMap(g_insertmode_mapid);
+	ParentMap(global_mapid);
+ cakez_bind_insert_mode_keys(m, map);
+	
+ // NOTE(nates): code_mapid && file_mapid are used in default_begin_buffer
+	SelectMap(file_mapid);
+	ParentMap(g_normalmode_mapid);
+	
+	SelectMap(code_mapid);
+	ParentMap(g_normalmode_mapid);
+
+	app_set_maps(app, g_normalmode_mapid, g_insertmode_mapid);
 }
 
 #endif

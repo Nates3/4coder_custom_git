@@ -122,11 +122,7 @@ api(custom) function void view_set_vim_cutting_mode(Application_Links* app, View
 api(custom) function void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
 api(custom) function void view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num);
 api(custom) function b32 view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State modal_state);
-api(custom) function Modal_State app_get_global_modal_state(Application_Links* app);
-api(custom) function void app_set_global_modal_state(Application_Links* app, Modal_State state);
-api(custom) function b32 app_get_is_global_modal(Application_Links* app);
-api(custom) function void app_set_is_global_modal(Application_Links* app, b32 value);
-api(custom) function void app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid);
+api(custom) function void app_set_maps(Application_Links* app, i64 normalmode_mapid, i64 insertmode_mapid);
 api(custom) function b32 view_quit_ui(Application_Links* app, View_ID view_id);
 api(custom) function b32 view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
 api(custom) function b32 view_push_context(Application_Links* app, View_ID view_id, View_Context* ctx);

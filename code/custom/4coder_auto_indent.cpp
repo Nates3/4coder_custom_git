@@ -450,6 +450,7 @@ CUSTOM_MULTICURSOR_COMMAND_SIG(write_text_and_auto_indent)
 CUSTOM_DOC("Inserts text and auto-indents the line on which the cursor sits if any of the text contains 'layout punctuation' such as ;:{}()[]# and new lines.")
 {
 	ProfileScope(app, "write and auto indent");
+	
 	User_Input in = get_current_input(app);
 	String_Const_u8 insert = to_writable(&in);
 	if (insert.str != 0 && insert.size > 0){

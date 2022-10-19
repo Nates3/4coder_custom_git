@@ -122,11 +122,7 @@
 #define custom_view_set_selection_begin_sig() void custom_view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num)
 #define custom_view_set_selection_end_sig() void custom_view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num)
 #define custom_view_set_modal_state_sig() b32 custom_view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State modal_state)
-#define custom_app_get_global_modal_state_sig() Modal_State custom_app_get_global_modal_state(Application_Links* app)
-#define custom_app_set_global_modal_state_sig() void custom_app_set_global_modal_state(Application_Links* app, Modal_State state)
-#define custom_app_get_is_global_modal_sig() b32 custom_app_get_is_global_modal(Application_Links* app)
-#define custom_app_set_is_global_modal_sig() void custom_app_set_is_global_modal(Application_Links* app, b32 value)
-#define custom_app_set_maps_sig() void custom_app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid)
+#define custom_app_set_maps_sig() void custom_app_set_maps(Application_Links* app, i64 normalmode_mapid, i64 insertmode_mapid)
 #define custom_view_quit_ui_sig() b32 custom_view_quit_ui(Application_Links* app, View_ID view_id)
 #define custom_view_set_buffer_sig() b32 custom_view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags)
 #define custom_view_push_context_sig() b32 custom_view_push_context(Application_Links* app, View_ID view_id, View_Context* ctx)
@@ -341,11 +337,7 @@ typedef void custom_view_set_vim_cutting_mode_type(Application_Links* app, View_
 typedef void custom_view_set_selection_begin_type(Application_Links* app, View_ID view_id, i64 line_num);
 typedef void custom_view_set_selection_end_type(Application_Links* app, View_ID view_id, i64 line_num);
 typedef b32 custom_view_set_modal_state_type(Application_Links* app, View_ID view_id, Modal_State modal_state);
-typedef Modal_State custom_app_get_global_modal_state_type(Application_Links* app);
-typedef void custom_app_set_global_modal_state_type(Application_Links* app, Modal_State state);
-typedef b32 custom_app_get_is_global_modal_type(Application_Links* app);
-typedef void custom_app_set_is_global_modal_type(Application_Links* app, b32 value);
-typedef void custom_app_set_maps_type(Application_Links* app, i64 command_mapid, i64 insert_mapid);
+typedef void custom_app_set_maps_type(Application_Links* app, i64 normalmode_mapid, i64 insertmode_mapid);
 typedef b32 custom_view_quit_ui_type(Application_Links* app, View_ID view_id);
 typedef b32 custom_view_set_buffer_type(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
 typedef b32 custom_view_push_context_type(Application_Links* app, View_ID view_id, View_Context* ctx);
@@ -561,10 +553,6 @@ custom_view_set_vim_cutting_mode_type *view_set_vim_cutting_mode;
 custom_view_set_selection_begin_type *view_set_selection_begin;
 custom_view_set_selection_end_type *view_set_selection_end;
 custom_view_set_modal_state_type *view_set_modal_state;
-custom_app_get_global_modal_state_type *app_get_global_modal_state;
-custom_app_set_global_modal_state_type *app_set_global_modal_state;
-custom_app_get_is_global_modal_type *app_get_is_global_modal;
-custom_app_set_is_global_modal_type *app_set_is_global_modal;
 custom_app_set_maps_type *app_set_maps;
 custom_view_quit_ui_type *view_quit_ui;
 custom_view_set_buffer_type *view_set_buffer;
@@ -782,11 +770,7 @@ internal void view_set_vim_cutting_mode(Application_Links* app, View_ID view_id,
 internal void view_set_selection_begin(Application_Links* app, View_ID view_id, i64 line_num);
 internal void view_set_selection_end(Application_Links* app, View_ID view_id, i64 line_num);
 internal b32 view_set_modal_state(Application_Links* app, View_ID view_id, Modal_State modal_state);
-internal Modal_State app_get_global_modal_state(Application_Links* app);
-internal void app_set_global_modal_state(Application_Links* app, Modal_State state);
-internal b32 app_get_is_global_modal(Application_Links* app);
-internal void app_set_is_global_modal(Application_Links* app, b32 value);
-internal void app_set_maps(Application_Links* app, i64 command_mapid, i64 insert_mapid);
+internal void app_set_maps(Application_Links* app, i64 normalmode_mapid, i64 insertmode_mapid);
 internal b32 view_quit_ui(Application_Links* app, View_ID view_id);
 internal b32 view_set_buffer(Application_Links* app, View_ID view_id, Buffer_ID buffer_id, Set_Buffer_Flag flags);
 internal b32 view_push_context(Application_Links* app, View_ID view_id, View_Context* ctx);
@@ -1003,10 +987,6 @@ global custom_view_set_vim_cutting_mode_type *view_set_vim_cutting_mode = 0;
 global custom_view_set_selection_begin_type *view_set_selection_begin = 0;
 global custom_view_set_selection_end_type *view_set_selection_end = 0;
 global custom_view_set_modal_state_type *view_set_modal_state = 0;
-global custom_app_get_global_modal_state_type *app_get_global_modal_state = 0;
-global custom_app_set_global_modal_state_type *app_set_global_modal_state = 0;
-global custom_app_get_is_global_modal_type *app_get_is_global_modal = 0;
-global custom_app_set_is_global_modal_type *app_set_is_global_modal = 0;
 global custom_app_set_maps_type *app_set_maps = 0;
 global custom_view_quit_ui_type *view_quit_ui = 0;
 global custom_view_set_buffer_type *view_set_buffer = 0;

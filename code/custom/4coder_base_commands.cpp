@@ -95,7 +95,7 @@ write_text_multi_cursor(Application_Links *app, String_Const_u8 insert)
 		else if(multi_cursor_mode == Multi_Cursor_Enabled)
 		{
 			u8 insert_c = insert.str[0];
-			if(insert.size == 1 && (insert_c != '\n'))
+			if(insert.size == 1)
 			{
 				Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
 				History_Record_Index first_index = buffer_history_get_current_state_index(app, buffer);
@@ -132,6 +132,12 @@ write_text_multi_cursor(Application_Links *app, String_Const_u8 insert)
 CUSTOM_MULTICURSOR_COMMAND_SIG(write_text_input)
 CUSTOM_DOC("Inserts whatever text was used to trigger this command.")
 {
+	View_ID view = get_active_view(app, Access_ReadWriteVisible);
+	Multi_Cursor_Mode mode = view_get_multi_cursor_mode(app, view);
+	if(mode == Multi_Cursor_PlaceCursors) {
+		view_set_multi_cursor_mode(app, view, Multi_Cursor_Enabled);
+	}
+	
   User_Input in = get_current_input(app);
   String_Const_u8 insert = to_writable(&in);
   write_text_multi_cursor(app, insert);
@@ -170,10 +176,11 @@ CUSTOM_DOC("Deletes the character to the right of the cursor.")
 				buffer_replace_range(app, buffer, Ii64(start, end), string_u8_empty);
 			}
 		}
-		else if(multi_cursor_mode == Multi_Cursor_Enabled)
+		else if(multi_cursor_mode == Multi_Cursor_PlaceCursors || multi_cursor_mode == Multi_Cursor_Enabled)
 		{
-			History_Group history_group = history_group_begin(app, buffer);
+			view_set_multi_cursor_mode(app, view, Multi_Cursor_Enabled);
 			
+			History_Group history_group = history_group_begin(app, buffer);
 			i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 			for(u32 multi_cursor_index = 0;
 					multi_cursor_index < multi_cursor_count;
@@ -220,10 +227,11 @@ CUSTOM_DOC("Deletes the character to the left of the cursor.")
 				}
 			}
 		}
-		else if(multi_cursor_mode == Multi_Cursor_Enabled)
+		else if(multi_cursor_mode == Multi_Cursor_PlaceCursors || multi_cursor_mode == Multi_Cursor_Enabled)
 		{
-			History_Group history_group = history_group_begin(app, buffer);
+			view_set_multi_cursor_mode(app, view, Multi_Cursor_Enabled);
 			
+			History_Group history_group = history_group_begin(app, buffer);
 			i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 			for(u32 multi_cursor_index = 0;
 					multi_cursor_index < multi_cursor_count;
@@ -376,10 +384,11 @@ current_view_boundary_delete(Application_Links *app, Scan_Direction direction, B
 		range = rectify(range);
 		buffer_replace_range(app, buffer, range, string_u8_empty);
 	}
-	else if(multi_cursor_mode == Multi_Cursor_Enabled)
+	else if(multi_cursor_mode == Multi_Cursor_PlaceCursors || multi_cursor_mode == Multi_Cursor_Enabled)
 	{
-		History_Group history_group = history_group_begin(app, buffer);
+		view_set_multi_cursor_mode(app, view, Multi_Cursor_Enabled);
 		
+		History_Group history_group = history_group_begin(app, buffer);
 		Range_i64 range = {};
 		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 		for(u32 multi_cursor_index = 0;
@@ -656,15 +665,16 @@ CUSTOM_DOC("Moves the cursor up one line.")
 	{
 		move_vertical_lines(app, -1);
 	}
-	else if(multi_cursor_mode == Multi_Cursor_Place_Cursors)
+	else if(multi_cursor_mode == Multi_Cursor_PlaceCursors)
 	{
 		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 		i64 top_most = view_get_top_most_multi_cursor(app, view);
-		if(top_most > 0)
+		
+		i64 first_cursor = view_get_first_or_current_multi_cursor(app, view);
+		i64 current_cursor = view_get_cursor(app, view);
+		if(first_cursor >= current_cursor)
 		{
-			i64 first_cursor = view_get_first_or_current_multi_cursor(app, view);
-			i64 current_cursor = view_get_cursor(app, view);
-			if(first_cursor >= current_cursor)
+			if(top_most > 0)
 			{
 				i64 old_pos = view_get_cursor(app, view);
         if(multi_cursor_count < VIEW_MULTI_CURSOR_MAXIMUM_COUNT) {
@@ -674,12 +684,12 @@ CUSTOM_DOC("Moves the cursor up one line.")
           view_set_mark(app, view, seek_pos(new_pos));
         }
 			}
-			else
-			{
-				i64 recent_cursor = view_get_most_recent_multi_cursor(app, view);
-				view_remove_most_recent_multi_cursor(app, view);
-				view_set_cursor_and_preferred_x(app, view, seek_pos(recent_cursor));
-			}
+		}
+		else
+		{
+			i64 recent_cursor = view_get_most_recent_multi_cursor(app, view);
+			view_remove_most_recent_multi_cursor(app, view);
+			view_set_cursor_and_preferred_x(app, view, seek_pos(recent_cursor));
 		}
 	}
 	else if(multi_cursor_mode == Multi_Cursor_Enabled)
@@ -725,18 +735,18 @@ CUSTOM_DOC("Moves the cursor down one line.")
 	{
 		move_vertical_lines(app, 1);
 	}
-	else if(multi_cursor_mode == Multi_Cursor_Place_Cursors)
+	else if(multi_cursor_mode == Multi_Cursor_PlaceCursors)
 	{
 		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 		i64 buffer_size = buffer_get_size(app, buffer_id);
 		
-		i64 bottom_most_cursor = view_get_bottom_most_multi_cursor(app, view);
-		if(bottom_most_cursor < buffer_size)
+		i64 first_cursor = view_get_first_or_current_multi_cursor(app, view);
+		i64 current_cursor = view_get_cursor(app, view);
+		if(first_cursor <= current_cursor)
 		{
-			i64 first_cursor = view_get_first_or_current_multi_cursor(app, view);
-			i64 current_cursor = view_get_cursor(app, view);
-			if(first_cursor <= current_cursor)
-      {
+			i64 bottom_most_cursor = view_get_bottom_most_multi_cursor(app, view);
+			if(bottom_most_cursor < buffer_size)
+			{
 				i64 old_pos = view_get_cursor(app, view);
         if(multi_cursor_count < VIEW_MULTI_CURSOR_MAXIMUM_COUNT) {
           move_vertical_lines(app, 1);
@@ -745,12 +755,12 @@ CUSTOM_DOC("Moves the cursor down one line.")
           view_set_mark(app, view, seek_pos(new_pos));
         }
 			}
-			else
-			{
-				i64 recent_cursor = view_get_most_recent_multi_cursor(app, view);
-				view_remove_most_recent_multi_cursor(app, view);
-				view_set_cursor_and_preferred_x(app, view, seek_pos(recent_cursor));
-			}
+		}
+		else
+		{
+			i64 recent_cursor = view_get_most_recent_multi_cursor(app, view);
+			view_remove_most_recent_multi_cursor(app, view);
+			view_set_cursor_and_preferred_x(app, view, seek_pos(recent_cursor));
 		}
 	}
 	else if(multi_cursor_mode == Multi_Cursor_Enabled)
@@ -1715,14 +1725,14 @@ isearch(Application_Links *app, Scan_Direction start_scan, i64 first_pos,
 function void
 isearch(Application_Links *app, Scan_Direction start_scan, String_Const_u8 query_init){
   View_ID view = get_active_view(app, Access_ReadVisible);
-  i64 pos = view_get_cursor(app, view);;
+  i64 pos = view_get_cursor(app, view);
   isearch(app, start_scan, pos, query_init);
 }
 
 function void
 isearch(Application_Links *app, Scan_Direction start_scan){
   View_ID view = get_active_view(app, Access_ReadVisible);
-  i64 pos = view_get_cursor(app, view);;
+  i64 pos = view_get_cursor(app, view);
   isearch(app, start_scan, pos, SCu8());
 }
 

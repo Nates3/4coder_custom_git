@@ -15,7 +15,7 @@
 #include <stdlib.h>
 
 #include "4coder_base_types.h"
-#include "q7/4coder_q7_shared.h"
+#include "q7/4coder_q7.h"
 #include "4coder_version.h"
 #include "4coder_table.h"
 #include "4coder_events.h"
@@ -66,7 +66,10 @@
 #include "4coder_profile_inspect.h"
 #include "4coder_tutorial.h"
 #include "4coder_search_list.h"
+
+//- q7 headers
 #include "q7/4coder_q7_functions.h"
+#include "q7/4coder_q7_render.h"
 
 ////////////////////////////////
 
@@ -148,6 +151,10 @@
 #include "4coder_examples.cpp"
 
 #include "4coder_default_hooks.cpp"
+
+//- q7 implementation
+
+#include "q7/4coder_q7_render.cpp"
 
 #endif
 

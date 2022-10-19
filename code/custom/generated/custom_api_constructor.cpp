@@ -735,28 +735,10 @@ api_param(arena, call, "View_ID", "view_id");
 api_param(arena, call, "Modal_State", "modal_state");
 }
 {
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_global_modal_state"), string_u8_litexpr("Modal_State"), string_u8_litexpr(""));
-api_param(arena, call, "Application_Links*", "app");
-}
-{
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_set_global_modal_state"), string_u8_litexpr("void"), string_u8_litexpr(""));
-api_param(arena, call, "Application_Links*", "app");
-api_param(arena, call, "Modal_State", "state");
-}
-{
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_get_is_global_modal"), string_u8_litexpr("b32"), string_u8_litexpr(""));
-api_param(arena, call, "Application_Links*", "app");
-}
-{
-API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_set_is_global_modal"), string_u8_litexpr("void"), string_u8_litexpr(""));
-api_param(arena, call, "Application_Links*", "app");
-api_param(arena, call, "b32", "value");
-}
-{
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("app_set_maps"), string_u8_litexpr("void"), string_u8_litexpr(""));
 api_param(arena, call, "Application_Links*", "app");
-api_param(arena, call, "i64", "command_mapid");
-api_param(arena, call, "i64", "insert_mapid");
+api_param(arena, call, "i64", "normalmode_mapid");
+api_param(arena, call, "i64", "insertmode_mapid");
 }
 {
 API_Call *call = api_call_with_location(arena, result, string_u8_litexpr("view_quit_ui"), string_u8_litexpr("b32"), string_u8_litexpr(""));

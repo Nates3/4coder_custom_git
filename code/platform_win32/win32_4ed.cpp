@@ -1989,10 +1989,10 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdS
  {
   Scratch_Block scratch(win32vars.tctx);
   String_Const_u8 curdir = system_get_path(scratch, SystemPath_CurrentDirectory);
-  Arena project_list_arena = make_arena_system(KB(4));
-  String_Const_u8 exedir = push_string_copy(&project_list_arena, string_remove_front_of_path(SCu8(exe_path)));
+  Arena q7arena = make_arena_system(KB(512));
+  String_Const_u8 exedir = push_string_copy(&q7arena, string_remove_front_of_path(SCu8(exe_path)));
   curdir = string_mod_replace_character(curdir, '\\', '/');
-  app.init(win32vars.tctx, &target, base_ptr, curdir, exedir, project_list_arena, custom);
+  app.init(win32vars.tctx, &target, base_ptr, curdir, exedir, q7arena, custom);
  }
  
  //

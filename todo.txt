@@ -21,6 +21,11 @@
 
 [ ] - Have 4coder listers sort by name
 
+[ ] - Have an option to render lines to indicate the indenting
+
+[ ] - Some commands should enable multi cursor mode when they get executed for the case that
+      Multi_Cursor_PlaceCursors is happening
+
 [ ] - Create command for backspace / delete alpha numeric boundary where it doesn't skip over lines 
       when deleting stuff
 
@@ -32,22 +37,11 @@
 
 [ ] - Loading a project is now laggy for some reason, investigate for optimization / bug fix
 
-[ ] - goto_end_of_file is slow, investigate to see if it can be optimized
-
-[ ] - Jump to cursor sets buffer scroll wrong in compilation view only sometimes
-
 [ ] - Save multi cursor positions maybe so undo / redo work by setting cursors correctly
 
 [ ] - Jump to definition sorts function code index notes without considering the stuff in parenthesis
 
-[ ] - Add more "CodeIndexNote_Types" for syntax highlighting
-  [x] - Add CodeIndexNote_Forward_Declarition type
-	[x] - Add CodeIndexNote_Enum Type
-  [x] - Add CodeIndexNote_CommentTODO type
-	[x] - Add CodeIndexNote_CommentNOTE type
-	[ ] - Add CodeIndexNote_Union type
-	[ ] - Add CodeIndexNote_Global_Variable type
-	[ ] - Add CodeIndexNote_Operator_Type for syntax hilighting *+-=\%#!~&
+[ ] - Add CodeIndexNote_Constant type
 
 [ ] - Implement render text that's above / on line ScopeBegin 
 			at the matching ScopeClose
@@ -59,6 +53,13 @@
 
 /////////////////////////////////////////////
 ------- FINISHED TODOS / FIXED BUGS ---------
+
+[x] - Add more "CodeIndexNote_Types" for syntax highlighting
+  [x] - Add CodeIndexNote_Forward_Declarition type
+	[x] - Add CodeIndexNote_Enum Type
+  [x] - Add CodeIndexNote_CommentTODO type
+	[x] - Add CodeIndexNote_CommentNOTE type
+	[x] - Add CodeIndexNote_Operator_Type for syntax hilighting *+-=\%#!~&
 
 [x] - IMPORTANT: Multi cursor mode has most of the move / edit features supported,
       but there's nothing stopping the user from executing commands

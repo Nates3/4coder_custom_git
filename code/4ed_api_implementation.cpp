@@ -511,96 +511,110 @@ project_list_file_tokenize_contents(String_Const_u8 contents)
 api(custom) function void
 load_project_list_file_func(Application_Links *app)
 {
-  u64 string_cap = 512;
-  
-  Models *models = (Models *)app->cmd_context;
-	models->project_list.first = models->project_list.last = 0;
-	models->project_list.count = 0;
-	if(models->project_list_string_node_memory.temp_memory_arena.arena)
-	{
-		end_temp(models->project_list_string_node_memory);
-	}
-	models->project_list_string_node_memory = begin_temp(&models->project_list_arena);
-	
-  Scratch_Block scratch(app);
-  Arena *scratch_arena = scratch.arena;
-  u8 *start = push_array(scratch_arena, u8, string_cap);
-  String_u8 full_path = Su8(start, models->exe_directory.size, string_cap);
-  block_copy_dynamic_array(start, models->exe_directory.str, models->exe_directory.size);
-  string_append(&full_path, SCu8("project_list.4coder"));
-  
-  File_Attributes attributes = system_quick_file_attributes(scratch, full_path.string);
-  b32 exists = (attributes.last_write_time > 0);
-  if(exists)
+ Models *models = (Models *)app->cmd_context;
+
+ //- if there were any project nodes loaded before then push them all onto the free_list
+ for(;;) {
+  Project_List_Node *node = g_q7data.project_list.first;
+  if(node == 0) {
+   break;
+  }
+  g_q7data.project_list.first = node->next;
+  sll_stack_push(g_q7data.free_project_nodes, node);
+ }
+ g_q7data.project_list.first = g_q7data.project_list.last = 0;
+ g_q7data.project_list.count = 0;
+
+ u64 string_cap = 512;
+
+ //- use the exedir to combine into a full path to project_list.4coder file
+ Scratch_Block scratch(app);
+ Arena *scratch_arena = scratch.arena;
+ u8 *start = push_array(scratch_arena, u8, string_cap);
+ String_u8 full_path = Su8(start, g_q7data.exedir.size, string_cap);
+ block_copy_dynamic_array(start, g_q7data.exedir.str, g_q7data.exedir.size);
+ string_append(&full_path, SCu8("project_list.4coder"));
+
+ File_Attributes attributes = system_quick_file_attributes(scratch, full_path.string);
+ b32 exists = (attributes.last_write_time > 0);
+ if(exists)
+ {
+  Buffer_ID buffer_id = create_buffer(app, full_path.string, 0);
+  Editing_File *file = imp_get_file(models, buffer_id);
+  Gap_Buffer *buffer = &file->state.buffer;
+  List_String_Const_u8 chunk_list = buffer_get_chunks(scratch, buffer);
+
+  String_Const_u8 chunk_mem[3] = {};
+  String_Const_u8_Array chunks = {chunk_mem};
+  for (Node_String_Const_u8 *node = chunk_list.first;
+    node != 0;
+    node = node->next){
+   chunks.vals[chunks.count] = node->string;
+   chunks.count += 1;
+  }
+
+
+  i64 line_start = 0;
+  String_Const_u8 contents = buffer_stringify(&g_q7data.arena, buffer, 
+    Ii64(0, (buffer->size1 + buffer->size2)));
+  Project_List_Token_Array token_array = project_list_file_tokenize_contents(contents);
+  for(;;)
   {
-    Buffer_ID buffer_id = create_buffer(app, full_path.string, 0);
-    Editing_File *file = imp_get_file(models, buffer_id);
-    Gap_Buffer *buffer = &file->state.buffer;
-    List_String_Const_u8 chunk_list = buffer_get_chunks(scratch, buffer);
-    
-    String_Const_u8 chunk_mem[3] = {};
-    String_Const_u8_Array chunks = {chunk_mem};
-    for (Node_String_Const_u8 *node = chunk_list.first;
-         node != 0;
-         node = node->next){
-      chunks.vals[chunks.count] = node->string;
-      chunks.count += 1;
+   Project_List_Token *path = project_list_grab_next_token_ptr(&token_array);
+   Project_List_Token *name = project_list_grab_next_token_ptr(&token_array);
+
+   if(path && name)
+   {
+    g_q7data.project_list.count++;
+    Project_List_Node *node;
+    if(g_q7data.free_project_nodes) {
+     node = g_q7data.free_project_nodes;
+     sll_stack_pop(g_q7data.free_project_nodes);
     }
-    
-    
-    i64 line_start = 0;
-    String_Const_u8 contents = buffer_stringify(&models->project_list_arena, buffer, 
-                                                Ii64(0, (buffer->size1 + buffer->size2)));
-		Project_List_Token_Array token_array = project_list_file_tokenize_contents(contents);
-		for(;;)
-		{
-			Project_List_Token *path = project_list_grab_next_token_ptr(&token_array);
-			Project_List_Token *name = project_list_grab_next_token_ptr(&token_array);
-			
-			if(path && name)
-			{
-				models->project_list.count++;
-				Project_List_Node *node = push_array(&models->project_list_arena, Project_List_Node, 1);
-				zdll_push_front(models->project_list.first, models->project_list.last, node);
-				
-				u64 prev_align = models->project_list_arena.alignment;
-				models->project_list_arena.alignment = 1;
-				String_Const_u8 path_str = SCu8(contents.str + path->pos, path->size);
-				String_Const_u8 name_str = SCu8(contents.str + name->pos, name->size);
-				
-				String_Const_u8 path_copy = push_string_copy(&models->project_list_arena, path_str);
-				if(path_copy.str[path_copy.size - 1] != '/')
-				{
-					u8 *new_terminator = push_array(&models->project_list_arena, u8, 1);
-					path_copy.str[path_copy.size] = '/';
-					*new_terminator = 0;
-				}
-				String_Const_u8 name_copy = push_string_copy(&models->project_list_arena, name_str);
-				models->project_list_arena.alignment = prev_align;
-				
-				node->full_path = path_copy;
-				node->name = name_copy;
-			}
-			else
-			{
-				break;
-			}
-		}
-    
-		buffer_kill(app, buffer_id, BufferKill_AlwaysKill);
+    else {
+     node = push_array(&g_q7data.arena, Project_List_Node, 1);
+    }
+    zdll_push_front(g_q7data.project_list.first, g_q7data.project_list.last, node);
+
+    u64 prev_align = g_q7data.arena.alignment;
+    g_q7data.arena.alignment = 1;
+    String_Const_u8 path_str = SCu8(contents.str + path->pos, path->size);
+    String_Const_u8 name_str = SCu8(contents.str + name->pos, name->size);
+
+    String_Const_u8 path_copy = push_string_copy(&g_q7data.arena, path_str);
+    if(path_copy.str[path_copy.size - 1] != '/')
+    {
+     u8 *new_terminator = push_array(&g_q7data.arena, u8, 1);
+     path_copy.str[path_copy.size] = '/';
+     *new_terminator = 0;
+    }
+    String_Const_u8 name_copy = push_string_copy(&g_q7data.arena, name_str);
+    g_q7data.arena.alignment = prev_align;
+
+    node->full_path = path_copy;
+    node->name = name_copy;
+   }
+   else
+   {
+    break;
+   }
   }
-  else
-  {
-    print_message(app, SCu8("Did not find the project_list.4coder file in the 4ed.exe directory.\n"));
-  }
+
+  buffer_kill(app, buffer_id, BufferKill_AlwaysKill);
+ }
+ else
+ {
+  print_message(app, SCu8("Did not find the project_list.4coder file in the 4ed.exe directory.\n"));
+ }
 }
 
 //NOTE(nates): Custom
+// TODO(nates): remove this
 api(custom) function Project_List
 get_project_list(Application_Links *app)
 {
   Models *models = (Models *)app->cmd_context;
-  Project_List result = models->project_list;
+  Project_List result = g_q7data.project_list;
   return(result);
 }
 
@@ -1122,6 +1136,7 @@ create_buffer(Application_Links *app, String_Const_u8 file_name, Buffer_Create_F
 	{
     result = new_file->id;
   }
+	
   return(result);
 }
 
@@ -1801,26 +1816,18 @@ view_set_active(Application_Links *app, View_ID view_id)
       }
       
       i64 mapid = 0;
-      Modal_State modal_state;
-      if(app_get_is_global_modal(app))
-      {
-        modal_state = app_get_global_modal_state(app);
-      }
-      else
-      {
-        modal_state = view->modal_state;
-      }
+      Modal_State modal_state = view->modal_state;
       
       switch(modal_state)
       {
         case Modal_State_Insert:
         {
-          mapid = models->insert_mapid;
+          mapid = g_q7data.insertmode_mapid;
         } break;
         
         case Modal_State_Command:
         {
-          mapid = models->command_mapid;
+          mapid = g_q7data.normalmode_mapid;
         } break;
         
         InvalidDefaultCase;
@@ -2382,7 +2389,7 @@ view_add_multi_cursor(Application_Links *app, View_ID view_id, i64 cursor_pos)
 	if(api_check_view(view))
 	{
 		Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view_id);
-		if(multi_cursor_mode == Multi_Cursor_Place_Cursors)
+		if(multi_cursor_mode == Multi_Cursor_PlaceCursors)
 		{
       if(view->cursor_count < VIEW_MULTI_CURSOR_MAXIMUM_COUNT)
       {
@@ -2419,16 +2426,16 @@ view_clear_multi_cursors(Application_Links *app, View_ID view_id)
 api(custom) function b32
 app_get_yanked_entire_line(Application_Links *app)
 {
-  Models *models = (Models*)app->cmd_context;
-	b32 result = models->app_yanked_entire_line;
-  return(result);
+ Models *models = (Models*)app->cmd_context;
+ b32 result = g_q7data.app_yanked_entire_line;
+ return(result);
 }
 
 api(custom) function void
 app_set_yanked_entire_line(Application_Links *app, b32 value)
 {
-  Models *models = (Models*)app->cmd_context;
-	models->app_yanked_entire_line = value;
+ Models *models = (Models*)app->cmd_context;
+ g_q7data.app_yanked_entire_line = value;
 }
 
 api(custom) function b32
@@ -2498,59 +2505,14 @@ view_set_modal_state(Application_Links *app, View_ID view_id, Modal_State modal_
   return(result);
 }
 
-api(custom) function Modal_State
-app_get_global_modal_state(Application_Links *app)
-{
-	Modal_State result = Modal_State_Null;
-	if(app)
-	{
-		Models *models = (Models *)app->cmd_context;
-		result = models->global_modal_state;
-	}
-	return(result);
-}
-
 api(custom) function void
-app_set_global_modal_state(Application_Links *app,
-													 Modal_State state)
-{
-	if(app)
-	{
-		Models *models = (Models *)app->cmd_context;
-		models->global_modal_state = state;
-	}
-}
-
-api(custom) function b32
-app_get_is_global_modal(Application_Links *app)
-{
-  b32 result = 0;
-  if(app)
-  {
-    Models *models = (Models *)app->cmd_context;
-    result = models->is_global_modal;
-  }
-  return(result);
-}
-
-api(custom) function void
-app_set_is_global_modal(Application_Links *app, b32 value)
-{
-	if(app)
-	{
-		Models *models = (Models *)app->cmd_context;
-		models->is_global_modal = value;
-	}
-}
-
-api(custom) function void
-app_set_maps(Application_Links *app, i64 command_mapid, i64 insert_mapid)
+app_set_maps(Application_Links *app, i64 normalmode_mapid, i64 insertmode_mapid)
 {
   if(app)
   {
     Models *models = (Models *)app->cmd_context;
-    models->command_mapid = command_mapid;
-    models->insert_mapid = insert_mapid;
+    g_q7data.normalmode_mapid = normalmode_mapid;
+    g_q7data.insertmode_mapid = insertmode_mapid;
   }
 }
 

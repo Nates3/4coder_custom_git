@@ -35,9 +35,9 @@ init_command_line_settings(App_Settings *settings,
         continue;
       }
     }
-    
+		
     switch (mode){
-      case CLMode_App:
+			case CLMode_App:
       {
         switch (action){
           case CLAct_Nothing:
@@ -61,7 +61,7 @@ init_command_line_settings(App_Settings *settings,
                 //case 'L': enables log, parsed before this is called (because I'm a dumbass)
               }
             }
-            else if (arg[0] != 0){
+						else if (arg[0] != 0){
               if (settings->init_files_count < settings->init_files_max){
                 i32 index = settings->init_files_count++;
                 settings->init_files[index] = arg;
@@ -206,6 +206,8 @@ App_Read_Command_Line_Sig(app_read_command_line){
 App_Init_Sig(app_init)
 {
   Models *models = (Models*)base_ptr;
+
+
   models->keep_playing = true;
   models->hard_exit = false;
   
@@ -294,8 +296,8 @@ App_Init_Sig(app_init)
   Application_Links app = {};
   app.tctx = tctx;
   app.cmd_context = models;
-  models->project_list_arena = project_list_arena;
-  models->exe_directory = exe_directory;
+  g_q7data.arena = q7arena; 
+  g_q7data.exedir = exe_directory;
   
   custom_init(&app);
   
@@ -681,26 +683,17 @@ App_Step_Sig(app_step)
               }
               
               i64 mapid = 0;
-              Modal_State modal_state;
-              if(app_get_is_global_modal(app))
-              {
-                modal_state = app_get_global_modal_state(app);
-              }
-              else
-              {
-                modal_state = view->modal_state;
-              }
-              
+              Modal_State modal_state = view->modal_state;
               switch(modal_state)
               {
                 case Modal_State_Insert:
                 {
-                  mapid = models->insert_mapid;
+                  mapid = g_q7data.insertmode_mapid;
                 } break;
                 
                 case Modal_State_Command:
                 {
-                  mapid = models->command_mapid;
+                  mapid = g_q7data.normalmode_mapid;
                 } break;
                 
                 InvalidDefaultCase;

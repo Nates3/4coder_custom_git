@@ -1,7 +1,4 @@
-// NOTE(nates): Everything is parsed line based, so no wrapping text across lines
-// There are comments
 // USAGE: c:/to/path/directory/ optional_lister_name
-// c:/to/path/directory doesn't work
 
 D:/Spieleentwickler/CakezFramework/ CakezTD
 D:/Spieleentwickler/TwitchBot/ TwitchBot

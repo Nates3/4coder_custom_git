@@ -515,7 +515,7 @@ do_4coder_close_user_check(Application_Links *app, View_ID view){
 
 ////////////////////////////////
 
-CUSTOM_COMMAND_SIG(interactive_switch_buffer)
+CUSTOM_UI_COMMAND_SIG(interactive_switch_buffer)
 CUSTOM_DOC("Interactively switch to an open buffer.")
 {
   Buffer_ID buffer = get_buffer_from_user(app, "Switch:");

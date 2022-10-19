@@ -45,8 +45,9 @@ custom_color_code_index_type = 0xFFedb211;
 custom_color_code_index_function = 0xFFde451f;
 custom_color_code_index_macro = 0xFF2895c7;
 custom_color_code_index_enum = 0xff6eb535;
-custom_color_code_index_forward_declaration = 0xFF939FD2;
+custom_color_code_index_forward_declaration = 0xFFde451f;
 custom_color_code_index_namespace = 0xffffffff;
+custom_color_operators = 0xffA23317;
 
 custom_color_margin_insert_mode_color = 0xFF666666;
 custom_color_margin_command_mode_color = 0xFFE89D04;

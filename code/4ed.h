@@ -55,7 +55,7 @@ Render_Target *target,    \
 void *base_ptr,           \
 String_Const_u8 current_directory,\
 String_Const_u8 exe_directory,\
-Arena project_list_arena,\
+Arena q7arena,\
 Custom_API api)
 
 typedef App_Init_Sig(App_Init);

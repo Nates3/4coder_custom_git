@@ -1007,7 +1007,7 @@ CUSTOM_DOC("Run an 'fkey command' configured in a project.4coder file.  Determin
       got_ind = true;
     }
     if (got_ind){
-      prj_exec_command_fkey_index(app, ind);
+			prj_exec_command_fkey_index(app, ind);
     }
   }
 }

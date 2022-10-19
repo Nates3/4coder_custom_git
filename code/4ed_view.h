@@ -59,42 +59,42 @@ struct View_Context_Node{
 
 struct View
 {
-  Modal_State modal_state;
-  
-  View *next;
-  View *prev;
-  struct Panel *panel;
-  b32 in_use;
-  
-  Editing_File *file;
-  Lifetime_Object *lifetime_object;
-  
-	i64 cursor_count;
-  File_Edit_Position edit_pos_;
-  i64 marks[VIEW_MULTI_CURSOR_MAXIMUM_COUNT];
-	f32 preferred_x[VIEW_MULTI_CURSOR_MAXIMUM_COUNT];
-  
-	Multi_Cursor_Mode multi_cursor_mode;
-	b32 line_selection_mode;
-  b32 vim_cutting_mode;
-  i64 selection_begin;
-  i64 selection_end;
-  
-  Vec2_f32 cursor_margin;
-  Vec2_f32 cursor_push_in_multiplier;
-  
-  b8 new_scroll_target;
-  b8 hide_scrollbar;
-  b8 hide_file_bar;
-  b8 show_whitespace;
-  
-  Coroutine *co;
-  Co_Out co_out;
-  
-  Arena node_arena;
-  View_Context_Node *ctx;
-  
-  Query_Set query_set;
+ Modal_State modal_state;
+
+ View *next;
+ View *prev;
+ struct Panel *panel;
+ b32 in_use;
+
+ Editing_File *file;
+ Lifetime_Object *lifetime_object;
+
+ i64 cursor_count;
+ File_Edit_Position edit_pos_;
+ i64 marks[VIEW_MULTI_CURSOR_MAXIMUM_COUNT];
+ f32 preferred_x[VIEW_MULTI_CURSOR_MAXIMUM_COUNT];
+
+ Multi_Cursor_Mode multi_cursor_mode;
+ b32 line_selection_mode;
+ b32 vim_cutting_mode;
+ i64 selection_begin;
+ i64 selection_end;
+
+ Vec2_f32 cursor_margin;
+ Vec2_f32 cursor_push_in_multiplier;
+
+ b8 new_scroll_target;
+ b8 hide_scrollbar;
+ b8 hide_file_bar;
+ b8 show_whitespace;
+
+ Coroutine *co;
+ Co_Out co_out;
+
+ Arena node_arena;
+ View_Context_Node *ctx;
+
+ Query_Set query_set;
 };
 
 struct Live_Views{

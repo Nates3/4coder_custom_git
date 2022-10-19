@@ -1,4 +1,45 @@
 /////////////////////////////////
+date->9/24/22
+
+(nates): Fixed crashing Assert bug where if you were to use "interactive_open_or_new" and then right
+         after use "interactive_switch_buffer" 4coder would assert because ui commands are supposed
+         to be resolved after the execution of other ui commands. I forgot to use 
+         CUSTOM_UI_COMMAND_SIG to indicate that "interactive_switch_buffer" was a ui command
+         and so it didn't delay the execution and tried executing the command on the spot causing
+         4coder to Assert crash
+
+//////////////////////////////////
+date->9/22/22
+
+(nates): added token highlighting option for operator tokens
+(nates): possibly fixed crashing bug that happens when trying to set the keybinding map on a view's
+         buffer when that buffer is being changed / initialized in "view_set_file"
+
+//////////////////////////////////
+date->9/20/22
+
+(nates): removed checking if file is a cpp file when treating code as cpp
+
+//////////////////////////////////
+date->9/19/22
+
+(nates): Fixed bug where inserting return didn't work for multi cursors
+(nates): Fixed bug that prevented you from removing cursors in Multi_Cursor_PlaceCursors mode when
+         a cursor was at either edge of the screen
+(nates): Some commands like text insert, delete, backspace, will enable multi cursor mode
+         in the case the Multi_Cursor_PlaceCursors is happening
+
+////////////////////////////////
+date->9/13/22
+(nates): cleaned up "change_to_command_mode" && "change_to_insert_mode" commands
+(nates): removed global modal concept, there's now only a modal state per each view
+(nates): changed copy and delete alpha numeric identifier to work with cursor opl the last character
+(nates): added JUMP_BUFFER_RANGE as an option in 4coder_q7_globals.h which limits how far up and down
+         the parser of a jump buffer will look to find jumps i.e. errors or list_all_substring_location
+         jumps
+(nates): change toggle compilation expand to happen when pressing project function keys i.e. f1-f12
+
+/////////////////////////////////
 date-> 9/6/22
 
 (nates): Organized all of the code into {RootDir}/code/custom/q7 folder

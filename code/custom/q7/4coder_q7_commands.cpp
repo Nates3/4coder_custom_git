@@ -3,7 +3,7 @@
 // if a normal command is called in multi cursor mode, it will disable multi cursor
 // mode 
 
-CUSTOM_MULTICURSOR_COMMAND_SIG(cycle_multi_cursor_mode)
+CUSTOM_MULTICURSOR_COMMAND_SIG(q7_cycle_multi_cursor_mode)
 CUSTOM_DOC("set the multi cursor mode")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -12,10 +12,10 @@ CUSTOM_DOC("set the multi cursor mode")
 	{
 		case Multi_Cursor_Disabled:
 		{
-			view_set_multi_cursor_mode(app, view, Multi_Cursor_Place_Cursors);
+			view_set_multi_cursor_mode(app, view, Multi_Cursor_PlaceCursors);
 		} break;
 		
-		case Multi_Cursor_Place_Cursors:
+		case Multi_Cursor_PlaceCursors:
 		{
 			i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 			if(multi_cursor_count > 1)
@@ -37,18 +37,92 @@ CUSTOM_DOC("set the multi cursor mode")
 	}
 }
 
-CUSTOM_COMMAND_SIG(load_project_list_file)
+CUSTOM_COMMAND_SIG(q7_jump_downwards_using_prevsearch)
+CUSTOM_DOC("jump downwards in a file using the previous search query")
+{
+ View_ID view = get_active_view(app, Access_ReadVisible);
+ Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
+ if(!buffer_exists(app, buffer)) {
+  return;
+ }
+
+ i64 buffer_size = buffer_get_size(app, buffer);
+
+ //- get the current_pos && set search "pos" to be +1 so that we don't search right at cursor
+ i64 current_pos = view_get_cursor(app, view);
+ i64 pos = current_pos + 1;
+
+ u8 *start = (u8 *)previous_isearch_query;
+ u64 size = cstring_length(start);
+ String_Const_u8 prev_search = SCu8(start, size);
+ if(prev_search.size) {
+  i64 new_pos = 0;
+  seek_string_insensitive_forward(app, buffer, pos - 1, 0, prev_search, &new_pos);
+  if(new_pos < buffer_size) {
+   pos = new_pos;
+  }
+  else if(new_pos == buffer_size) {
+   seek_string_insensitive_forward(app, buffer, 0, 0, prev_search, &new_pos);
+   if(new_pos < buffer_size) {
+    pos = new_pos;
+   }
+  }
+ }
+ 
+ if(pos != current_pos) {
+  view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
+ }
+}
+
+CUSTOM_COMMAND_SIG(q7_jump_upwards_using_prevsearch)
+CUSTOM_DOC("jump upwards in a file using the previous search query")
+{
+ View_ID view = get_active_view(app, Access_ReadVisible);
+ Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
+ if(!buffer_exists(app, buffer)) {
+  return;
+ }
+
+ i64 buffer_size = buffer_get_size(app, buffer);
+
+ //- get the current_pos && set search "pos" to be +1 so that we don't search right at cursor
+ i64 current_pos = view_get_cursor(app, view);
+ i64 pos = current_pos - 1;
+
+ u8 *start = (u8 *)previous_isearch_query;
+ u64 size = cstring_length(start);
+ String_Const_u8 prev_search = SCu8(start, size);
+ if(prev_search.size) {
+  i64 new_pos = 0;
+  seek_string_insensitive_backward(app, buffer, pos + 1, 0, prev_search, &new_pos);
+  if(new_pos >= 0) {
+   pos = new_pos;
+  }
+  else if(new_pos == -1) {
+   seek_string_insensitive_backward(app, buffer, buffer_size, 0, prev_search, &new_pos);
+   if(new_pos >= 0) {
+    pos = new_pos;
+   }
+  }
+ }
+ 
+ if(pos != current_pos) {
+  view_set_cursor_and_preferred_x(app, view, seek_pos(pos));
+ }
+}
+
+CUSTOM_COMMAND_SIG(q7_load_project_list_file)
 CUSTOM_DOC("loads project list file and parses for full paths to projet.4coder files")
 {
 	load_project_list_file_func(app);
 }
 
 
-CUSTOM_MULTICURSOR_COMMAND_SIG(delete_to_end_of_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(q7_delete_to_end_of_line)
 CUSTOM_DOC("Delete's from the cursor to the end of the line")
 {
- View_ID view = get_active_view(app, 0);
- Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
+	View_ID view = get_active_view(app, 0);
+	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
 	
 	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
 	if(multi_cursor_mode == Multi_Cursor_Disabled)
@@ -68,8 +142,8 @@ CUSTOM_DOC("Delete's from the cursor to the end of the line")
 		
 		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 		for(u32 multi_cursor_index = 0;
-      multi_cursor_index < multi_cursor_count;
-      ++multi_cursor_index)
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
 		{
 			i64 cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
 			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
@@ -84,16 +158,16 @@ CUSTOM_DOC("Delete's from the cursor to the end of the line")
 	}
 }
 
-CUSTOM_MULTICURSOR_COMMAND_SIG(delete_to_start_of_line)
+CUSTOM_MULTICURSOR_COMMAND_SIG(q7_delete_to_start_of_line)
 CUSTOM_DOC("Delete's from the start of line to the cursor position")
 {
- View_ID view = get_active_view(app, 0);
- Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
+	View_ID view = get_active_view(app, 0);
+	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
 	
 	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
 	if(multi_cursor_mode == Multi_Cursor_Disabled)
 	{
-  i64 cursor_pos = view_get_cursor(app, view);
+		i64 cursor_pos = view_get_cursor(app, view);
 		i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
 		i64 line_start = get_line_start_pos(app, buffer, cursor_line);
 		
@@ -108,8 +182,8 @@ CUSTOM_DOC("Delete's from the start of line to the cursor position")
 		
 		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
 		for(u32 multi_cursor_index = 0;
-      multi_cursor_index < multi_cursor_count;
-      ++multi_cursor_index)
+				multi_cursor_index < multi_cursor_count;
+				++multi_cursor_index)
 		{
 			i64 cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
 			i64 cursor_line = get_line_number_from_pos(app, buffer, cursor_pos);
@@ -124,90 +198,97 @@ CUSTOM_DOC("Delete's from the start of line to the cursor position")
 	}
 }
 
-CUSTOM_MULTICURSOR_COMMAND_SIG(delete_alpha_numeric_identifier)
-CUSTOM_DOC("deletes alpha numeric identifier at cursor position")
-{
-	Scratch_Block scratch(app);
-	
-	View_ID view = get_active_view(app, Access_ReadWriteVisible);
-	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
-	
-	Multi_Cursor_Mode multi_cursor_mode = view_get_multi_cursor_mode(app, view);
-	if(multi_cursor_mode == Multi_Cursor_Disabled)
-	{
-		i64 cursor_pos = view_get_cursor(app, view);
-		Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
-                                                          cursor_pos);
-		if(range.min != -1)
-		{
-			buffer_replace_range(app, buffer, range, string_u8_empty);
-		}
-	}
-	else if(multi_cursor_mode == Multi_Cursor_Enabled)
-	{
-		History_Group history_group = history_group_begin(app, buffer);
-		
-		i64 multi_cursor_count = view_get_multi_cursor_count(app, view);
-		for(u32 multi_cursor_index = 0;
-      multi_cursor_index < multi_cursor_count;
-      ++multi_cursor_index)
-		{
-			i64 multi_cursor_pos = view_get_multi_cursor(app, view, multi_cursor_index);
-			Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
-                                                           multi_cursor_pos);
-			if(range.min != -1)
-			{
-				buffer_replace_range(app, buffer, range, string_u8_empty);
-			}
-		}
-		history_group_end(history_group);
-	}
-}
 
-CUSTOM_COMMAND_SIG(copy_alpha_numeric_identifier)
-CUSTOM_DOC("Copies characters between the seek left result for a alpha numeric and the seek right result.")
+CUSTOM_COMMAND_SIG(q7_delete_alpha_numeric_identifier)
+CUSTOM_DOC("Deletes the alpha numeric identifer right beneath the cursor")
 {
-	Scratch_Block scratch(app);
+	View_ID view = get_active_view(app, Access_Read);
+	Buffer_ID buffer = view_get_buffer(app, view, Access_Read);
 	
-	View_ID view = get_active_view(app, Access_ReadWriteVisible);
-	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWriteVisible);
 	i64 cursor_pos = view_get_cursor(app, view);
-	Range_i64 range = buffer_seek_character_predicate_range(app, buffer, &character_predicate_alpha_numeric_underscore,
-                                                         cursor_pos);
-	if(range.min != -1)
-	{
-		clipboard_post_buffer_range(app, 0, buffer, range);
-	}
-}
-
-CUSTOM_MULTICURSOR_COMMAND_SIG(change_to_command_mode)
-CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
-{
-	View_ID view = get_active_view(app, 0);
-	Buffer_ID buffer = view_get_buffer(app, view, 0);
+	u8 char_under_cursor = buffer_get_char(app, buffer, cursor_pos);
+	i64 prev_pos = clamp_bot(cursor_pos - 1, 0);
+	u8 char_under_prev_pos = buffer_get_char(app, buffer, prev_pos);
 	
-	Modal_State modal_state;
-	b32 is_global_modal = app_get_is_global_modal(app);
-	if (is_global_modal)
+	Scratch_Block scratch(app);
+	Range_i64 range = {};
+	i64 pos = 0;
+	if(character_predicate_check_character(character_predicate_alpha_numeric_underscore, char_under_cursor))
 	{
-		modal_state = app_get_global_modal_state(app);
+		pos = cursor_pos;
+	}
+	else if(character_predicate_check_character(character_predicate_alpha_numeric_underscore, char_under_prev_pos))
+	{
+		pos = prev_pos;
 	}
 	else
 	{
-		modal_state = view_get_modal_state(app, view);
+		goto end;
 	}
 	
-	if (modal_state != Modal_State_Command)
+	i64 buffer_size = buffer_get_size(app, buffer);
+	Character_Predicate not = character_predicate_not(&character_predicate_alpha_numeric_underscore);
+	String_Match m1 = buffer_seek_character_class(app, buffer, &not, Scan_Backward, pos);
+	//range.start = boundary_predicate(app, buffer, Side_Min, Scan_Backward, pos, &character_predicate_alpha_numeric_underscore);
+	range.start = m1.range.min + 1;
+	range.start = clamp_top(range.start, buffer_size);
+	
+	range.end = boundary_predicate(app, buffer, Side_Max, Scan_Forward, pos, &character_predicate_alpha_numeric_underscore);
+	buffer_replace_range(app, buffer, range, string_u8_empty);
+	end:;
+}
+
+
+CUSTOM_COMMAND_SIG(q7_copy_alpha_numeric_identifier)
+CUSTOM_DOC("Deletes the alpha numeric identifer right beneath the cursor")
+{
+	View_ID view = get_active_view(app, Access_Read);
+	Buffer_ID buffer = view_get_buffer(app, view, Access_Read);
+	
+	i64 cursor_pos = view_get_cursor(app, view);
+	u8 char_under_cursor = buffer_get_char(app, buffer, cursor_pos);
+	i64 prev_pos = clamp_bot(cursor_pos - 1, 0);
+	u8 char_under_prev_pos = buffer_get_char(app, buffer, prev_pos);
+	
+	Scratch_Block scratch(app);
+	Range_i64 range = {};
+	i64 pos = 0;
+	if(character_predicate_check_character(character_predicate_alpha_numeric_underscore, char_under_cursor))
 	{
-		if (is_global_modal)
-		{
-			app_set_global_modal_state(app, Modal_State_Command);
-		}
-		else
-		{
-			view_set_modal_state(app, view, Modal_State_Command);
-		}
-		
+		pos = cursor_pos;
+	}
+	else if(character_predicate_check_character(character_predicate_alpha_numeric_underscore, char_under_prev_pos))
+	{
+		pos = prev_pos;
+	}
+	else
+	{
+		goto end;
+	}
+	
+	i64 buffer_size = buffer_get_size(app, buffer);
+	Character_Predicate not = character_predicate_not(&character_predicate_alpha_numeric_underscore);
+	String_Match m1 = buffer_seek_character_class(app, buffer, &not, Scan_Backward, pos);
+	//range.start = boundary_predicate(app, buffer, Side_Min, Scan_Backward, pos, &character_predicate_alpha_numeric_underscore);
+	range.start = m1.range.min + 1;
+	range.start = clamp_top(range.start, buffer_size);
+	
+	range.end = boundary_predicate(app, buffer, Side_Max, Scan_Forward, pos, &character_predicate_alpha_numeric_underscore);
+	clipboard_post_buffer_range(app, 0, buffer, range);
+	end:;
+}
+
+
+CUSTOM_MULTICURSOR_COMMAND_SIG(q7_change_to_normal_mode)
+CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
+{
+	View_ID view = get_active_view(app, Access_ReadWrite);
+	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadWrite);
+	
+	b32 succeeded = set_command_mapid(app, buffer, (Command_Map_ID)g_normalmode_mapid);
+	if(succeeded) {
+		Modal_State modal_state = view_get_modal_state(app, view);
+		view_set_modal_state(app, view, Modal_State_Command);
 		i64 cursor_pos = view_get_cursor(app, view);
 		if (cursor_pos > 0)
 		{
@@ -219,130 +300,53 @@ CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap")
 				view_set_cursor(app, view, seek_pos(cursor_pos - 1));
 			}
 		}
-		
-		// Set Keybinds for Command Mode only
-		b32 result = view_set_buffer(app, view, buffer, 0);
-		set_command_map_id(app, buffer, (Command_Map_ID)command_mapid);
 	}
 }
 
-CUSTOM_MULTICURSOR_COMMAND_SIG(change_to_command_mode_dont_move)
-CUSTOM_DOC("Sets the view's buffer keymap to the command_keymap, but doesn't move the cursor")
-{
-	View_ID view = get_active_view(app, 0);
-	Buffer_ID buffer = view_get_buffer(app, view, 0);
-	
-	Modal_State modal_state;
-	b32 is_global_modal = app_get_is_global_modal(app);
-	if (is_global_modal)
-	{
-		modal_state = app_get_global_modal_state(app);
-	}
-	else
-	{
-		modal_state = view_get_modal_state(app, view);
-	}
-	
-	if (modal_state != Modal_State_Command)
-	{
-		if (is_global_modal)
-		{
-			app_set_global_modal_state(app, Modal_State_Command);
-		}
-		else
-		{
-			view_set_modal_state(app, view, Modal_State_Command);
-		}
-		
-		// Set Keybinds for Command Mode only
-		b32 result = view_set_buffer(app, view, buffer, 0);
-		set_command_map_id(app, buffer, (Command_Map_ID)command_mapid);
-	}
-}
-
-CUSTOM_MULTICURSOR_COMMAND_SIG(change_to_insert_mode_front)
+CUSTOM_MULTICURSOR_COMMAND_SIG(q7_change_to_insert_mode)
 CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
 	View_ID view = get_active_view(app, 0);
 	Buffer_ID buffer = view_get_buffer(app, view, 0);
 	
-	// TODO(cakez77): Switch on the view type? Only change in certain views?
-	Modal_State modal_state;
-	
-	b32 is_global_modal = app_get_is_global_modal(app);
-	if (is_global_modal)
-	{
-		modal_state = app_get_global_modal_state(app);
-	}
-	else
-	{
-		modal_state = view_get_modal_state(app, view);
-	}
-	
-	if (modal_state != Modal_State_Insert)
-	{
-		if (is_global_modal)
-		{
-			app_set_global_modal_state(app, Modal_State_Insert);
-		}
-		else
+	b32 succeeded = set_command_mapid(app, buffer, (Command_Map_ID)g_insertmode_mapid);
+	if(succeeded) {
+		Modal_State modal_state = view_get_modal_state(app, view);
+		if (modal_state != Modal_State_Insert)
 		{
 			view_set_modal_state(app, view, Modal_State_Insert);
 		}
-		
-		// Set Keybinds for Command Mode only
-		b32 result = view_set_buffer(app, view, buffer, 0);
-		set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
 	}
 }
 
-CUSTOM_MULTICURSOR_COMMAND_SIG(change_to_insert_mode_after)
+CUSTOM_MULTICURSOR_COMMAND_SIG(q7_change_to_insert_mode_after)
 CUSTOM_DOC("Sets the view's buffer keymap to the insert_keymap")
 {
 	View_ID view = get_active_view(app, 0);
 	Buffer_ID buffer = view_get_buffer(app, view, 0);
 	
-	// TODO(cakez77): Switch on the view type? Only change in certain views?
-	Modal_State modal_state;
-	
-	b32 is_global_modal = app_get_is_global_modal(app);
-	if (is_global_modal)
-	{
-		modal_state = app_get_global_modal_state(app);
-	}
-	else
-	{
-		modal_state = view_get_modal_state(app, view);
-	}
-	
-	if (modal_state != Modal_State_Insert)
-	{
-		if (is_global_modal)
-		{
-			app_set_global_modal_state(app, Modal_State_Insert);
-		}
-		else
+	b32 succeeded = set_command_mapid(app, buffer, (Command_Map_ID)g_insertmode_mapid);
+	if(succeeded) {
+		Modal_State modal_state = view_get_modal_state(app, view);
+		if (modal_state != Modal_State_Insert)
 		{
 			view_set_modal_state(app, view, Modal_State_Insert);
+			
 		}
 		
-		// Set Keybinds for Command Mode only
-		b32 result = view_set_buffer(app, view, buffer, 0);
-		set_command_map_id(app, buffer, (Command_Map_ID)insert_mapid);
-	}
-	
-	i64 cursor_pos = view_get_cursor(app, view);
-	i64 cursor_line_before = get_line_number_from_pos(app, buffer, cursor_pos);
-	i64 cursor_line_after = get_line_number_from_pos(app, buffer, cursor_pos + 1);
-	
-	if (cursor_line_after == cursor_line_before)
-	{
-		view_set_cursor(app, view, seek_pos(cursor_pos + 1));
+		i64 cursor_pos = view_get_cursor(app, view);
+		i64 cursor_line_before = get_line_number_from_pos(app, buffer, cursor_pos);
+		i64 cursor_line_after = get_line_number_from_pos(app, buffer, cursor_pos + 1);
+		
+		if (cursor_line_after == cursor_line_before)
+		{
+			view_set_cursor(app, view, seek_pos(cursor_pos + 1));
+		}
 	}
 }
 
-CUSTOM_COMMAND_SIG(jump_from_brace_to_brace)
-CUSTOM_DOC("Jump from Brace to brace")
+CUSTOM_COMMAND_SIG(q7_jump_to_matching_brace)
+CUSTOM_DOC("Jump to the matching brace under the cursor")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
 	Buffer_ID buffer = view_get_buffer(app, view, Access_ReadVisible);
@@ -354,8 +358,8 @@ CUSTOM_DOC("Jump from Brace to brace")
 	if (char_under_cursor == '{' || prev_char_under_cursor == '{')
 	{
 		if (find_nest_side(app, buffer, prev_char_under_cursor == '{' ? cursor_pos : cursor_pos + 1,
-                     FindNest_Scope | FindNest_Balanced | FindNest_EndOfToken,
-                     Scan_Forward, NestDelim_Close, &bracePos))
+											 FindNest_Scope | FindNest_Balanced | FindNest_EndOfToken,
+											 Scan_Forward, NestDelim_Close, &bracePos))
 		{
 			view_set_cursor(app, view, Buffer_Seek{buffer_seek_pos, bracePos - 1});
 		}
@@ -363,8 +367,8 @@ CUSTOM_DOC("Jump from Brace to brace")
 	else if (char_under_cursor == '}' || prev_char_under_cursor == '}')
 	{
 		if (find_nest_side(app, buffer, prev_char_under_cursor == '}' ? cursor_pos - 2 : cursor_pos - 1,
-                     FindNest_Scope | FindNest_Balanced,
-                     Scan_Backward, NestDelim_Open, &bracePos))
+											 FindNest_Scope | FindNest_Balanced,
+											 Scan_Backward, NestDelim_Open, &bracePos))
 		{
 			view_set_cursor(app, view, Buffer_Seek{buffer_seek_pos, bracePos});
 		}
@@ -372,14 +376,14 @@ CUSTOM_DOC("Jump from Brace to brace")
 	else
 	{
 		if (find_nest_side(app, buffer, cursor_pos, FindNest_Scope,
-                     Scan_Forward, NestDelim_Open, &bracePos))
+											 Scan_Forward, NestDelim_Open, &bracePos))
 		{
 			view_set_cursor(app, view, Buffer_Seek{buffer_seek_pos, bracePos});
 		}
 	}
 }
 
-CUSTOM_COMMAND_SIG(vim_yank_line)
+CUSTOM_COMMAND_SIG(q7_yank_line)
 CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -423,7 +427,7 @@ CUSTOM_DOC("Copies lines if in select mode, but yanks line if otherwise")
 	}
 }
 
-CUSTOM_COMMAND_SIG(vim_cut)
+CUSTOM_COMMAND_SIG(q7_cut)
 CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipboard.")
 {
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -494,7 +498,7 @@ CUSTOM_DOC("Cut the text in the range from the cursor to the mark onto the clipb
 	}
 }
 
-CUSTOM_COMMAND_SIG(vim_paste)
+CUSTOM_COMMAND_SIG(q7_paste)
 CUSTOM_DOC("If you yank a line, this will add a new line under the line you're on and paste the yank result there")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -524,7 +528,7 @@ CUSTOM_DOC("If you yank a line, this will add a new line under the line you're o
 	history_group_end(group);
 }
 
-CUSTOM_COMMAND_SIG(select_lines)
+CUSTOM_COMMAND_SIG(q7_select_lines)
 CUSTOM_DOC("Selects a line region that can be used inside other commantds like copy, paste, cut, or delete")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -554,29 +558,29 @@ CUSTOM_DOC("Selects a line region that can be used inside other commantds like c
 	}
 }
 
-CUSTOM_COMMAND_SIG(combine_two_lines)
-CUSTOM_DOC("combine two lines")
+CUSTOM_COMMAND_SIG(q7_join_lines)
+CUSTOM_DOC("Combine the current line and the line below")
 {
 	seek_end_of_line(app);
 	delete_char(app);
 }
 
-CUSTOM_COMMAND_SIG(new_line_and_switch_to_insert)
+CUSTOM_COMMAND_SIG(q7_insert_line_below)
 CUSTOM_DOC("add new line and switch to insert mode")
 {
 	seek_end_of_textual_line(app);
-	change_to_insert_mode_front(app);
+	q7_change_to_insert_mode(app);
 	write_text_multi_cursor(app, SCu8("\n"));
 }
 
-CUSTOM_COMMAND_SIG(move_cursor_to_beginning_and_switch_to_insert)
-CUSTOM_DOC("add new line and switch to insert mode")
+CUSTOM_COMMAND_SIG(q7_insert_start_of_line)
+CUSTOM_DOC("go to the start of the line and go into insert mode")
 {
 	seek_beginning_of_textual_line(app);
-	change_to_insert_mode_front(app);
+	q7_change_to_insert_mode(app);
 }
 
-CUSTOM_COMMAND_SIG(cancel_command)
+CUSTOM_COMMAND_SIG(q7_cancel_command)
 CUSTOM_DOC("cancel context modes")
 {
 	View_ID view = get_active_view(app, Access_ReadWriteVisible);
@@ -585,12 +589,13 @@ CUSTOM_DOC("cancel context modes")
 	view_set_multi_cursor_mode(app, view, Multi_Cursor_Disabled);
 }
 
-CUSTOM_COMMAND_SIG(insert_return)
+// TODO(nates): Can we remove this
+CUSTOM_MULTICURSOR_COMMAND_SIG(q7_insert_return)
 CUSTOM_DOC("copy of text input but just for return, so you can hit return in command mode")
 {
 	User_Input in = get_current_input(app);
 	char Value = in.event.text.string.str[0];
-	if (Value == 10)
+	if (Value == '\n')
 	{
 		write_text_and_auto_indent(app);
 	}
@@ -600,7 +605,7 @@ CUSTOM_DOC("copy of text input but just for return, so you can hit return in com
 	}
 }
 
-CUSTOM_COMMAND_SIG(control_plus_click_jump_to_definition)
+CUSTOM_COMMAND_SIG(q7_jump_to_definition_under_mouse)
 CUSTOM_DOC("control + click to jump to the definition")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -611,7 +616,7 @@ CUSTOM_DOC("control + click to jump to the definition")
 	jump_to_definition_at_cursor(app);
 }
 
-CUSTOM_UI_COMMAND_SIG(jump_to_definition_sorted)
+CUSTOM_UI_COMMAND_SIG(q7_tag_context_menu)
 CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 {
 	Scratch_Block scratch(app);
@@ -640,7 +645,7 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 	
 	Lister_Result sort_result = run_lister(app, sort_lister);
 	if (!sort_result.canceled &&
-     sort_result.user_data)
+			sort_result.user_data)
 	{
 		Code_Index_Note_Kind users_type = *(Code_Index_Note_Kind *)sort_result.user_data;
 		
@@ -651,8 +656,8 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 		
 		code_index_lock();
 		for (Buffer_ID buffer = get_buffer_next(app, 0, Access_Always);
-       buffer != 0;
-       buffer = get_buffer_next(app, buffer, Access_Always))
+				 buffer != 0;
+				 buffer = get_buffer_next(app, buffer, Access_Always))
 		{
 			Code_Index_File *file = code_index_get_file(buffer);
 			if (file != 0)
@@ -746,13 +751,14 @@ CUSTOM_DOC("Sorts all note types and lists the ones user choeses.")
 	}
 }
 
-CUSTOM_COMMAND_SIG(reload_changed_files)
+// TODO(nates): replace this with "q7_reload_current_file" 
+CUSTOM_COMMAND_SIG(q7_reload_all_files)
 CUSTOM_DOC("if you change the file outside a program and reload it with this command, it will carry over all changes from the unloaded file and ignore everything you added in 4ed buffer")
 {
 	Scratch_Block scratch(app);
 	for (Buffer_ID buffer = get_buffer_next(app, 0, Access_ReadWriteVisible);
-      buffer != 0;
-      buffer = get_buffer_next(app, buffer, Access_ReadWriteVisible))
+			 buffer != 0;
+			 buffer = get_buffer_next(app, buffer, Access_ReadWriteVisible))
 	{
 		Dirty_State dirty = buffer_get_dirty_state(app, buffer);
 		if(dirty == DirtyState_UnloadedChanges || dirty == DirtyState_UnsavedChangesAndUnloadedChanges)
@@ -764,7 +770,8 @@ CUSTOM_DOC("if you change the file outside a program and reload it with this com
 	}
 }
 
-CUSTOM_COMMAND_SIG(goto_next_mark)
+#if 0
+CUSTOM_COMMAND_SIG(q7_goto_next_jump)
 CUSTOM_DOC("moves forward in mark history if user has searched backwards in history")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -792,8 +799,10 @@ CUSTOM_DOC("moves forward in mark history if user has searched backwards in hist
 		view_set_cursor_and_preferred_x_no_set_mark_rel_index(app, view, seek_pos(mark_pos));
 	}
 }
+#endif
 
-CUSTOM_COMMAND_SIG(goto_prev_mark)
+#if 0
+CUSTOM_COMMAND_SIG(q7_goto_prev_jump)
 CUSTOM_DOC("moves backward in mark history")
 {
 	View_ID view = get_active_view(app, Access_ReadVisible);
@@ -816,9 +825,10 @@ CUSTOM_DOC("moves backward in mark history")
 		view_set_cursor_and_preferred_x_no_set_mark_rel_index(app, view, seek_pos(mark_pos));
 	}
 }
+#endif
 
 
-CUSTOM_COMMAND_SIG(toggle_compilation_expand)
+CUSTOM_COMMAND_SIG(q7_toggle_compilation_expand)
 CUSTOM_DOC("Expand the compilation window.")
 {
 	Buffer_ID buffer = view_get_buffer(app, global_compilation_view, Access_Always);
@@ -834,7 +844,7 @@ CUSTOM_DOC("Expand the compilation window.")
 	}
 }
 
-CUSTOM_COMMAND_SIG(list_projects)
+CUSTOM_COMMAND_SIG(q7_list_projects)
 CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
 {
 	Project_List projects = get_project_list(app);
@@ -849,8 +859,8 @@ CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
 		code_index_lock();
 		Project_List_Node *node = projects.first;
 		for(u32 node_index = 0;
-      node_index < projects.count;
-      ++node_index)
+				node_index < projects.count;
+				++node_index)
 		{
 			lister_add_item(lister, node->name, SCu8(""), &node->full_path, 0);
 			node = node->next;
@@ -878,7 +888,7 @@ CUSTOM_DOC("loads the project_list.4coder file under same directory as 4ed.exe")
 	}
 }
 
-CUSTOM_COMMAND_SIG(custom_startup)
+CUSTOM_COMMAND_SIG(q7_initialize)
 CUSTOM_DOC("custom startup")
 {
 	User_Input input = get_current_input(app);
@@ -895,8 +905,8 @@ CUSTOM_DOC("custom startup")
 	{
 		{
 			Buffer_ID buffer = create_buffer(app, string_u8_litexpr("*compilation*"),
-                                    BufferCreate_NeverAttachToFile |
-                                    BufferCreate_AlwaysNew);
+																			 BufferCreate_NeverAttachToFile |
+																			 BufferCreate_AlwaysNew);
 			buffer_set_setting(app, buffer, BufferSetting_Unimportant, true);
 			buffer_set_setting(app, buffer, BufferSetting_ReadOnly, true);
 		}
@@ -910,6 +920,9 @@ CUSTOM_DOC("custom startup")
 		Buffer_ID comp_id = buffer_identifier_to_id(app, comp);
 		Buffer_ID left_id = buffer_identifier_to_id(app, left);
 		Buffer_ID right_id = buffer_identifier_to_id(app, right);
+  set_command_mapid(app, comp_id, (Command_Map_ID)g_normalmode_mapid);
+  set_command_mapid(app, left_id, (Command_Map_ID)g_insertmode_mapid);
+  set_command_mapid(app, right_id, (Command_Map_ID)g_insertmode_mapid);
 		
 		View_ID view = get_active_view(app, Access_Always);
 		new_view_settings(app, view);
@@ -958,22 +971,12 @@ CUSTOM_DOC("custom startup")
 	
 	// NOTE(nates): Load Project Paths
 	{
-		load_project_list_file(app);
+		q7_load_project_list_file(app);
 	}
 	
 	// NOTE(nates): View stuff
 	{
-		app_set_maps(app, command_mapid, insert_mapid);
-		app_set_is_global_modal(app, false);
-		b32 is_global_modal = app_get_is_global_modal(app);
-		if(is_global_modal)
-		{
-			app_set_global_modal_state(app, Modal_State_Command);
-		}
-		else
-		{
-			View_ID active_view = get_active_view(app, Access_ReadVisible);
-			view_set_modal_state(app, active_view, Modal_State_Command);
-		}
+		View_ID active_view = get_active_view(app, Access_ReadVisible);
+		view_set_modal_state(app, active_view, Modal_State_Insert);
 	}
 }
